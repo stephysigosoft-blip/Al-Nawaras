@@ -20,6 +20,9 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ar';
 
   final messages = _notInlinedMessages(_notInlinedMessages);
+  static String m2(spot) => "مركون في الموقف ${spot}";
+  static String m3(date) => "صالح حتى: ${date}";
+  static String m4(number) => "الترخيص: ${number}";
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "aNewUpdateIsAvailableForThisAppPleaseDownload":
         MessageLookupByLibrary.simpleMessage(
@@ -462,5 +465,70 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "شريكك الموثوق لتوصيل الطعام والبقالة",
         ),
+    "premiumParkingSolutions": MessageLookupByLibrary.simpleMessage("حلول مواقف سيارات متميزة"),
+    "register": MessageLookupByLibrary.simpleMessage("تسجيل"),
+    "signIn": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
+    "welcomeDescription": MessageLookupByLibrary.simpleMessage("مواقف آمنة للكرفانات، والجت سكي، \nوشاحنات الطعام والقوارب والمزيد"),
+    "dontHaveAccount": MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟"),
+    "emailOrMobile": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني أو رقم الهاتف"),
+    "enterEmailOrMobile": MessageLookupByLibrary.simpleMessage("أدخل بريدك الإلكتروني أو هاتفك"),
+    "enterPassword": MessageLookupByLibrary.simpleMessage("أدخل كلمة المرور الخاصة بك"),
+    "forgotPassword": MessageLookupByLibrary.simpleMessage("هل نسيت كلمة المرور؟"),
+    "orSignInWith": MessageLookupByLibrary.simpleMessage("أو سجل الدخول باستخدام"),
+    "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
+    "rememberMe": MessageLookupByLibrary.simpleMessage("تذكرني"),
+    "signInToYourAccount": MessageLookupByLibrary.simpleMessage("سجل الدخول إلى حساب النورس الخاص بك"),
+    "signUp": MessageLookupByLibrary.simpleMessage("تسجيل"),
+    "welcomeBack": MessageLookupByLibrary.simpleMessage("مرحباً بعودتك"),
+    "agreeToTerms": MessageLookupByLibrary.simpleMessage(
+        "أوافق على شروط الخدمة وسياسة الخصوصية"),
+    "alreadyHaveAccount":
+        MessageLookupByLibrary.simpleMessage("هل لديك حساب بالفعل؟ "),
+    "confirmPassword":
+        MessageLookupByLibrary.simpleMessage("تأكيد كلمة المرور"),
+    "confirmYourPassword": MessageLookupByLibrary.simpleMessage("أكد كلمة مرورك"),
+    "createAccount": MessageLookupByLibrary.simpleMessage("إنشاء حساب"),
+    "createPassword": MessageLookupByLibrary.simpleMessage("أنشئ كلمة مرور"),
+    "drivingLicense":
+        MessageLookupByLibrary.simpleMessage("رقم رخصة القيادة (اختياري)"),
+    "emailAddress": MessageLookupByLibrary.simpleMessage("بريد إلكتروني"),
+    "enterEmail": MessageLookupByLibrary.simpleMessage("أدخل بريدك الإلكتروني"),
+    "enterDrivingLicense":
+        MessageLookupByLibrary.simpleMessage("أدخل رقم رخصة القيادة الخاصة بك"),
+    "enterFullName": MessageLookupByLibrary.simpleMessage("أدخل اسمك الكامل"),
+    "fullName": MessageLookupByLibrary.simpleMessage("الاسم الكامل"),
+    "mobileHint": MessageLookupByLibrary.simpleMessage("+971 XX XXX XXXX"),
+    "mobileNumber": MessageLookupByLibrary.simpleMessage("رقم الهاتف المحمول"),
+    "provideDetailsToRegister":
+        MessageLookupByLibrary.simpleMessage("يرجى تقديم التفاصيل الخاصة بك لإنشاء حساب"),
+    "awayFromParking": MessageLookupByLibrary.simpleMessage("بعيد عن الموقف"),
+    "bookNow": MessageLookupByLibrary.simpleMessage("احجز الآن!"),
+    "bookParking": MessageLookupByLibrary.simpleMessage("حجز موقف"),
+    "buy": MessageLookupByLibrary.simpleMessage("شراء"),
+    "checkRewards": MessageLookupByLibrary.simpleMessage("تحقق من المكافآت"),
+    "currentMembership": MessageLookupByLibrary.simpleMessage("العضوية الحالية"),
+    "forAllVehicleTypes": MessageLookupByLibrary.simpleMessage("لكافة أنواع المركبات"),
+    "getDirections": MessageLookupByLibrary.simpleMessage("الحصول على الاتجاهات"),
+    "membershipPlans": MessageLookupByLibrary.simpleMessage("خطط العضوية"),
+    "myVehicles": MessageLookupByLibrary.simpleMessage("مركباتي"),
+    "navigateToYourParking": MessageLookupByLibrary.simpleMessage("انتقل إلى\nموقف سيارتك"),
+    "opportunity": MessageLookupByLibrary.simpleMessage("فرصة!"),
+    "parkedAtSpot": m2,
+    "recentActivity": MessageLookupByLibrary.simpleMessage("النشاط الأخير"),
+    "registerNewVehicle": MessageLookupByLibrary.simpleMessage("تسجيل مركبة جديدة"),
+    "renew": MessageLookupByLibrary.simpleMessage("تجديد"),
+    "securedSlots": MessageLookupByLibrary.simpleMessage("أكثر من 300 موقف مؤمن للكرفانات،\nوالقوارب، والجت سكي والمزيد."),
+    "smartParking": MessageLookupByLibrary.simpleMessage("المواقف الذكية"),
+    "validUntil": m3,
+    "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
+    "welcome": MessageLookupByLibrary.simpleMessage("مرحباً"),
+    "license": m4,
+    "monthlyPremium": MessageLookupByLibrary.simpleMessage("قسط شهري"),
+    "parkingRenewed": MessageLookupByLibrary.simpleMessage("تم تجديد الموقف"),
+    "vehicleCheckIn": MessageLookupByLibrary.simpleMessage("تسجيل دخول المركبة"),
+    "home": MessageLookupByLibrary.simpleMessage("الرئيسية"),
+    "bookings": MessageLookupByLibrary.simpleMessage("الحجوزات"),
+    "services": MessageLookupByLibrary.simpleMessage("الخدمات"),
+    "profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي")
   };
 }

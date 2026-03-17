@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/login_controller.dart';
+import '../../generated/l10n.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -87,20 +88,20 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: height * 0.002),
-                          const Center(
+                          Center(
                             child: Text(
-                              'Premium Parking Solutions',
-                              style: TextStyle(
+                              S.of(context).premiumParkingSolutions,
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: Color.fromARGB(255, 103, 111, 128),
                               ),
                             ),
                           ),
                           SizedBox(height: height * 0.03),
-                          const Center(
+                          Center(
                             child: Text(
-                              'Welcome Back',
-                              style: TextStyle(
+                              S.of(context).welcomeBack,
+                              style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF001133),
@@ -108,11 +109,11 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: height * 0.01),
-                          const Center(
+                          Center(
                             child: Text(
-                              'Sign in to your AL Nawras account',
+                              S.of(context).signInToYourAccount,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
                                 color: Color(0xFF001133),
                                 height: 1.3,
@@ -120,9 +121,9 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: height * 0.05),
-                          const Text(
-                            'Email or Mobile Number',
-                            style: TextStyle(
+                          Text(
+                            S.of(context).emailOrMobile,
+                            style: const TextStyle(
                               fontSize: 12,
                               color: Colors.black54,
                             ),
@@ -134,7 +135,7 @@ class LoginScreen extends StatelessWidget {
                               controller: controller.emailOrMobileController,
                               style: const TextStyle(fontSize: 14),
                               decoration: InputDecoration(
-                                hintText: 'Enter your email or mobile',
+                                hintText: S.of(context).enterEmailOrMobile,
                                 hintStyle: const TextStyle(
                                   color: Colors.black38,
                                   fontSize: 13,
@@ -167,9 +168,9 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: height * 0.02),
-                          const Text(
-                            'Password',
-                            style: TextStyle(
+                          Text(
+                            S.of(context).password,
+                            style: const TextStyle(
                               fontSize: 12,
                               color: Colors.black54,
                             ),
@@ -182,7 +183,7 @@ class LoginScreen extends StatelessWidget {
                               obscureText: true,
                               style: const TextStyle(fontSize: 14),
                               decoration: InputDecoration(
-                                hintText: 'Enter your password',
+                                hintText: S.of(context).enterPassword,
                                 hintStyle: const TextStyle(
                                   color: Colors.black38,
                                   fontSize: 13,
@@ -220,9 +221,9 @@ class LoginScreen extends StatelessWidget {
                             children: [
                               GestureDetector(
                                 onTap: controller.forgotPassword,
-                                child: const Text(
-                                  'Forgot Password?',
-                                  style: TextStyle(
+                                child: Text(
+                                  S.of(context).forgotPassword,
+                                  style: const TextStyle(
                                     fontSize: 11,
                                     color: Color(0xFFE30613),
                                   ),
@@ -250,9 +251,9 @@ class LoginScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              const Text(
-                                'Remember me',
-                                style: TextStyle(
+                              Text(
+                                S.of(context).rememberMe,
+                                style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.black54,
                                 ),
@@ -274,9 +275,9 @@ class LoginScreen extends StatelessWidget {
                               ),
                               elevation: 0,
                             ),
-                            child: const Text(
-                              'Sign In',
-                              style: TextStyle(
+                            child: Text(
+                              S.of(context).signIn,
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -296,7 +297,7 @@ class LoginScreen extends StatelessWidget {
                                   horizontal: 15,
                                 ),
                                 child: Text(
-                                  'Or sign in with',
+                                  S.of(context).orSignInWith,
                                   style: TextStyle(
                                     fontSize: 13,
                                     color: const Color(

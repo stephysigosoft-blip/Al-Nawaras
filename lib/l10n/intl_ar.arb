@@ -481,5 +481,105 @@
   "yourTrustedFoodGroceryDeliveryPartner": "شريكك الموثوق لتوصيل الطعام والبقالة",
   "@yourTrustedFoodGroceryDeliveryPartner": {},
   "youSaved": "لقد وفرت",
-  "@youSaved": {}
+  "@youSaved": {},
+  "register": "تسجيل",
+  "@register": {},
+  "premiumParkingSolutions": "حلول مواقف سيارات متميزة",
+  "@premiumParkingSolutions": {},
+  "signIn": "تسجيل الدخول",
+  "@signIn": {},
+  "welcomeBack": "مرحباً بعودتك",
+  "@welcomeBack": {},
+  "signInToYourAccount": "سجل الدخول إلى حساب النورس الخاص بك",
+  "@signInToYourAccount": {},
+  "forgotPassword": "هل نسيت كلمة المرور؟",
+  "@forgotPassword": {},
+  "rememberMe": "تذكرني",
+  "@rememberMe": {},
+  "orSignInWith": "أو سجل الدخول باستخدام",
+  "@orSignInWith": {},
+  "dontHaveAccount": "ليس لديك حساب؟",
+  "@dontHaveAccount": {},
+  "signUp": "تسجيل",
+  "@signUp": {},
+  "welcomeDescription": "مواقف آمنة للكرفانات، والجت سكي، \nوشاحنات الطعام والقوارب والمزيد",
+  "@welcomeDescription": {},
+  "welcome": "مرحباً",
+  "@welcome": {},
+  "currentMembership": "العضوية الحالية",
+  "@currentMembership": {},
+  "renew": "تجديد",
+  "@renew": {},
+  "bookParking": "حجز موقف",
+  "@bookParking": {},
+  "requestService": "طلب خدمة",
+  "@requestService": {},
+  "membershipPlans": "خطط العضوية",
+  "@membershipPlans": {},
+  "buy": "شراء",
+  "@buy": {},
+  "navigateToYourParking": "انتقل إلى\nموقف سيارتك",
+  "@navigateToYourParking": {},
+  "getDirections": "الحصول على الاتجاهات",
+  "@getDirections": {},
+  "smartParking": "المواقف الذكية",
+  "@smartParking": {},
+  "forAllVehicleTypes": "لكافة أنواع المركبات",
+  "@forAllVehicleTypes": {},
+  "securedSlots": "أكثر من 300 موقف مؤمن للكرفانات،\nوالقوارب، والجت سكي والمزيد.",
+  "@securedSlots": {},
+  "bookNow": "احجز الآن!",
+  "@bookNow": {},
+  "opportunity": "فرصة!",
+  "@opportunity": {},
+  "checkRewards": "تحقق من المكافآت",
+  "@checkRewards": {},
+  "myVehicles": "مركباتي",
+  "@myVehicles": {},
+  "recentActivity": "النشاط الأخير",
+  "@recentActivity": {},
+  "viewAll": "عرض الكل",
+  "@viewAll": {},
+  "registerNewVehicle": "تسجيل مركبة جديدة",
+  "@registerNewVehicle": {},
+  "validUntil": "صالح حتى: {date}",
+  "@validUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "parkedAtSpot": "مركون في الموقف {spot}",
+  "@parkedAtSpot": {
+    "placeholders": {
+      "spot": {
+        "type": "String"
+      }
+    }
+  },
+  "awayFromParking": "بعيد عن الموقف",
+  "@awayFromParking": {},
+  "monthlyPremium": "قسط شهري",
+  "@monthlyPremium": {},
+  "parkingRenewed": "تم تجديد الموقف",
+  "@parkingRenewed": {},
+  "vehicleCheckIn": "تسجيل دخول المركبة",
+  "@vehicleCheckIn": {},
+  "license": "الترخيص: {number}",
+  "@license": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "home": "الرئيسية",
+  "@home": {},
+  "bookings": "الحجوزات",
+  "@bookings": {},
+  "services": "الخدمات",
+  "@services": {},
+  "profile": "الملف الشخصي",
+  "@profile": {}
 }

@@ -2459,6 +2459,606 @@ class S {
       args: [],
     );
   }
+
+  /// `Register`
+  String get register {
+    return Intl.message(
+      'Register',
+      name: 'register',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Premium Parking Solutions`
+  String get premiumParkingSolutions {
+    return Intl.message(
+      'Premium Parking Solutions',
+      name: 'premiumParkingSolutions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign In`
+  String get signIn {
+    return Intl.message(
+      'Sign In',
+      name: 'signIn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Secure parking for caravans, jet skis, \nfood trucks, boats and more`
+  String get welcomeDescription {
+    return Intl.message(
+      'Secure parking for caravans, jet skis, \nfood trucks, boats and more',
+      name: 'welcomeDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome Back`
+  String get welcomeBack {
+    return Intl.message(
+      'Welcome Back',
+      name: 'welcomeBack',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign in to your AL Nawras account`
+  String get signInToYourAccount {
+    return Intl.message(
+      'Sign in to your AL Nawras account',
+      name: 'signInToYourAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email or Mobile Number`
+  String get emailOrMobile {
+    return Intl.message(
+      'Email or Mobile Number',
+      name: 'emailOrMobile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your email or mobile`
+  String get enterEmailOrMobile {
+    return Intl.message(
+      'Enter your email or mobile',
+      name: 'enterEmailOrMobile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password`
+  String get password {
+    return Intl.message(
+      'Password',
+      name: 'password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your password`
+  String get enterPassword {
+    return Intl.message(
+      'Enter your password',
+      name: 'enterPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Forgot Password?`
+  String get forgotPassword {
+    return Intl.message(
+      'Forgot Password?',
+      name: 'forgotPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remember me`
+  String get rememberMe {
+    return Intl.message(
+      'Remember me',
+      name: 'rememberMe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Or sign in with`
+  String get orSignInWith {
+    return Intl.message(
+      'Or sign in with',
+      name: 'orSignInWith',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Don't have an account?`
+  String get dontHaveAccount {
+    return Intl.message(
+      'Don\'t have an account?',
+      name: 'dontHaveAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign Up`
+  String get signUp {
+    return Intl.message(
+      'Sign Up',
+      name: 'signUp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create Account`
+  String get createAccount {
+    return Intl.message(
+      'Create Account',
+      name: 'createAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please provide your details to create an account`
+  String get provideDetailsToRegister {
+    return Intl.message(
+      'Please provide your details to create an account',
+      name: 'provideDetailsToRegister',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full Name`
+  String get fullName {
+    return Intl.message(
+      'Full Name',
+      name: 'fullName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your full name`
+  String get enterFullName {
+    return Intl.message(
+      'Enter your full name',
+      name: 'enterFullName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email Address`
+  String get emailAddress {
+    return Intl.message(
+      'Email Address',
+      name: 'emailAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your email`
+  String get enterEmail {
+    return Intl.message(
+      'Enter your email',
+      name: 'enterEmail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mobile Number`
+  String get mobileNumber {
+    return Intl.message(
+      'Mobile Number',
+      name: 'mobileNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `+971 XX XXX XXXX`
+  String get mobileHint {
+    return Intl.message(
+      '+971 XX XXX XXXX',
+      name: 'mobileHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Driving License Number (Optional)`
+  String get drivingLicense {
+    return Intl.message(
+      'Driving License Number (Optional)',
+      name: 'drivingLicense',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your Driving License Number`
+  String get enterDrivingLicense {
+    return Intl.message(
+      'Enter your Driving License Number',
+      name: 'enterDrivingLicense',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create a password`
+  String get createPassword {
+    return Intl.message(
+      'Create a password',
+      name: 'createPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Password`
+  String get confirmPassword {
+    return Intl.message(
+      'Confirm Password',
+      name: 'confirmPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm your password`
+  String get confirmYourPassword {
+    return Intl.message(
+      'Confirm your password',
+      name: 'confirmYourPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `I agree to the Terms of Service and Privacy Policy`
+  String get agreeToTerms {
+    return Intl.message(
+      'I agree to the Terms of Service and Privacy Policy',
+      name: 'agreeToTerms',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already have an account? `
+  String get alreadyHaveAccount {
+    return Intl.message(
+      'Already have an account? ',
+      name: 'alreadyHaveAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Welcome`
+  String get welcome {
+    return Intl.message(
+      'Welcome',
+      name: 'welcome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current Membership`
+  String get currentMembership {
+    return Intl.message(
+      'Current Membership',
+      name: 'currentMembership',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Renew`
+  String get renew {
+    return Intl.message(
+      'Renew',
+      name: 'renew',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Book Parking`
+  String get bookParking {
+    return Intl.message(
+      'Book Parking',
+      name: 'bookParking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request Service`
+  String get requestService {
+    return Intl.message(
+      'Request Service',
+      name: 'requestService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Membership Plans`
+  String get membershipPlans {
+    return Intl.message(
+      'Membership Plans',
+      name: 'membershipPlans',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Buy`
+  String get buy {
+    return Intl.message(
+      'Buy',
+      name: 'buy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Navigate to\nYour Parking\nSpot`
+  String get navigateToYourParking {
+    return Intl.message(
+      'Navigate to\nYour Parking\nSpot',
+      name: 'navigateToYourParking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get Directions`
+  String get getDirections {
+    return Intl.message(
+      'Get Directions',
+      name: 'getDirections',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Smart Parking`
+  String get smartParking {
+    return Intl.message(
+      'Smart Parking',
+      name: 'smartParking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `for All Vehicle Types`
+  String get forAllVehicleTypes {
+    return Intl.message(
+      'for All Vehicle Types',
+      name: 'forAllVehicleTypes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `300+ secured slots for caravans,\nboats, jet skis & more.`
+  String get securedSlots {
+    return Intl.message(
+      '300+ secured slots for caravans,\nboats, jet skis & more.',
+      name: 'securedSlots',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Book Now!`
+  String get bookNow {
+    return Intl.message(
+      'Book Now!',
+      name: 'bookNow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Opportunity!`
+  String get opportunity {
+    return Intl.message(
+      'Opportunity!',
+      name: 'opportunity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check Rewards`
+  String get checkRewards {
+    return Intl.message(
+      'Check Rewards',
+      name: 'checkRewards',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Vehicles`
+  String get myVehicles {
+    return Intl.message(
+      'My Vehicles',
+      name: 'myVehicles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recent Activity`
+  String get recentActivity {
+    return Intl.message(
+      'Recent Activity',
+      name: 'recentActivity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View All`
+  String get viewAll {
+    return Intl.message(
+      'View All',
+      name: 'viewAll',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Register New Vehicle`
+  String get registerNewVehicle {
+    return Intl.message(
+      'Register New Vehicle',
+      name: 'registerNewVehicle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Valid until: {date}`
+  String validUntil(Object date) {
+    return Intl.message(
+      'Valid until: $date',
+      name: 'validUntil',
+      desc: '',
+      args: [date],
+    );
+  }
+
+  /// `Parked at Spot {spot}`
+  String parkedAtSpot(Object spot) {
+    return Intl.message(
+      'Parked at Spot $spot',
+      name: 'parkedAtSpot',
+      desc: '',
+      args: [spot],
+    );
+  }
+
+  /// `Away from Parking`
+  String get awayFromParking {
+    return Intl.message(
+      'Away from Parking',
+      name: 'awayFromParking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly Premium`
+  String get monthlyPremium {
+    return Intl.message(
+      'Monthly Premium',
+      name: 'monthlyPremium',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Parking Renewed`
+  String get parkingRenewed {
+    return Intl.message(
+      'Parking Renewed',
+      name: 'parkingRenewed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle Check-in`
+  String get vehicleCheckIn {
+    return Intl.message(
+      'Vehicle Check-in',
+      name: 'vehicleCheckIn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `License: {number}`
+  String license(Object number) {
+    return Intl.message(
+      'License: $number',
+      name: 'license',
+      desc: '',
+      args: [number],
+    );
+  }
+
+  /// `Home`
+  String get home {
+    return Intl.message(
+      'Home',
+      name: 'home',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bookings`
+  String get bookings {
+    return Intl.message(
+      'Bookings',
+      name: 'bookings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Services`
+  String get services {
+    return Intl.message(
+      'Services',
+      name: 'services',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile`
+  String get profile {
+    return Intl.message(
+      'Profile',
+      name: 'profile',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

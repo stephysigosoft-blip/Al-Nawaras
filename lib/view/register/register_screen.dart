@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/register_controller.dart';
+import '../../generated/l10n.dart';
 import '../widgets/custom_app_bar.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class RegisterScreen extends StatelessWidget {
           backgroundColor: const Color(
             0xFFF7F7F7,
           ), // Extremely light grey to match the image matching inputs
-          appBar: const CustomAppBar(title: 'Create Account'),
+          appBar: CustomAppBar(title: S.of(context).createAccount),
           body: Stack(
             children: [
               SafeArea(
@@ -30,31 +31,31 @@ class RegisterScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                        child: const Text(
-                          'Please provide your details to create an account',
-                          style: TextStyle(color: Colors.black87, fontSize: 13),
+                        child: Text(
+                          S.of(context).provideDetailsToRegister,
+                          style: const TextStyle(color: Colors.black87, fontSize: 13),
                         ),
                       ),
                       SizedBox(height: height * 0.02),
 
                       _buildTextField(
-                        label: 'Full Name',
-                        hint: 'Enter your full name',
+                        label: S.of(context).fullName,
+                        hint: S.of(context).enterFullName,
                         controller: controller.fullNameController,
                         height: height,
                       ),
 
                       _buildTextField(
-                        label: 'Email Address',
-                        hint: 'Enter your email',
+                        label: S.of(context).emailAddress,
+                        hint: S.of(context).enterEmail,
                         controller: controller.emailController,
                         keyboardType: TextInputType.emailAddress,
                         height: height,
                       ),
 
                       _buildTextField(
-                        label: 'Mobile Number',
-                        hint: '+971 XX XXX XXXX',
+                        label: S.of(context).mobileNumber,
+                        hint: S.of(context).mobileHint,
                         controller: controller.mobileController,
                         keyboardType: TextInputType.phone,
                         height: height,
@@ -67,23 +68,23 @@ class RegisterScreen extends StatelessWidget {
                       //   height: height,
                       // ),
                       _buildTextField(
-                        label: 'Driving License Number (Optional)',
-                        hint: 'Enter your Driving License Number',
+                        label: S.of(context).drivingLicense,
+                        hint: S.of(context).enterDrivingLicense,
                         controller: controller.drivingLicenseController,
                         height: height,
                       ),
 
                       _buildTextField(
-                        label: 'Password',
-                        hint: 'Create a password',
+                        label: S.of(context).password,
+                        hint: S.of(context).createPassword,
                         controller: controller.passwordController,
                         obscureText: true,
                         height: height,
                       ),
 
                       _buildTextField(
-                        label: 'Confirm Password',
-                        hint: 'Confirm your password',
+                        label: S.of(context).confirmPassword,
+                        hint: S.of(context).confirmYourPassword,
                         controller: controller.confirmPasswordController,
                         obscureText: true,
                         height: height,
@@ -111,9 +112,9 @@ class RegisterScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          const Text(
-                            'I agree to the Terms of Service and Privacy Policy',
-                            style: TextStyle(
+                          Text(
+                            S.of(context).agreeToTerms,
+                            style: const TextStyle(
                               fontSize: 12,
                               color: Colors.black87,
                             ),
@@ -136,9 +137,9 @@ class RegisterScreen extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
-                          'Create Account',
-                          style: TextStyle(
+                        child: Text(
+                          S.of(context).createAccount,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -150,18 +151,18 @@ class RegisterScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Already have an account? ',
-                            style: TextStyle(
+                          Text(
+                            S.of(context).alreadyHaveAccount,
+                            style: const TextStyle(
                               color: Colors.black87,
                               fontSize: 13,
                             ),
                           ),
                           GestureDetector(
                             onTap: controller.goToSignIn,
-                            child: const Text(
-                              'Sign In',
-                              style: TextStyle(
+                            child: Text(
+                              S.of(context).signIn,
+                              style: const TextStyle(
                                 color: Color(0xFFE30613),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -34,10 +35,10 @@ class CustomBottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(0, 'Home', 'lib/assets/images/Home bottom.png'),
-            _buildNavItem(1, 'Bookings', 'lib/assets/images/booking bottom.png'),
-            _buildNavItem(2, 'Services', 'lib/assets/images/Service bottom.png'),
-            _buildNavItem(3, 'Profile', 'lib/assets/images/Profile.png'),
+            _buildNavItem(0, S.of(context).home, 'lib/assets/images/Home bottom.png'),
+            _buildNavItem(1, S.of(context).bookings, 'lib/assets/images/booking bottom.png'),
+            _buildNavItem(2, S.of(context).services, 'lib/assets/images/Service bottom.png'),
+            _buildNavItem(3, S.of(context).profile, 'lib/assets/images/Profile.png'),
           ],
         ),
       ),

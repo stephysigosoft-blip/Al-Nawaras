@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/welcome_controller.dart';
+import '../../generated/l10n.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -33,34 +34,50 @@ class WelcomeScreen extends StatelessWidget {
                                   top: 20,
                                   right: 20,
                                 ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: const [
-                                    Text(
-                                      'English',
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 13,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () => controller.changeLanguage('en'),
+                                        child: Text(
+                                          'English',
+                                          style: TextStyle(
+                                            color: controller.getCurrentLocale() == 'en'
+                                                ? const Color(0xFFE30613)
+                                                : Colors.black54,
+                                            fontSize: 13,
+                                            fontWeight: controller.getCurrentLocale() == 'en'
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 8,
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          '|',
+                                          style: TextStyle(color: Colors.black26),
+                                        ),
                                       ),
-                                      child: Text(
-                                        '|',
-                                        style: TextStyle(color: Colors.black26),
+                                      GestureDetector(
+                                        onTap: () => controller.changeLanguage('ar'),
+                                        child: Text(
+                                          'العربية',
+                                          style: TextStyle(
+                                            color: controller.getCurrentLocale() == 'ar'
+                                                ? const Color(0xFFE30613)
+                                                : Colors.black54,
+                                            fontSize: 13,
+                                            fontWeight: controller.getCurrentLocale() == 'ar'
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      'العربية',
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
                               ),
 
                               SizedBox(height: height * 0.08),
@@ -111,9 +128,9 @@ class WelcomeScreen extends StatelessWidget {
 
                               // Subtitle
                               SizedBox(height: height * 0.002),
-                              const Text(
-                                'Premium Parking Solutions',
-                                style: TextStyle(
+                              Text(
+                                S.of(context).premiumParkingSolutions,
+                                style: const TextStyle(
                                   fontSize: 15,
                                   color: Color.fromARGB(255, 103, 111, 128),
                                 ),
@@ -142,9 +159,9 @@ class WelcomeScreen extends StatelessWidget {
                                     ),
                                     elevation: 0,
                                   ),
-                                  child: const Text(
-                                    'Sign In',
-                                    style: TextStyle(
+                                  child: Text(
+                                    S.of(context).signIn,
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -177,9 +194,9 @@ class WelcomeScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Register',
-                                    style: TextStyle(
+                                  child: Text(
+                                    S.of(context).register,
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -190,19 +207,19 @@ class WelcomeScreen extends StatelessWidget {
                               SizedBox(height: height * 0.035),
 
                               // Description Text
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 50),
-                                child: Text(
-                                  'Secure parking for caravans, jet skis, \nfood trucks, boats and more',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Color(0xFF001133),
-                                    fontWeight: FontWeight.bold,
-                                    height: 1.5,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                                  child: Text(
+                                    S.of(context).welcomeDescription,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Color(0xFF001133),
+                                      fontWeight: FontWeight.bold,
+                                      height: 1.5,
+                                    ),
                                   ),
                                 ),
-                              ),
 
                               // Bottom Background Image
                               SizedBox(

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../controller/home_controller.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/draggable_help_button.dart';
+import '../../generated/l10n.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -34,9 +35,9 @@ class HomeScreen extends StatelessWidget {
                       width: double.infinity,
                       decoration: const BoxDecoration(
                         color: Color(0xFFE30613), // Primary red color
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(30),
-                          bottomRight: Radius.circular(30),
+                        borderRadius: BorderRadiusDirectional.only(
+                          bottomStart: Radius.circular(30),
+                          bottomEnd: Radius.circular(30),
                         ),
                       ),
                     ),
@@ -48,16 +49,16 @@ class HomeScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: height * 0.08),
-                          _buildHeader(controller, height, width),
+                          _buildHeader(controller, context, height, width),
                           SizedBox(height: height * 0.025),
-                          _buildMembershipCard(controller, height, width),
+                          _buildMembershipCard(controller, context, height, width),
                           SizedBox(height: height * 0.015),
 
                           Row(
                             children: [
                               Expanded(
                                 child: _buildSquareButton(
-                                  'Book Parking',
+                                  S.of(context).bookParking,
                                   const AssetImage(
                                     "lib/assets/images/book parking.png",
                                   ),
@@ -69,7 +70,7 @@ class HomeScreen extends StatelessWidget {
                               SizedBox(width: width * 0.04),
                               Expanded(
                                 child: _buildSquareButton(
-                                  'Request Service',
+                                  S.of(context).requestService,
                                   const AssetImage(
                                     "lib/assets/images/request service.png",
                                   ),
@@ -82,33 +83,33 @@ class HomeScreen extends StatelessWidget {
                           ),
                           SizedBox(height: height * 0.02),
 
-                          _buildPlanRow(controller, height, width),
+                          _buildPlanRow(controller, context, height, width),
 
                           SizedBox(height: height * 0.02),
-                          _buildNavigateBanner(controller, height, width),
+                          _buildNavigateBanner(controller, context, height, width),
 
                           SizedBox(height: height * 0.02),
-                          _buildSearchBar(controller, height, width),
+                          _buildSearchBar(controller, context, height, width),
 
                           SizedBox(height: height * 0.02),
-                          _buildSmartParkingBanner(controller, height, width),
+                          _buildSmartParkingBanner(controller, context, height, width),
 
                           SizedBox(height: height * 0.02),
-                          _buildOpportunityBanner(controller, height, width),
+                          _buildOpportunityBanner(controller, context, height, width),
 
                           SizedBox(height: height * 0.02),
                           _buildSectionHeader(
-                            'My Vehicles',
-                            'View All',
+                            S.of(context).myVehicles,
+                            S.of(context).viewAll,
                             controller.onViewAllVehiclesClick,
                             height,
                           ),
                           SizedBox(height: height * 0.02),
                           _buildVehicleCard(
                             'Airstream Caravel',
-                            'License: AD-45678',
+                            S.of(context).license('AD-45678'),
                             true,
-                            'Parked at Spot B-24',
+                            S.of(context).parkedAtSpot('B-24'),
                             'lib/assets/images/Airstream.png',
                             height,
                             width,
@@ -116,27 +117,27 @@ class HomeScreen extends StatelessWidget {
                           SizedBox(height: height * 0.015),
                           _buildVehicleCard(
                             'Airstream Basecamp',
-                            'License: DX-98123',
+                            S.of(context).license('DX-98123'),
                             false,
-                            'Away from Parking',
+                            S.of(context).awayFromParking,
                             'lib/assets/images/Airstream.png',
                             height,
                             width,
                           ),
                           SizedBox(height: height * 0.02),
-                          _buildRegisterButton(controller, height),
+                          _buildRegisterButton(controller, context, height),
 
                           SizedBox(height: height * 0.035),
                           _buildSectionHeader(
-                            'Recent Activity',
-                            'View All',
+                            S.of(context).recentActivity,
+                            S.of(context).viewAll,
                             controller.onViewAllActivityClick,
                             height,
                           ),
                           SizedBox(height: height * 0.02),
                           _buildActivityCard(
-                            'Parking Renewed',
-                            'Today, 10:30 AM • Monthly Premium',
+                            S.of(context).parkingRenewed,
+                            'Today, 10:30 AM • ${S.of(context).monthlyPremium}',
                             Icons.history,
                             const Color(0xFF00B2FF),
                             height,
@@ -144,8 +145,8 @@ class HomeScreen extends StatelessWidget {
                           ),
                           SizedBox(height: height * 0.01),
                           _buildActivityCard(
-                            'Vehicle Check-in',
-                            'Yesterday, 2:15 PM • Spot A12',
+                            S.of(context).vehicleCheckIn,
+                            'Yesterday, 2:15 PM • ${S.of(context).parkedAtSpot('A12')}',
                             Icons.check_circle_outline,
                             Colors.greenAccent.shade400,
                             height,
@@ -171,31 +172,37 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(HomeController controller, double height, double width) {
+  Widget _buildHeader(
+      HomeController controller, BuildContext context, double height, double width) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Welcome',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                S.of(context).welcome,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const Text(
-              'Faizan Arshad',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+              Flexible(
+                child: Text(
+                  'Faizan Arshad',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         Row(
           children: [
@@ -228,6 +235,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildMembershipCard(
     HomeController controller,
+    BuildContext context,
     double height,
     double width,
   ) {
@@ -248,28 +256,30 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Current Membership',
-                style: TextStyle(fontSize: 11, color: Colors.black54),
-              ),
-              SizedBox(height: height * 0.005),
-              const Text(
-                'Monthly Premium',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF001133),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  S.of(context).currentMembership,
+                  style: const TextStyle(fontSize: 11, color: Colors.black54),
                 ),
-              ),
-              SizedBox(height: height * 0.005),
-              const Text(
-                'Valid until: 15 Jun 2023',
-                style: TextStyle(fontSize: 11, color: Colors.black54),
-              ),
-            ],
+                SizedBox(height: height * 0.005),
+                Text(
+                  S.of(context).monthlyPremium,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF001133),
+                  ),
+                ),
+                SizedBox(height: height * 0.005),
+                Text(
+                  S.of(context).validUntil('15 Jun 2023'),
+                  style: const TextStyle(fontSize: 11, color: Colors.black54),
+                ),
+              ],
+            ),
           ),
           ElevatedButton(
             onPressed: controller.onRenewClick,
@@ -286,9 +296,9 @@ class HomeScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
               ),
             ),
-            child: const Text(
-              'Renew',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            child: Text(
+              S.of(context).renew,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -328,12 +338,16 @@ class HomeScreen extends StatelessWidget {
               width: 35,
             ),
             SizedBox(height: height * 0.01),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF001133),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: width * 0.02),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF001133),
+                ),
               ),
             ),
           ],
@@ -342,7 +356,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPlanRow(HomeController controller, double height, double width) {
+  Widget _buildPlanRow(
+      HomeController controller, BuildContext context, double height, double width) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -363,24 +378,28 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Image.asset(
-                "lib/assets/images/membership pleans.png",
-                height: 28,
-                width: 28,
-                color: const Color(0xFFE30613),
-              ),
-              SizedBox(width: width * 0.02),
-              const Text(
-                'Membership Plans',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF001133),
+          Expanded(
+            child: Row(
+              children: [
+                Image.asset(
+                  "lib/assets/images/membership pleans.png",
+                  height: 28,
+                  width: 28,
+                  color: const Color(0xFFE30613),
                 ),
-              ),
-            ],
+                SizedBox(width: width * 0.02),
+                Expanded(
+                  child: Text(
+                    S.of(context).membershipPlans,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF001133),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           OutlinedButton(
             onPressed: controller.onBuyMembershipClick,
@@ -393,9 +412,9 @@ class HomeScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text(
-              'Buy',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            child: Text(
+              S.of(context).buy,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -405,6 +424,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildNavigateBanner(
     HomeController controller,
+    BuildContext context,
     double height,
     double width,
   ) {
@@ -417,11 +437,11 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: 0,
+          PositionedDirectional(
+            end: 0,
             bottom: 0,
             top: 0,
-            width: width * 0.45,
+            width: width * 0.4,
             child: Image.asset(
               'lib/assets/images/map.png',
               fit: BoxFit.contain,
@@ -432,41 +452,51 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(height * 0.02),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Navigate to\nYour Parking\nSpot',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF003D3D),
-                    height: 1.2,
-                  ),
-                ),
-                SizedBox(height: height * 0.01),
-                ElevatedButton(
-                  onPressed: controller.onGetDirectionsClick,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFBFE5E5), // Matches bg
-                    foregroundColor: const Color(0xFF003D3D), // Dark text
-                    side: const BorderSide(color: Color(0xFF003D3D), width: 1),
-                    elevation: 0,
-                    minimumSize: Size(width * 0.4, height * 0.038),
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+          PositionedDirectional(
+            start: 0,
+            top: 0,
+            bottom: 0,
+            width: width * 0.55,
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(
+                start: width * 0.04,
+                top: height * 0.02,
+                bottom: height * 0.02,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    S.of(context).navigateToYourParking,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF003D3D),
+                      height: 1.2,
                     ),
                   ),
-                  child: const Text(
-                    'Get Directions',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  SizedBox(height: height * 0.01),
+                  ElevatedButton(
+                    onPressed: controller.onGetDirectionsClick,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFBFE5E5), // Matches bg
+                      foregroundColor: const Color(0xFF003D3D), // Dark text
+                      side: const BorderSide(color: Color(0xFF003D3D), width: 1),
+                      elevation: 0,
+                      minimumSize: Size(width * 0.35, height * 0.038),
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      S.of(context).getDirections,
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -476,6 +506,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildSearchBar(
     HomeController controller,
+    BuildContext context,
     double height,
     double width,
   ) {
@@ -498,7 +529,7 @@ class HomeScreen extends StatelessWidget {
         onChanged: controller.onSearchChanged,
         style: const TextStyle(fontSize: 14),
         decoration: InputDecoration(
-          hintText: 'Search',
+          hintText: S.of(context).search,
           hintStyle: const TextStyle(color: Colors.black38),
           prefixIcon: const Icon(Icons.search, color: Colors.black38, size: 20),
           border: InputBorder.none,
@@ -510,6 +541,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildSmartParkingBanner(
     HomeController controller,
+    BuildContext context,
     double height,
     double width,
   ) {
@@ -529,11 +561,11 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: 0,
+          PositionedDirectional(
+            end: 0,
             bottom: 0,
             top: 0,
-            width: width * 0.5,
+            width: width * 0.45,
             child: Image.asset(
               'lib/assets/images/parking slot.png',
               fit: BoxFit.contain,
@@ -544,51 +576,57 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(height * 0.02),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Smart Parking',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFE30613), // Red
-                  ),
-                ),
-                const Text(
-                  'for All Vehicle Types',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF001133), // Dark
-                  ),
-                ),
-                SizedBox(height: height * 0.005),
-                const Text(
-                  '300+ secured slots for caravans,\nboats, jet skis & more.',
-                  style: TextStyle(fontSize: 9, color: Colors.black87),
-                ),
-                SizedBox(height: height * 0.01),
-                OutlinedButton(
-                  onPressed: controller.onBookNowClick,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFFE30613),
-                    side: const BorderSide(color: Color(0xFFE30613), width: 1),
-                    minimumSize: Size(width * 0.3, height * 0.038),
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+          PositionedDirectional(
+            start: 0,
+            top: 0,
+            bottom: 0,
+            width: width * 0.5,
+            child: Padding(
+              padding: EdgeInsetsDirectional.all(height * 0.02),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    S.of(context).smartParking,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFE30613), // Red
                     ),
                   ),
-                  child: const Text(
-                    'Book Now!',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  Text(
+                    S.of(context).forAllVehicleTypes,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF001133), // Dark
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: height * 0.005),
+                  Text(
+                    S.of(context).securedSlots,
+                    style: const TextStyle(fontSize: 9, color: Colors.black87),
+                  ),
+                  SizedBox(height: height * 0.01),
+                  OutlinedButton(
+                    onPressed: controller.onBookNowClick,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFE30613),
+                      side: const BorderSide(color: Color(0xFFE30613), width: 1),
+                      minimumSize: Size(width * 0.3, height * 0.038),
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      S.of(context).bookNow,
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -598,6 +636,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildOpportunityBanner(
     HomeController controller,
+    BuildContext context,
     double height,
     double width,
   ) {
@@ -610,8 +649,8 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(
-            right: 0,
+          PositionedDirectional(
+            end: 0,
             bottom: 0,
             top: 0,
             width: width * 0.45,
@@ -625,38 +664,44 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(height * 0.02),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Opportunity!',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF003D3D),
-                  ),
-                ),
-                SizedBox(height: height * 0.01),
-                OutlinedButton(
-                  onPressed: controller.onCheckRewardsClick,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF003D3D), // Dark text
-                    side: const BorderSide(color: Color(0xFF003D3D), width: 1),
-                    minimumSize: Size(width * 0.3, height * 0.038),
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+          PositionedDirectional(
+            start: 0,
+            top: 0,
+            bottom: 0,
+            width: width * 0.5,
+            child: Padding(
+              padding: EdgeInsetsDirectional.all(height * 0.02),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    S.of(context).opportunity,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF003D3D),
                     ),
                   ),
-                  child: const Text(
-                    'Check Rewards',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  SizedBox(height: height * 0.01),
+                  OutlinedButton(
+                    onPressed: controller.onCheckRewardsClick,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF003D3D), // Dark text
+                      side: const BorderSide(color: Color(0xFF003D3D), width: 1),
+                      minimumSize: Size(width * 0.3, height * 0.038),
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      S.of(context).checkRewards,
+                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -674,12 +719,15 @@ class HomeScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF001133),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF001133),
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         GestureDetector(
@@ -749,11 +797,13 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF001133),
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: height * 0.005),
                 Text(
                   subtitle,
                   style: const TextStyle(fontSize: 11, color: Colors.black54),
+                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: height * 0.005),
                 Row(
@@ -784,7 +834,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRegisterButton(HomeController controller, double height) {
+  Widget _buildRegisterButton(
+      HomeController controller, BuildContext context, double height) {
     return OutlinedButton(
       onPressed: controller.onRegisterVehicleClick,
       style: OutlinedButton.styleFrom(
@@ -796,8 +847,8 @@ class HomeScreen extends StatelessWidget {
         minimumSize: Size(double.infinity, height * 0.055),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      child: const Text(
-        'Register New Vehicle',
+      child: Text(
+        S.of(context).registerNewVehicle,
         style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
       ),
     );
@@ -840,23 +891,27 @@ class HomeScreen extends StatelessWidget {
             child: Icon(iconData, color: iconColor, size: 20),
           ),
           SizedBox(width: width * 0.04),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF001133),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF001133),
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              SizedBox(height: height * 0.005),
-              Text(
-                subtitle,
-                style: const TextStyle(fontSize: 10, color: Colors.black54),
-              ),
-            ],
+                SizedBox(height: height * 0.005),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 10, color: Colors.black54),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),

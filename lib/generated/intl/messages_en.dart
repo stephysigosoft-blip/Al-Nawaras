@@ -21,6 +21,9 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
   final messages = _notInlinedMessages(_notInlinedMessages);
+  static String m2(spot) => "Parked at Spot ${spot}";
+  static String m3(date) => "Valid until: ${date}";
+  static String m4(number) => "License: ${number}";
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "aNewUpdateIsAvailableForThisAppPleaseDownload":
             MessageLookupByLibrary.simpleMessage(
@@ -406,6 +409,82 @@ class MessageLookup extends MessageLookupByLibrary {
         "yourOrders": MessageLookupByLibrary.simpleMessage("Your Orders"),
         "yourTrustedFoodGroceryDeliveryPartner":
             MessageLookupByLibrary.simpleMessage(
-                "Your trusted food & grocery delivery partner")
+                "Your trusted food & grocery delivery partner"),
+        "premiumParkingSolutions": MessageLookupByLibrary.simpleMessage("Premium Parking Solutions"),
+        "register": MessageLookupByLibrary.simpleMessage("Register"),
+        "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
+        "welcomeDescription": MessageLookupByLibrary.simpleMessage("Secure parking for caravans, jet skis, \nfood trucks, boats and more"),
+        "dontHaveAccount": MessageLookupByLibrary.simpleMessage("Don\'t have an account?"),
+        "emailOrMobile": MessageLookupByLibrary.simpleMessage("Email or Mobile Number"),
+        "enterEmailOrMobile": MessageLookupByLibrary.simpleMessage("Enter your email or mobile"),
+        "enterPassword": MessageLookupByLibrary.simpleMessage("Enter your password"),
+        "forgotPassword": MessageLookupByLibrary.simpleMessage("Forgot Password?"),
+        "orSignInWith": MessageLookupByLibrary.simpleMessage("Or sign in with"),
+        "password": MessageLookupByLibrary.simpleMessage("Password"),
+        "rememberMe": MessageLookupByLibrary.simpleMessage("Remember me"),
+        "signInToYourAccount": MessageLookupByLibrary.simpleMessage("Sign in to your AL Nawras account"),
+        "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
+        "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome Back"),
+        "agreeToTerms": MessageLookupByLibrary.simpleMessage(
+            "I agree to the Terms of Service and Privacy Policy"),
+        "alreadyHaveAccount":
+            MessageLookupByLibrary.simpleMessage("Already have an account? "),
+        "confirmPassword":
+            MessageLookupByLibrary.simpleMessage("Confirm Password"),
+        "confirmYourPassword":
+            MessageLookupByLibrary.simpleMessage("Confirm your password"),
+        "createAccount": MessageLookupByLibrary.simpleMessage("Create Account"),
+        "createPassword":
+            MessageLookupByLibrary.simpleMessage("Create a password"),
+        "drivingLicense": MessageLookupByLibrary.simpleMessage(
+            "Driving License Number (Optional)"),
+        "emailAddress": MessageLookupByLibrary.simpleMessage("Email Address"),
+        "enterEmail": MessageLookupByLibrary.simpleMessage("Enter your email"),
+        "enterDrivingLicense": MessageLookupByLibrary.simpleMessage(
+            "Enter your Driving License Number"),
+        "enterFullName":
+            MessageLookupByLibrary.simpleMessage("Enter your full name"),
+        "fullName": MessageLookupByLibrary.simpleMessage("Full Name"),
+        "mobileHint": MessageLookupByLibrary.simpleMessage("+971 XX XXX XXXX"),
+        "mobileNumber": MessageLookupByLibrary.simpleMessage("Mobile Number"),
+        "provideDetailsToRegister": MessageLookupByLibrary.simpleMessage(
+            "Please provide your details to create an account"),
+        "awayFromParking":
+            MessageLookupByLibrary.simpleMessage("Away from Parking"),
+        "bookNow": MessageLookupByLibrary.simpleMessage("Book Now!"),
+        "bookParking": MessageLookupByLibrary.simpleMessage("Book Parking"),
+        "buy": MessageLookupByLibrary.simpleMessage("Buy"),
+        "checkRewards": MessageLookupByLibrary.simpleMessage("Check Rewards"),
+        "currentMembership":
+            MessageLookupByLibrary.simpleMessage("Current Membership"),
+        "forAllVehicleTypes":
+            MessageLookupByLibrary.simpleMessage("for All Vehicle Types"),
+        "getDirections": MessageLookupByLibrary.simpleMessage("Get Directions"),
+        "membershipPlans":
+            MessageLookupByLibrary.simpleMessage("Membership Plans"),
+        "myVehicles": MessageLookupByLibrary.simpleMessage("My Vehicles"),
+        "navigateToYourParking": MessageLookupByLibrary.simpleMessage(
+            "Navigate to\nYour Parking\nSpot"),
+        "opportunity": MessageLookupByLibrary.simpleMessage("Opportunity!"),
+        "parkedAtSpot": m2,
+        "recentActivity":
+            MessageLookupByLibrary.simpleMessage("Recent Activity"),
+        "registerNewVehicle":
+            MessageLookupByLibrary.simpleMessage("Register New Vehicle"),
+        "renew": MessageLookupByLibrary.simpleMessage("Renew"),
+        "securedSlots": MessageLookupByLibrary.simpleMessage(
+            "300+ secured slots for caravans,\nboats, jet skis & more."),
+        "smartParking": MessageLookupByLibrary.simpleMessage("Smart Parking"),
+        "validUntil": m3,
+        "viewAll": MessageLookupByLibrary.simpleMessage("View All"),
+        "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
+        "license": m4,
+        "monthlyPremium": MessageLookupByLibrary.simpleMessage("Monthly Premium"),
+        "parkingRenewed": MessageLookupByLibrary.simpleMessage("Parking Renewed"),
+        "vehicleCheckIn": MessageLookupByLibrary.simpleMessage("Vehicle Check-in"),
+        "home": MessageLookupByLibrary.simpleMessage("Home"),
+        "bookings": MessageLookupByLibrary.simpleMessage("Bookings"),
+        "services": MessageLookupByLibrary.simpleMessage("Services"),
+        "profile": MessageLookupByLibrary.simpleMessage("Profile")
       };
 }

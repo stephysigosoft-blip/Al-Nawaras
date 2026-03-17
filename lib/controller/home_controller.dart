@@ -18,7 +18,7 @@ class HomeController extends GetxController {
     if (index == 0) {
       Get.offAll(() => const HomeScreen());
     } else if (index == 1) {
-      Get.to(() => const BookParkingScreen());
+      // Get.to(() => const BookParkingScreen());
     } else if (index == 2) {
       Get.to(() => const AdditionalServicesScreen());
     }
