@@ -16,9 +16,6 @@ class LoginController extends GetxController {
   }
 
   void signIn() {
-    if (kDebugMode) {
-      print("Sign In Clicked");
-    }
     Get.offAll(() => const HomeScreen());
   }
 

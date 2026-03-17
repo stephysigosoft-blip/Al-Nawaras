@@ -5,6 +5,7 @@ class RegisterVehicleController extends GetxController {
   final TextEditingController licenseController = TextEditingController();
   final TextEditingController makeController = TextEditingController();
   final TextEditingController modelController = TextEditingController();
+  final TextEditingController chassisController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
   final TextEditingController lengthController = TextEditingController();
   final TextEditingController widthController = TextEditingController();
@@ -44,6 +45,7 @@ class RegisterVehicleController extends GetxController {
     licenseController.dispose();
     makeController.dispose();
     modelController.dispose();
+    chassisController.dispose();
     yearController.dispose();
     lengthController.dispose();
     widthController.dispose();

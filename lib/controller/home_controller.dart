@@ -2,6 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../view/register_vehicle/register_vehicle_screen.dart';
+import '../view/membership_plans/membership_plans_screen.dart';
+import '../view/book_parking/book_parking_screen.dart';
+import '../view/additional_services/additional_services_screen.dart';
+import '../view/home/home_screen.dart';
 
 class HomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
@@ -9,7 +13,15 @@ class HomeController extends GetxController {
   int currentIndex = 0;
 
   void changeBottomNavIndex(int index) {
+    if (currentIndex == index) return;
     currentIndex = index;
+    if (index == 0) {
+      Get.offAll(() => const HomeScreen());
+    } else if (index == 1) {
+      Get.to(() => const BookParkingScreen());
+    } else if (index == 2) {
+      Get.to(() => const AdditionalServicesScreen());
+    }
     update();
   }
 
@@ -31,15 +43,15 @@ class HomeController extends GetxController {
   }
 
   void onBookParkingClick() {
-    if (kDebugMode) print("Book Parking Clicked");
+    Get.to(() => const BookParkingScreen());
   }
 
   void onRequestServiceClick() {
-    if (kDebugMode) print("Request Service Clicked");
+    Get.to(() => const AdditionalServicesScreen());
   }
 
   void onBuyMembershipClick() {
-    if (kDebugMode) print("Buy Membership Clicked");
+    Get.to(() => const MembershipPlansScreen());
   }
 
   void onGetDirectionsClick() {

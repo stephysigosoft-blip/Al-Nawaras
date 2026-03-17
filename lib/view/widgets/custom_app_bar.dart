@@ -4,11 +4,13 @@ import 'package:get/get.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onBackPressed;
+  final bool? centerTitle;
 
   const CustomAppBar({
     super.key,
     required this.title,
     this.onBackPressed,
+    this.centerTitle,
   });
 
   @override
@@ -16,7 +18,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: const Color(0xFFE30613), // Requested custom red color
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 22),
+        icon: const Icon(
+          Icons.arrow_back_ios_new,
+          color: Colors.white,
+          size: 22,
+        ),
         onPressed: onBackPressed ?? () => Get.back(),
       ),
       title: Text(
@@ -27,7 +33,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           fontSize: 19,
         ),
       ),
-      centerTitle: false,
+      centerTitle: centerTitle ?? true,
       elevation: 0,
       titleSpacing: 0,
     );

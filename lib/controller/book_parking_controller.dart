@@ -1,0 +1,99 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class BookParkingController extends GetxController {
+  String selectedVehicle = 'Airstream Caravel';
+  String selectedParkingType = 'Shaded';
+  String selectedMembership = 'Hourly';
+
+  final List<String> parkingTypes = ['Unshaded', 'Shaded', 'Air Conditioned'];
+  final List<Map<String, String>> membershipPackages = [
+    {'title': 'Hourly', 'price': 'AED 15/hour'},
+    {'title': 'Daily', 'price': 'AED 100/day'},
+    {'title': 'Weekly', 'price': 'AED 500/week'},
+    {'title': 'Monthly', 'price': 'AED 1,500/month'},
+    {'title': '3 Months', 'price': 'AED 4,000/year'},
+    {'title': '6 Months', 'price': 'AED 7,500/6 months'},
+  ];
+
+  final List<Map<String, dynamic>> addonServices = [
+    {
+      'title': 'Battery Replacement',
+      'price': 'AED 150',
+      'subtitle': 'Engine service with diagnostics',
+      'icon': 'lib/assets/images/battery.png',
+      'isSelected': true,
+    },
+    {
+      'title': 'Oil Change',
+      'price': 'AED 300',
+      'subtitle': 'Scheduled maintenance service',
+      'icon': 'lib/assets/images/oil charge.png',
+      'isSelected': true,
+    },
+    {
+      'title': 'Tire Change',
+      'price': 'AED 100',
+      'subtitle': 'Front back and parking lot tire tests',
+      'icon': 'lib/assets/images/tire change.png',
+      'isSelected': false,
+    },
+    {
+      'title': 'Car Wash',
+      'price': 'AED 150',
+      'subtitle': 'Front back and parking lot tire tests',
+      'icon': 'lib/assets/images/cleaning.png',
+      'isSelected': false,
+    },
+    {
+      'title': 'Towing',
+      'price': 'AED 150',
+      'subtitle': 'From location to parking in 1 hour limit',
+      'icon': 'lib/assets/images/Trolly.png',
+      'isSelected': false,
+    },
+    {
+      'title': 'Vehicle Pickup/Drop-off',
+      'price': 'AED 100',
+      'subtitle': 'From location to parking in 1 hour limit',
+      'icon': 'lib/assets/images/vehicle pickup.png',
+      'isSelected': false,
+    },
+    {
+      'title': 'Customer Pickup/Drop-off',
+      'price': 'AED 50',
+      'subtitle': 'From location to parking in 1 hour limit',
+      'icon': 'lib/assets/images/customer pickup.png',
+      'isSelected': false,
+    },
+  ];
+
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController timeController = TextEditingController();
+
+  void setParkingType(String type) {
+    selectedParkingType = type;
+    update();
+  }
+
+  void setMembership(String membership) {
+    selectedMembership = membership;
+    update();
+  }
+
+  void toggleAddon(int index) {
+    addonServices[index]['isSelected'] = !addonServices[index]['isSelected'];
+    update();
+  }
+
+  void onNextClick() {
+    // Navigate to next screen or process booking
+  }
+
+  @override
+  void onClose() {
+    dateController.dispose();
+    timeController.dispose();
+    super.onClose();
+  }
+}

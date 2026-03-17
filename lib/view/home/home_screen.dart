@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/home_controller.dart';
+import '../widgets/custom_bottom_nav_bar.dart';
+import '../widgets/draggable_help_button.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,168 +14,158 @@ class HomeScreen extends StatelessWidget {
 
     return GetBuilder<HomeController>(
       init: HomeController(),
+      initState: (state) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Get.find<HomeController>().currentIndex = 0;
+          Get.find<HomeController>().update();
+        });
+      },
       builder: (controller) {
         return Scaffold(
           backgroundColor: const Color(0xFFF7F7F7),
-          body: SingleChildScrollView(
-            child: Stack(
-              children: [
-                // Red Curved Background
-                Container(
-                  height: height * 0.24,
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFE30613), // Primary red color
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(22),
-                      bottomRight: Radius.circular(22),
+          body: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    // Red Curved Background
+                    Container(
+                      height: height * 0.32,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFE30613), // Primary red color
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: width * 0.045),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: height * 0.02),
 
-                        // Header
-                        _buildHeader(controller, height, width),
+                    // Main Content
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: width * 0.05),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: height * 0.08),
+                          _buildHeader(controller, height, width),
+                          SizedBox(height: height * 0.025),
+                          _buildMembershipCard(controller, height, width),
+                          SizedBox(height: height * 0.015),
 
-                        SizedBox(height: height * 0.025),
-
-                        // Membership Card
-                        _buildMembershipCard(controller, height, width),
-
-                        SizedBox(height: height * 0.025),
-
-                        // Book & Request Row
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildSquareButton(
-                                "Book Parking",
-                                Icons.calendar_today_outlined,
-                                controller.onBookParkingClick,
-                                height,
-                                width,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildSquareButton(
+                                  'Book Parking',
+                                  const AssetImage(
+                                    "lib/assets/images/book parking.png",
+                                  ),
+                                  controller.onBookParkingClick,
+                                  height,
+                                  width,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: width * 0.035),
-                            Expanded(
-                              child: _buildSquareButton(
-                                "Request Service",
-                                Icons.build_outlined,
-                                controller.onRequestServiceClick,
-                                height,
-                                width,
+                              SizedBox(width: width * 0.04),
+                              Expanded(
+                                child: _buildSquareButton(
+                                  'Request Service',
+                                  const AssetImage(
+                                    "lib/assets/images/request service.png",
+                                  ),
+                                  controller.onRequestServiceClick,
+                                  height,
+                                  width,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                          SizedBox(height: height * 0.02),
 
-                        SizedBox(height: height * 0.025),
+                          _buildPlanRow(controller, height, width),
 
-                        // Plan Row
-                        _buildPlanRow(controller, height, width),
+                          SizedBox(height: height * 0.02),
+                          _buildNavigateBanner(controller, height, width),
 
-                        SizedBox(height: height * 0.025),
+                          SizedBox(height: height * 0.02),
+                          _buildSearchBar(controller, height, width),
 
-                        // Navigate Banner
-                        _buildNavigateBanner(controller, height, width),
+                          SizedBox(height: height * 0.02),
+                          _buildSmartParkingBanner(controller, height, width),
 
-                        SizedBox(height: height * 0.02),
+                          SizedBox(height: height * 0.02),
+                          _buildOpportunityBanner(controller, height, width),
 
-                        // Search Bar
-                        _buildSearchBar(controller, height, width),
+                          SizedBox(height: height * 0.02),
+                          _buildSectionHeader(
+                            'My Vehicles',
+                            'View All',
+                            controller.onViewAllVehiclesClick,
+                            height,
+                          ),
+                          SizedBox(height: height * 0.02),
+                          _buildVehicleCard(
+                            'Airstream Caravel',
+                            'License: AD-45678',
+                            true,
+                            'Parked at Spot B-24',
+                            'lib/assets/images/Airstream.png',
+                            height,
+                            width,
+                          ),
+                          SizedBox(height: height * 0.015),
+                          _buildVehicleCard(
+                            'Airstream Basecamp',
+                            'License: DX-98123',
+                            false,
+                            'Away from Parking',
+                            'lib/assets/images/Airstream.png',
+                            height,
+                            width,
+                          ),
+                          SizedBox(height: height * 0.02),
+                          _buildRegisterButton(controller, height),
 
-                        SizedBox(height: height * 0.02),
+                          SizedBox(height: height * 0.035),
+                          _buildSectionHeader(
+                            'Recent Activity',
+                            'View All',
+                            controller.onViewAllActivityClick,
+                            height,
+                          ),
+                          SizedBox(height: height * 0.02),
+                          _buildActivityCard(
+                            'Parking Renewed',
+                            'Today, 10:30 AM • Monthly Premium',
+                            Icons.history,
+                            const Color(0xFF00B2FF),
+                            height,
+                            width,
+                          ),
+                          SizedBox(height: height * 0.01),
+                          _buildActivityCard(
+                            'Vehicle Check-in',
+                            'Yesterday, 2:15 PM • Spot A12',
+                            Icons.check_circle_outline,
+                            Colors.greenAccent.shade400,
+                            height,
+                            width,
+                          ),
 
-                        // Smart Parking Banner
-                        _buildSmartParkingBanner(controller, height, width),
-
-                        SizedBox(height: height * 0.02),
-
-                        // Opportunity Banner
-                        _buildOpportunityBanner(controller, height, width),
-
-                        SizedBox(height: height * 0.03),
-
-                        // My Vehicles section
-                        _buildSectionHeader(
-                          'My Vehicles',
-                          'View All',
-                          controller.onViewAllVehiclesClick,
-                          height,
-                        ),
-
-                        SizedBox(height: height * 0.015),
-                        _buildVehicleCard(
-                          'Airstream Caravel',
-                          'License: AD-45678',
-                          true,
-                          'Currently Parked • Spot A12',
-                          'assets/images/caravan.png',
-                          height,
-                          width,
-                        ),
-
-                        SizedBox(height: height * 0.015),
-                        _buildVehicleCard(
-                          'Yamaha Waverunner',
-                          'License: JT-12345',
-                          false,
-                          'Not Parked',
-                          'assets/images/jetski.png',
-                          height,
-                          width,
-                        ),
-
-                        SizedBox(height: height * 0.025),
-
-                        // Register button
-                        _buildRegisterButton(controller, height),
-
-                        SizedBox(height: height * 0.03),
-
-                        // Recent Activity section
-                        _buildSectionHeader(
-                          'Recent Activity',
-                          'View All',
-                          controller.onViewAllActivityClick,
-                          height,
-                        ),
-
-                        SizedBox(height: height * 0.015),
-                        _buildActivityCard(
-                          'Parking Payment',
-                          'Today, 10:30 AM • AED 150',
-                          Icons.verified_user_outlined,
-                          Colors.blueAccent,
-                          height,
-                          width,
-                        ),
-
-                        SizedBox(height: height * 0.01),
-                        _buildActivityCard(
-                          'Vehicle Check-in',
-                          'Yesterday, 2:15 PM • Spot A12',
-                          Icons.check_circle_outline,
-                          Colors.greenAccent.shade400,
-                          height,
-                          width,
-                        ),
-
-                        SizedBox(height: height * 0.05), // Bottom padding
-                      ],
+                          SizedBox(height: height * 0.05), // Bottom padding
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              const DraggableHelpButton(),
+            ],
           ),
-          bottomNavigationBar: _buildBottomNav(controller, height),
+          bottomNavigationBar: CustomBottomNavBar(
+            currentIndex: controller.currentIndex,
+            onTap: controller.changeBottomNavIndex,
+          ),
         );
       },
     );
@@ -247,7 +239,7 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withValues(alpha: 0.05),
+            color: Colors.black12.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -306,7 +298,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildSquareButton(
     String title,
-    IconData icon,
+    AssetImage image,
     VoidCallback onTap,
     double height,
     double width,
@@ -320,7 +312,7 @@ class HomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.black12.withValues(alpha: 0.05),
+              color: Colors.black12.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),
@@ -329,7 +321,12 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: const Color(0xFFE30613), size: 35),
+            Image(
+              image: image,
+              color: const Color(0xFFE30613),
+              height: 35,
+              width: 35,
+            ),
             SizedBox(height: height * 0.01),
             Text(
               title,
@@ -357,7 +354,7 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withValues(alpha: 0.05),
+            color: Colors.black12.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -368,10 +365,11 @@ class HomeScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.badge_outlined,
-                color: Color(0xFFE30613),
-                size: 28,
+              Image.asset(
+                "lib/assets/images/membership pleans.png",
+                height: 28,
+                width: 28,
+                color: const Color(0xFFE30613),
               ),
               SizedBox(width: width * 0.02),
               const Text(
@@ -425,7 +423,7 @@ class HomeScreen extends StatelessWidget {
             top: 0,
             width: width * 0.45,
             child: Image.asset(
-              'assets/images/map_illustration.png',
+              'lib/assets/images/map.png',
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) => const Icon(
                 Icons.map_outlined,
@@ -489,7 +487,7 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withValues(alpha: 0.05),
+            color: Colors.black12.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -523,7 +521,7 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withValues(alpha: 0.05),
+            color: Colors.black12.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -537,7 +535,7 @@ class HomeScreen extends StatelessWidget {
             top: 0,
             width: width * 0.5,
             child: Image.asset(
-              'assets/images/parking_isometric.png',
+              'lib/assets/images/parking slot.png',
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) => const Icon(
                 Icons.local_parking,
@@ -618,7 +616,7 @@ class HomeScreen extends StatelessWidget {
             top: 0,
             width: width * 0.45,
             child: Image.asset(
-              'assets/images/rewards_illustration.png',
+              'lib/assets/images/opportunity.png',
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) => const Icon(
                 Icons.card_giftcard,
@@ -716,7 +714,7 @@ class HomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withValues(alpha: 0.05),
+            color: Colors.black12.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -821,10 +819,10 @@ class HomeScreen extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withValues(alpha: 0.05),
+            color: Colors.black12.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -836,7 +834,7 @@ class HomeScreen extends StatelessWidget {
             height: height * 0.045,
             width: height * 0.045,
             decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.15),
+              color: iconColor.withOpacity(0.15),
               shape: BoxShape.circle,
             ),
             child: Icon(iconData, color: iconColor, size: 20),
@@ -859,54 +857,6 @@ class HomeScreen extends StatelessWidget {
                 style: const TextStyle(fontSize: 10, color: Colors.black54),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNav(HomeController controller, double height) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        currentIndex: controller.currentIndex,
-        onTap: controller.changeBottomNavIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFFE30613), // Red
-        unselectedItemColor: Colors.black38,
-        selectedFontSize: 10,
-        unselectedFontSize: 10,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
-            activeIcon: Icon(Icons.calendar_month),
-            label: 'Bookings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.build_outlined),
-            activeIcon: Icon(Icons.build),
-            label: 'Services',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
           ),
         ],
       ),
