@@ -190,16 +190,14 @@ class HomeScreen extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              Flexible(
-                child: Text(
-                  'Faizan Arshad',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+              Text(
+                'Faizan Arshad',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

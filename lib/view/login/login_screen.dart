@@ -23,349 +23,337 @@ class LoginScreen extends StatelessWidget {
                     horizontal: 25,
                     vertical: 10,
                   ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight:
-                          height -
-                          MediaQuery.of(context).padding.top -
-                          MediaQuery.of(context).padding.bottom -
-                          20,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            padding: EdgeInsets.zero,
-                            alignment: Alignment.centerLeft,
-                            icon: const Icon(
-                              Icons.arrow_back_ios_new,
-                              color: Color(0xFF001133),
-                              size: 24,
-                            ),
-                            onPressed: () => Get.back(),
-                          ),
-                          Center(
-                            child: SizedBox(
-                              height: height * 0.1,
-                              child: Image.asset(
-                                'lib/assets/images/Welcome.png',
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: const [
-                                        Icon(
-                                          Icons.flight_takeoff,
-                                          size: 50,
-                                          color: Color(0xFF0D1B2A),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Text(
-                                          "ANET",
-                                          style: TextStyle(
-                                            fontSize: 45,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFFE30613),
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                        ),
-                                      ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        alignment: Alignment.centerLeft,
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new,
+                          color: Color(0xFF001133),
+                          size: 24,
+                        ),
+                        onPressed: () => Get.back(),
+                      ),
+                      Center(
+                        child: SizedBox(
+                          height: height * 0.1,
+                          child: Image.asset(
+                            'lib/assets/images/Welcome.png',
+                            errorBuilder: (context, error, stackTrace) =>
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.flight_takeoff,
+                                      size: 50,
+                                      color: Color(0xFF0D1B2A),
                                     ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: height * 0.001),
-                          const Center(
-                            child: Text(
-                              'Al NAWRAS',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF001133),
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: height * 0.002),
-                          Center(
-                            child: Text(
-                              S.of(context).premiumParkingSolutions,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Color.fromARGB(255, 103, 111, 128),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: height * 0.03),
-                          Center(
-                            child: Text(
-                              S.of(context).welcomeBack,
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF001133),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: height * 0.01),
-                          Center(
-                            child: Text(
-                              S.of(context).signInToYourAccount,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF001133),
-                                height: 1.3,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: height * 0.05),
-                          Text(
-                            S.of(context).emailOrMobile,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          SizedBox(height: height * 0.01),
-                          SizedBox(
-                            height: height * 0.06,
-                            child: TextField(
-                              controller: controller.emailOrMobileController,
-                              style: const TextStyle(fontSize: 14),
-                              decoration: InputDecoration(
-                                hintText: S.of(context).enterEmailOrMobile,
-                                hintStyle: const TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: 13,
-                                ),
-                                filled: true,
-                                fillColor: Colors.white,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 0,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFFE0E0E0),
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFFE0E0E0),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFFE30613),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: height * 0.02),
-                          Text(
-                            S.of(context).password,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          SizedBox(height: height * 0.01),
-                          SizedBox(
-                            height: height * 0.06,
-                            child: TextField(
-                              controller: controller.passwordController,
-                              obscureText: true,
-                              style: const TextStyle(fontSize: 14),
-                              decoration: InputDecoration(
-                                hintText: S.of(context).enterPassword,
-                                hintStyle: const TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: 13,
-                                ),
-                                filled: true,
-                                fillColor: Colors.white,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 0,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFFE0E0E0),
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFFE0E0E0),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFFE30613),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: height * 0.015),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: controller.forgotPassword,
-                                child: Text(
-                                  S.of(context).forgotPassword,
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    color: Color(0xFFE30613),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                height: 15,
-                                width: 15,
-                                child: Checkbox(
-                                  value: controller.isRememberMe,
-                                  onChanged: (value) =>
-                                      controller.toggleRememberMe(),
-                                  side: const BorderSide(
-                                    color: Colors.black38,
-                                    width: 1,
-                                  ),
-                                  activeColor: const Color(0xFFE30613),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                S.of(context).rememberMe,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: height * 0.03),
-                          ElevatedButton(
-                            onPressed: () => controller.signIn(),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFE30613),
-                              foregroundColor: Colors.white,
-                              minimumSize: Size(
-                                double.infinity,
-                                height * 0.055,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              S.of(context).signIn,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: height * 0.03),
-                          Row(
-                            children: [
-                              const Expanded(
-                                child: Divider(
-                                  color: Colors.black26,
-                                  thickness: 1,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                ),
-                                child: Text(
-                                  S.of(context).orSignInWith,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: const Color(
-                                      0xFF001133,
-                                    ).withOpacity(0.7),
-                                  ),
-                                ),
-                              ),
-                              const Expanded(
-                                child: Divider(
-                                  color: Colors.black26,
-                                  thickness: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: height * 0.03),
-                          Row(
-                            children: [
-                              _buildSocialButton(
-                                child: Image.asset(
-                                  'lib/assets/images/google.png',
-                                  height: 30,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(
-                                        Icons.g_mobiledata,
-                                        size: 35,
-                                        color: Colors.red,
+                                    SizedBox(width: 8),
+                                    Text(
+                                      "ANET",
+                                      style: TextStyle(
+                                        fontSize: 45,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFFE30613),
+                                        fontStyle: FontStyle.italic,
                                       ),
+                                    ),
+                                  ],
                                 ),
-                                onTap: controller.signInWithGoogle,
-                                height: height,
-                              ),
-                              _buildSocialButton(
-                                child: Image.asset(
-                                  'lib/assets/images/facebook.png',
-                                  height: 36,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(
-                                        Icons.facebook,
-                                        size: 28,
-                                        color: Colors.blue,
-                                      ),
-                                ),
-                                onTap: controller.signInWithFacebook,
-                                height: height,
-                              ),
-                              _buildSocialButton(
-                                child: Image.asset(
-                                  'lib/assets/images/twitter.png',
-                                  height: 30,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(
-                                        Icons.close,
-                                        size: 26,
-                                        color: Colors.black,
-                                      ),
-                                ),
-                                onTap: controller.signInWithX,
-                                height: height,
-                              ),
-                            ],
                           ),
-                          const Spacer(),
-                          SizedBox(height: height * 0.02),
+                        ),
+                      ),
+                      SizedBox(height: height * 0.001),
+                      const Center(
+                        child: Text(
+                          'Al NAWRAS',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF001133),
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: height * 0.002),
+                      Center(
+                        child: Text(
+                          S.of(context).premiumParkingSolutions,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color.fromARGB(255, 103, 111, 128),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: height * 0.03),
+                      Center(
+                        child: Text(
+                          S.of(context).welcomeBack,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF001133),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: height * 0.01),
+                      Center(
+                        child: Text(
+                          S.of(context).signInToYourAccount,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF001133),
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: height * 0.05),
+                      Text(
+                        S.of(context).emailOrMobile,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.01),
+                      SizedBox(
+                        height: height * 0.06,
+                        child: TextField(
+                          controller: controller.emailOrMobileController,
+                          style: const TextStyle(fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: S.of(context).enterEmailOrMobile,
+                            hintStyle: const TextStyle(
+                              color: Colors.black38,
+                              fontSize: 13,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 0,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE0E0E0),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE0E0E0),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE30613),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: height * 0.02),
+                      Text(
+                        S.of(context).password,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      SizedBox(height: height * 0.01),
+                      SizedBox(
+                        height: height * 0.06,
+                        child: TextField(
+                          controller: controller.passwordController,
+                          obscureText: true,
+                          style: const TextStyle(fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: S.of(context).enterPassword,
+                            hintStyle: const TextStyle(
+                              color: Colors.black38,
+                              fontSize: 13,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 0,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE0E0E0),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE0E0E0),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: Color(0xFFE30613),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: height * 0.015),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: controller.forgotPassword,
+                            child: Text(
+                              S.of(context).forgotPassword,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFFE30613),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                    ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            height: 15,
+                            width: 15,
+                            child: Checkbox(
+                              value: controller.isRememberMe,
+                              onChanged: (value) =>
+                                  controller.toggleRememberMe(),
+                              side: const BorderSide(
+                                color: Colors.black38,
+                                width: 1,
+                              ),
+                              activeColor: const Color(0xFFE30613),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            S.of(context).rememberMe,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: height * 0.03),
+                      ElevatedButton(
+                        onPressed: () => controller.signIn(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFE30613),
+                          foregroundColor: Colors.white,
+                          minimumSize: Size(
+                            double.infinity,
+                            height * 0.055,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          S.of(context).signIn,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: height * 0.03),
+                      Row(
+                        children: [
+                          const Expanded(
+                            child: Divider(
+                              color: Colors.black26,
+                              thickness: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                            ),
+                            child: Text(
+                              S.of(context).orSignInWith,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: const Color(
+                                  0xFF001133,
+                                ).withOpacity(0.7),
+                              ),
+                            ),
+                          ),
+                          const Expanded(
+                            child: Divider(
+                              color: Colors.black26,
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: height * 0.03),
+                      Row(
+                        children: [
+                          _buildSocialButton(
+                            child: Image.asset(
+                              'lib/assets/images/google.png',
+                              height: 30,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(
+                                    Icons.g_mobiledata,
+                                    size: 35,
+                                    color: Colors.red,
+                                  ),
+                            ),
+                            onTap: controller.signInWithGoogle,
+                            height: height,
+                          ),
+                          _buildSocialButton(
+                            child: Image.asset(
+                              'lib/assets/images/facebook.png',
+                              height: 36,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(
+                                    Icons.facebook,
+                                    size: 28,
+                                    color: Colors.blue,
+                                  ),
+                            ),
+                            onTap: controller.signInWithFacebook,
+                            height: height,
+                          ),
+                          _buildSocialButton(
+                            child: Image.asset(
+                              'lib/assets/images/twitter.png',
+                              height: 30,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(
+                                    Icons.close,
+                                    size: 26,
+                                    color: Colors.black,
+                                  ),
+                            ),
+                            onTap: controller.signInWithX,
+                            height: height,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: height * 0.02),
+                    ],
                   ),
                 ),
               ),
