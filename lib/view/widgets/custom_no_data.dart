@@ -36,7 +36,7 @@ class CustomNoData extends StatelessWidget {
               ),
               child: const Text('Retry', style: TextStyle(color: Colors.white)),
             ),
-          ]
+          ],
         ],
       ),
     );

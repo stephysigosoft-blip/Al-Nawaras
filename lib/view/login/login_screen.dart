@@ -41,28 +41,26 @@ class LoginScreen extends StatelessWidget {
                           height: height * 0.1,
                           child: Image.asset(
                             'lib/assets/images/Welcome.png',
-                            errorBuilder: (context, error, stackTrace) =>
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(
-                                      Icons.flight_takeoff,
-                                      size: 50,
-                                      color: Color(0xFF0D1B2A),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      "ANET",
-                                      style: TextStyle(
-                                        fontSize: 45,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFFE30613),
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                  ],
+                            errorBuilder: (context, error, stackTrace) => Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(
+                                  Icons.flight_takeoff,
+                                  size: 50,
+                                  color: Color(0xFF0D1B2A),
                                 ),
+                                SizedBox(width: 8),
+                                Text(
+                                  "ANET",
+                                  style: TextStyle(
+                                    fontSize: 45,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFFE30613),
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -257,10 +255,7 @@ class LoginScreen extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFE30613),
                           foregroundColor: Colors.white,
-                          minimumSize: Size(
-                            double.infinity,
-                            height * 0.055,
-                          ),
+                          minimumSize: Size(double.infinity, height * 0.055),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -278,30 +273,20 @@ class LoginScreen extends StatelessWidget {
                       Row(
                         children: [
                           const Expanded(
-                            child: Divider(
-                              color: Colors.black26,
-                              thickness: 1,
-                            ),
+                            child: Divider(color: Colors.black26, thickness: 1),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: Text(
                               S.of(context).orSignInWith,
                               style: TextStyle(
                                 fontSize: 13,
-                                color: const Color(
-                                  0xFF001133,
-                                ).withOpacity(0.7),
+                                color: const Color(0xFF001133).withOpacity(0.7),
                               ),
                             ),
                           ),
                           const Expanded(
-                            child: Divider(
-                              color: Colors.black26,
-                              thickness: 1,
-                            ),
+                            child: Divider(color: Colors.black26, thickness: 1),
                           ),
                         ],
                       ),
