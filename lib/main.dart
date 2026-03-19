@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'view/welcome/welcome_screen.dart';
+import 'view/home/home_screen.dart';
 import 'controller/home_controller.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final storage = GetStorage();
     String lang = storage.read('lang') ?? 'en';
+    final token = storage.read('token');
 
     return GetMaterialApp(
       title: 'Al Nawras',
@@ -44,7 +46,7 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
-      home: const WelcomeScreen(),
+      home: (token != null && token.toString().isNotEmpty) ? const HomeScreen() : const WelcomeScreen(),
     );
   }
 }

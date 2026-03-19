@@ -169,13 +169,23 @@ class LoginScreen extends StatelessWidget {
                         height: height * 0.06,
                         child: TextField(
                           controller: controller.passwordController,
-                          obscureText: true,
+                          obscureText: controller.isPasswordObscured,
                           style: const TextStyle(fontSize: 14),
                           decoration: InputDecoration(
                             hintText: S.of(context).enterPassword,
                             hintStyle: const TextStyle(
                               color: Colors.black38,
                               fontSize: 13,
+                            ),
+                            suffixIcon: GestureDetector(
+                              onTap: controller.togglePasswordVisibility,
+                              child: Icon(
+                                controller.isPasswordObscured
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.grey,
+                                size: 20,
+                              ),
                             ),
                             filled: true,
                             fillColor: Colors.white,
@@ -251,7 +261,8 @@ class LoginScreen extends StatelessWidget {
                       ),
                       SizedBox(height: height * 0.03),
                       ElevatedButton(
-                        onPressed: () => controller.signIn(),
+                        onPressed: () =>
+                            controller.isLoading ? null : controller.signIn(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFE30613),
                           foregroundColor: Colors.white,
@@ -261,13 +272,22 @@ class LoginScreen extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        child: Text(
-                          S.of(context).signIn,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: controller.isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                S.of(context).signIn,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                       SizedBox(height: height * 0.03),
                       Row(

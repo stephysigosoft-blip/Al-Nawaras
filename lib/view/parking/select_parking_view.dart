@@ -1,5 +1,4 @@
 import 'package:al_nawaras/view/book_parking/book_parking_screen.dart';
-import 'package:al_nawaras/view/payment/payment_success_view.dart';
 import 'package:flutter/material.dart';
 
 class _SlotRowConfig {

@@ -33,7 +33,10 @@ class RegisterScreen extends StatelessWidget {
                       Center(
                         child: Text(
                           S.of(context).provideDetailsToRegister,
-                          style: const TextStyle(color: Colors.black87, fontSize: 13),
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
                       SizedBox(height: height * 0.02),
@@ -78,16 +81,36 @@ class RegisterScreen extends StatelessWidget {
                         label: S.of(context).password,
                         hint: S.of(context).createPassword,
                         controller: controller.passwordController,
-                        obscureText: true,
+                        obscureText: controller.isPasswordObscured,
                         height: height,
+                        suffixIcon: GestureDetector(
+                          onTap: controller.togglePasswordVisibility,
+                          child: Icon(
+                            controller.isPasswordObscured
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: Colors.grey,
+                            size: 20,
+                          ),
+                        ),
                       ),
 
                       _buildTextField(
                         label: S.of(context).confirmPassword,
                         hint: S.of(context).confirmYourPassword,
                         controller: controller.confirmPasswordController,
-                        obscureText: true,
+                        obscureText: controller.isConfirmPasswordObscured,
                         height: height,
+                        suffixIcon: GestureDetector(
+                          onTap: controller.toggleConfirmPasswordVisibility,
+                          child: Icon(
+                            controller.isConfirmPasswordObscured
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: Colors.grey,
+                            size: 20,
+                          ),
+                        ),
                       ),
 
                       SizedBox(height: height * 0.002),
@@ -125,7 +148,9 @@ class RegisterScreen extends StatelessWidget {
                       SizedBox(height: height * 0.03),
 
                       ElevatedButton(
-                        onPressed: () => controller.createAccount(),
+                        onPressed: () => controller.isLoading
+                            ? null
+                            : controller.createAccount(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(
                             0xFFE30613,
@@ -137,13 +162,22 @@ class RegisterScreen extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        child: Text(
-                          S.of(context).createAccount,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: controller.isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                S.of(context).createAccount,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
 
                       SizedBox(height: height * 0.02),
@@ -189,6 +223,7 @@ class RegisterScreen extends StatelessWidget {
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
+    Widget? suffixIcon,
     required double height,
   }) {
     return Padding(
@@ -211,6 +246,7 @@ class RegisterScreen extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: hint,
                 hintStyle: const TextStyle(color: Colors.black38, fontSize: 13),
+                suffixIcon: suffixIcon,
                 filled: true,
                 fillColor: Colors.white,
                 contentPadding: const EdgeInsets.symmetric(

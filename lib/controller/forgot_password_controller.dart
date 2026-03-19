@@ -10,18 +10,24 @@ class ForgotPasswordController extends GetxController {
   bool isOtpSent = false;
 
   void sendOtp() {
-    // Basic validation
-    if (userOrMobileController.text.isEmpty ||
-        newPasswordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty) {
-      Get.snackbar('Error', 'Please fill all fields',
-          backgroundColor: Colors.red, colorText: Colors.white);
+    if (userOrMobileController.text.trim().isEmpty) {
+      Get.snackbar('Error', 'Please enter your Email or Mobile Number', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
       return;
     }
-
+    if (newPasswordController.text.trim().isEmpty) {
+      Get.snackbar('Error', 'Please enter your New Password', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+    if (newPasswordController.text.length < 6) {
+      Get.snackbar('Error', 'Password must be at least 6 characters long', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+    if (confirmPasswordController.text.trim().isEmpty) {
+      Get.snackbar('Error', 'Please confirm your Password', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
     if (newPasswordController.text != confirmPasswordController.text) {
-      Get.snackbar('Error', 'Passwords do not match',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      Get.snackbar('Error', 'Passwords do not match', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
@@ -29,19 +35,19 @@ class ForgotPasswordController extends GetxController {
     isOtpSent = true;
     update();
     Get.snackbar('Success', 'OTP sent to ${userOrMobileController.text}',
-        backgroundColor: Colors.green, colorText: Colors.white);
+        backgroundColor: Colors.green, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
   }
 
   void verifyOtp() {
     if (otpController.text.length < 6) {
       Get.snackbar('Error', 'Please enter a valid 6-digit OTP',
-          backgroundColor: Colors.red, colorText: Colors.white);
+          backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
     // Success simulation
     Get.snackbar('Success', 'Password reset successfully',
-        backgroundColor: Colors.green, colorText: Colors.white);
+        backgroundColor: Colors.green, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
     Get.back(); // Go back to login
   }
 
