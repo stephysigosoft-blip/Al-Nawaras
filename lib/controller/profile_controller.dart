@@ -1,7 +1,6 @@
 import 'package:al_nawaras/model/profile_model.dart';
 import 'package:al_nawaras/services/profile_service.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class ProfileController extends GetxController {
@@ -12,21 +11,23 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchProfile();
+    fetchProfileData();
   }
 
-  void fetchProfile() async {
+  void fetchProfileData() async {
     try {
       isLoading(true);
-      update();
       final box = GetStorage();
-      String token = box.read('token');
-      final result = await service.fetchProfile(token);
-      if (result != null) {
-        profile.value = result;
+      String? token = box.read('token'); 
+
+      if (token != null) {
+        final result = await service.fetchProfile(token); 
+        if (result != null) {
+          profile.value = result;
+        }
       }
     } catch (e) {
-      throw Exception("Error $e");
+      Get.snackbar("Error",e.toString(),snackPosition:SnackPosition.BOTTOM);
     } finally {
       isLoading(false);
       update();

@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 class ProfileService {
   Future<ProfileModel?>fetchProfile(String token)async{
     final response=await http.get(Uri.parse(ApiConstants.profile),headers: {
-      'Accept':'*/*',
+      'Accept':'application/json',
       'Authorization': 'Bearer $token',
     });
     if(response.statusCode==200){

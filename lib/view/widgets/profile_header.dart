@@ -77,6 +77,7 @@ class ProfileHeader extends StatelessWidget {
 
   Widget _buildUserInfo(double width) {
     final controller = Get.find<ProfileController>();
+    return Obx(() {
     final user = controller.profile.value;
     final box = GetStorage();
 
@@ -133,5 +134,6 @@ class ProfileHeader extends StatelessWidget {
         ],
       ),
     );
+    });
   }
 }
