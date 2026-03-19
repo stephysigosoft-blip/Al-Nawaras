@@ -169,7 +169,9 @@ class ForgotPasswordView extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withOpacity(
+              0.03,
+            ), // ignore: deprecated_member_use
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
