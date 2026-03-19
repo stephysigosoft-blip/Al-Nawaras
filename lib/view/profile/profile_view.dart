@@ -1,5 +1,8 @@
 import 'package:al_nawaras/view/booking/booking_history.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import '../welcome/welcome_screen.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/membership_status_card.dart';
 import '../widgets/profile_menu_item.dart';
@@ -121,7 +124,15 @@ class ProfileView extends StatelessWidget {
       width: double.infinity,
       height: 55,
       child: OutlinedButton(
-        onPressed: () {},
+        onPressed: () {
+          final storage = GetStorage();
+          storage.remove('token');
+          storage.remove('partner_id');
+          storage.remove('name');
+          storage.remove('email');
+          storage.remove('mobile');
+          Get.offAll(() => const WelcomeScreen());
+        },
         style: OutlinedButton.styleFrom(
           side: const BorderSide(color: const Color(0xFFE30613), width: 1),
           shape: RoundedRectangleBorder(
