@@ -1,3 +1,4 @@
+import 'package:al_nawaras/view/payment/payment_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -87,7 +88,20 @@ class BookParkingController extends GetxController {
   }
 
   void onNextClick() {
-    // Navigate to next screen or process booking
+    Get.to(
+      () => PaymentView(
+        title: 'Booking Payment',
+        subtitle: '$selectedParkingType Parking',
+        amount: 'AED 700.00',
+        subtotal: 'AED 700.00',
+        vat: 'AED 35.00',
+        details: [
+          {'label': 'Vehicle', 'value': selectedVehicle},
+          {'label': 'Membership', 'value': selectedMembership},
+          {'label': 'Type', 'value': selectedParkingType},
+        ],
+      ),
+    );
   }
 
   @override

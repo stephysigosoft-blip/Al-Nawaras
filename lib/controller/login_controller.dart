@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../view/register/register_screen.dart';
 import '../view/home/home_screen.dart';
+import '../view/login/forgot_password_view.dart';
 
 class LoginController extends GetxController {
   final emailOrMobileController = TextEditingController();
@@ -20,9 +21,7 @@ class LoginController extends GetxController {
   }
 
   void forgotPassword() {
-    if (kDebugMode) {
-      print("Forgot Password Clicked");
-    }
+    Get.to(() => const ForgotPasswordView());
   }
 
   void signInWithGoogle() {

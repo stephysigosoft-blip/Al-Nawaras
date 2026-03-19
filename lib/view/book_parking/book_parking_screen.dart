@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/book_parking_controller.dart';
-import '../../controller/home_controller.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/draggable_help_button.dart';
 
 class BookParkingScreen extends StatelessWidget {
@@ -16,12 +14,6 @@ class BookParkingScreen extends StatelessWidget {
 
     return GetBuilder<BookParkingController>(
       init: BookParkingController(),
-      initState: (state) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Get.find<HomeController>().currentIndex = 1;
-          Get.find<HomeController>().update();
-        });
-      },
       builder: (controller) {
         return Scaffold(
           backgroundColor: const Color(0xFFF7F7F7),
@@ -29,8 +21,6 @@ class BookParkingScreen extends StatelessWidget {
             title: 'Book Parking',
             centerTitle: false,
             onBackPressed: () {
-              Get.find<HomeController>().currentIndex = 0;
-              Get.find<HomeController>().update();
               Get.back();
             },
           ),
@@ -70,12 +60,6 @@ class BookParkingScreen extends StatelessWidget {
               ),
               const DraggableHelpButton(),
             ],
-          ),
-          bottomNavigationBar: CustomBottomNavBar(
-            currentIndex: 1,
-            onTap: (index) {
-              Get.find<HomeController>().changeBottomNavIndex(index);
-            },
           ),
         );
       },

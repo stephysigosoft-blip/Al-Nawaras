@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../view/payment/payment_view.dart';
 
 class MembershipPlansController extends GetxController {
   final List<Map<String, dynamic>> plans = [
@@ -74,7 +75,17 @@ class MembershipPlansController extends GetxController {
   ];
 
   void onSelectPlan(int index) {
-    // Handle plan selection
-    Get.snackbar('Plan Selected', 'You selected the ${plans[index]['title']}');
+    final plan = plans[index];
+    Get.to(() => PaymentView(
+          title: plan['title'],
+          subtitle: 'Membership Subscription',
+          amount: plan['price'],
+          subtotal: plan['price'],
+          vat: 'AED 0.00', // Assuming tax is inclusive or not required for simple memberships here for now
+          details: [
+            {'label': 'Plan Type', 'value': plan['title']},
+            {'label': 'Validity', 'value': plan['unit'].replaceAll('per ', '')},
+          ],
+        ));
   }
 }

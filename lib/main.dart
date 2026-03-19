@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'view/welcome/welcome_screen.dart';
+import 'controller/home_controller.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+  Get.put(HomeController());
   runApp(const MyApp());
 }
 
@@ -24,8 +26,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       locale: Locale(lang),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFE30613)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFE30613),
+          primary: const Color(0xFFE30613),
+        ),
+        primaryColor: const Color(0xFFE30613),
         useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFFE30613),
+          elevation: 0,
+        ),
       ),
       localizationsDelegates: const [
         S.delegate,

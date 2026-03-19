@@ -100,30 +100,32 @@ class HomeScreen extends StatelessWidget {
                           SizedBox(height: height * 0.02),
                           _buildSectionHeader(
                             S.of(context).myVehicles,
-                            S.of(context).viewAll,
+                            controller.showAllVehicles ? S.of(context).viewAll : S.of(context).viewAll, // Keep it 'View All' as user didn't request 'Show Less' but logic will toggle. Wait, user might want 'Show Less' text too.
                             controller.onViewAllVehiclesClick,
                             height,
                           ),
                           SizedBox(height: height * 0.02),
-                          _buildVehicleCard(
-                            'Airstream Caravel',
-                            S.of(context).license('AD-45678'),
-                            true,
-                            S.of(context).parkedAtSpot('B-24'),
-                            'lib/assets/images/Airstream.png',
-                            height,
-                            width,
-                          ),
-                          SizedBox(height: height * 0.015),
-                          _buildVehicleCard(
-                            'Airstream Basecamp',
-                            S.of(context).license('DX-98123'),
-                            false,
-                            S.of(context).awayFromParking,
-                            'lib/assets/images/Airstream.png',
-                            height,
-                            width,
-                          ),
+                          ...((controller.searchQuery.isEmpty && !controller.showAllVehicles)
+                                  ? controller.filteredVehicles.take(2)
+                                  : controller.filteredVehicles)
+                              .map((vehicle) {
+                            return Column(
+                              children: [
+                                _buildVehicleCard(
+                                  vehicle['title'],
+                                  S.of(context).license(vehicle['license']),
+                                  vehicle['isParked'],
+                                  vehicle['isParked']
+                                      ? S.of(context).parkedAtSpot(vehicle['spot'])
+                                      : S.of(context).awayFromParking,
+                                  vehicle['image'],
+                                  height,
+                                  width,
+                                ),
+                                SizedBox(height: height * 0.015),
+                              ],
+                            );
+                          }).toList(),
                           SizedBox(height: height * 0.02),
                           _buildRegisterButton(controller, context, height),
 
@@ -135,23 +137,41 @@ class HomeScreen extends StatelessWidget {
                             height,
                           ),
                           SizedBox(height: height * 0.02),
-                          _buildActivityCard(
-                            S.of(context).parkingRenewed,
-                            'Today, 10:30 AM • ${S.of(context).monthlyPremium}',
-                            Icons.history,
-                            const Color(0xFF00B2FF),
-                            height,
-                            width,
-                          ),
-                          SizedBox(height: height * 0.01),
-                          _buildActivityCard(
-                            S.of(context).vehicleCheckIn,
-                            'Yesterday, 2:15 PM • ${S.of(context).parkedAtSpot('A12')}',
-                            Icons.check_circle_outline,
-                            Colors.greenAccent.shade400,
-                            height,
-                            width,
-                          ),
+                          ...((controller.searchQuery.isEmpty && !controller.showAllActivities)
+                                  ? controller.filteredActivities.take(2)
+                                  : controller.filteredActivities)
+                              .map((activity) {
+                            String title = "";
+                            String subtitle = activity['subtitle'];
+
+                            if (activity['titleKey'] == 'parkingRenewed') {
+                              title = S.of(context).parkingRenewed;
+                              subtitle = subtitle.replaceAll(
+                                'monthlyPremium',
+                                S.of(context).monthlyPremium,
+                              );
+                            } else if (activity['titleKey'] == 'vehicleCheckIn') {
+                              title = S.of(context).vehicleCheckIn;
+                              subtitle = subtitle.replaceAll(
+                                'parkedAtSpotA12',
+                                S.of(context).parkedAtSpot('A12'),
+                              );
+                            }
+
+                            return Column(
+                              children: [
+                                _buildActivityCard(
+                                  title,
+                                  subtitle,
+                                  activity['icon'],
+                                  activity['color'],
+                                  height,
+                                  width,
+                                ),
+                                SizedBox(height: height * 0.01),
+                              ],
+                            );
+                          }).toList(),
 
                           SizedBox(height: height * 0.05), // Bottom padding
                         ],

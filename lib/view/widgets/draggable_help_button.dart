@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../chat/customer_support_view.dart';
 
 class DraggableHelpController extends GetxController {
   final _storage = GetStorage();
@@ -50,6 +51,9 @@ class DraggableHelpButton extends StatelessWidget {
           top: currentTop,
           right: currentRight,
           child: GestureDetector(
+            onTap: () {
+              Get.to(() => const CustomerSupportView());
+            },
             onPanUpdate: (details) {
               double newTop = currentTop + details.delta.dy;
               double newRight = currentRight - details.delta.dx;

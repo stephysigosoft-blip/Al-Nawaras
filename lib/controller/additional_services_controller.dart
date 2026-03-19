@@ -1,3 +1,4 @@
+import 'package:al_nawaras/view/payment/payment_view.dart';
 import 'package:get/get.dart';
 
 class AdditionalServicesController extends GetxController {
@@ -54,10 +55,18 @@ class AdditionalServicesController extends GetxController {
   ];
 
   void onBuyNowClick(int index) {
-    Get.snackbar(
-      'Service Selected',
-      'You selected ${services[index]['title']}',
-      snackPosition: SnackPosition.BOTTOM,
+    final service = services[index];
+    Get.to(
+      () => PaymentView(
+        title: service['title'],
+        subtitle: 'Additional Service',
+        amount: service['price'],
+        subtotal: service['price']!,
+        vat: 'AED 0.00',
+        details: [
+          {'label': 'Service', 'value': service['title']!},
+        ],
+      ),
     );
   }
 }

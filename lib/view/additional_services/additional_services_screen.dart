@@ -18,8 +18,9 @@ class AdditionalServicesScreen extends StatelessWidget {
       init: AdditionalServicesController(),
       initState: (state) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          Get.find<HomeController>().currentIndex = 2;
-          Get.find<HomeController>().update();
+          final homeController = Get.put(HomeController());
+          homeController.currentIndex = 2;
+          homeController.update();
         });
       },
       builder: (controller) {
@@ -29,9 +30,7 @@ class AdditionalServicesScreen extends StatelessWidget {
             title: 'Additional Services',
             centerTitle: false,
             onBackPressed: () {
-              Get.find<HomeController>().currentIndex = 0;
-              Get.find<HomeController>().update();
-              Get.back();
+              Get.find<HomeController>().changeBottomNavIndex(0);
             },
           ),
           body: Stack(
