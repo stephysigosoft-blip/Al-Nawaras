@@ -79,7 +79,7 @@ class LoginController extends GetxController {
 
     try {
       if (kDebugMode) {
-        print('\n--- API REQUEST ---');
+        print('\n--- API REQUEST (login) ---');
         print('URL: ${ApiConstants.login}');
         print('Payload: {"login": "$login", "password": "$password"}');
       }

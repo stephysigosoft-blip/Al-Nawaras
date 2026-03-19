@@ -17,7 +17,7 @@ class CustomNoData extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.inbox, size: height * 0.1, color: Colors.grey),
+          Image.asset('lib/assets/images/no data.png', height: height * 0.12),
           SizedBox(height: height * 0.02),
           Text(
             message,

@@ -127,7 +127,93 @@ class RegisterController extends GetxController {
       );
       return;
     }
-    _callRegisterApi();
+    _checkUserExists();
+  }
+
+  Future<void> _checkUserExists() async {
+    if (isLoading) return;
+    isLoading = true;
+    update();
+
+    try {
+      if (kDebugMode) {
+        print('\n--- API REQUEST (check_user) ---');
+        print('URL: ${ApiConstants.checkUser}');
+        print('Payload: {"login": "${emailController.text.trim()}"}');
+      }
+
+      final response = await dio.post(
+        ApiConstants.checkUser,
+        data: {"login": emailController.text.trim()},
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+      );
+
+      if (kDebugMode) {
+        print('--- API RESPONSE (check_user) ---');
+        print('Status Code: ${response.statusCode}');
+        print('Response Data: ${response.data}');
+        print('--------------------\n');
+      }
+
+      if (response.statusCode == 200 && response.data != null) {
+        final Map<String, dynamic> data = response.data;
+        final exists = data['data']?['exists'] == true;
+
+        if (exists) {
+          // User already exists — stop and notify
+          Get.snackbar(
+            'Error',
+            'User already exists. Please login or use a different email.',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          isLoading = false;
+          update();
+          return;
+        }
+
+        // User does not exist — proceed with registration
+        isLoading = false;
+        update();
+        await _callRegisterApi();
+      }
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('API Error (check_user DioException): ${e.message}');
+        if (e.response != null) {
+          print('Response Error Data: ${e.response?.data}');
+        }
+      }
+      String errorMessage = 'A network error occurred. Please try again.';
+      if (e.response != null &&
+          e.response?.data != null &&
+          e.response?.data is Map) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      Get.snackbar(
+        'Error',
+        errorMessage,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      isLoading = false;
+      update();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Exception caught (check_user): $e');
+      }
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      isLoading = false;
+      update();
+    }
   }
 
   Future<void> _callRegisterApi() async {
@@ -184,7 +270,8 @@ class RegisterController extends GetxController {
           duration: const Duration(seconds: 2),
         );
 
-        Future.delayed(const Duration(milliseconds: 300), () {
+        // Navigate to Login after showing the snackbar
+        Future.delayed(const Duration(milliseconds: 1500), () {
           Get.off(() => const LoginScreen());
         });
       }

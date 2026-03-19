@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../controller/home_controller.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/draggable_help_button.dart';
+import '../widgets/custom_no_data.dart';
 import '../../generated/l10n.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -17,8 +18,10 @@ class HomeScreen extends StatelessWidget {
       init: HomeController(),
       initState: (state) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          Get.find<HomeController>().currentIndex = 0;
-          Get.find<HomeController>().update();
+          final ctrl = Get.find<HomeController>();
+          ctrl.currentIndex = 0;
+          ctrl.fetchHomeData(); // Force fetch data explicitly when screen loads
+          ctrl.update();
         });
       },
       builder: (controller) {
@@ -51,7 +54,12 @@ class HomeScreen extends StatelessWidget {
                           SizedBox(height: height * 0.08),
                           _buildHeader(controller, context, height, width),
                           SizedBox(height: height * 0.025),
-                          _buildMembershipCard(controller, context, height, width),
+                          _buildMembershipCard(
+                            controller,
+                            context,
+                            height,
+                            width,
+                          ),
                           SizedBox(height: height * 0.015),
 
                           Row(
@@ -86,46 +94,79 @@ class HomeScreen extends StatelessWidget {
                           _buildPlanRow(controller, context, height, width),
 
                           SizedBox(height: height * 0.02),
-                          _buildNavigateBanner(controller, context, height, width),
+                          _buildNavigateBanner(
+                            controller,
+                            context,
+                            height,
+                            width,
+                          ),
 
                           SizedBox(height: height * 0.02),
                           _buildSearchBar(controller, context, height, width),
 
                           SizedBox(height: height * 0.02),
-                          _buildSmartParkingBanner(controller, context, height, width),
+                          _buildSmartParkingBanner(
+                            controller,
+                            context,
+                            height,
+                            width,
+                          ),
 
                           SizedBox(height: height * 0.02),
-                          _buildOpportunityBanner(controller, context, height, width),
+                          _buildOpportunityBanner(
+                            controller,
+                            context,
+                            height,
+                            width,
+                          ),
 
                           SizedBox(height: height * 0.02),
                           _buildSectionHeader(
                             S.of(context).myVehicles,
-                            controller.showAllVehicles ? S.of(context).viewAll : S.of(context).viewAll, // Keep it 'View All' as user didn't request 'Show Less' but logic will toggle. Wait, user might want 'Show Less' text too.
+                            controller.showAllVehicles
+                                ? S.of(context).viewAll
+                                : S
+                                      .of(context)
+                                      .viewAll, // Keep it 'View All' as user didn't request 'Show Less' but logic will toggle. Wait, user might want 'Show Less' text too.
                             controller.onViewAllVehiclesClick,
                             height,
                           ),
                           SizedBox(height: height * 0.02),
-                          ...((controller.searchQuery.isEmpty && !controller.showAllVehicles)
-                                  ? controller.filteredVehicles.take(2)
-                                  : controller.filteredVehicles)
-                              .map((vehicle) {
-                            return Column(
-                              children: [
-                                _buildVehicleCard(
-                                  vehicle['title'],
-                                  S.of(context).license(vehicle['license']),
-                                  vehicle['isParked'],
-                                  vehicle['isParked']
-                                      ? S.of(context).parkedAtSpot(vehicle['spot'])
-                                      : S.of(context).awayFromParking,
-                                  vehicle['image'],
-                                  height,
-                                  width,
-                                ),
-                                SizedBox(height: height * 0.015),
-                              ],
-                            );
-                          }).toList(),
+                          if (controller.filteredVehicles.isEmpty)
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: height * 0.01,
+                              ),
+                              child: const CustomNoData(message: 'No data'),
+                            )
+                          else
+                            ...((controller.searchQuery.isEmpty &&
+                                        !controller.showAllVehicles)
+                                    ? controller.filteredVehicles.take(2)
+                                    : controller.filteredVehicles)
+                                .map((vehicle) {
+                                  return Column(
+                                    children: [
+                                      _buildVehicleCard(
+                                        vehicle['title'],
+                                        S
+                                            .of(context)
+                                            .license(vehicle['license']),
+                                        vehicle['isParked'],
+                                        vehicle['isParked']
+                                            ? S
+                                                  .of(context)
+                                                  .parkedAtSpot(vehicle['spot'])
+                                            : S.of(context).awayFromParking,
+                                        vehicle['image'],
+                                        height,
+                                        width,
+                                      ),
+                                      SizedBox(height: height * 0.015),
+                                    ],
+                                  );
+                                })
+                                .toList(),
                           SizedBox(height: height * 0.02),
                           _buildRegisterButton(controller, context, height),
 
@@ -137,41 +178,53 @@ class HomeScreen extends StatelessWidget {
                             height,
                           ),
                           SizedBox(height: height * 0.02),
-                          ...((controller.searchQuery.isEmpty && !controller.showAllActivities)
-                                  ? controller.filteredActivities.take(2)
-                                  : controller.filteredActivities)
-                              .map((activity) {
-                            String title = "";
-                            String subtitle = activity['subtitle'];
+                          if (controller.filteredActivities.isEmpty)
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: height * 0.01,
+                              ),
+                              child: const CustomNoData(message: 'No data'),
+                            )
+                          else
+                            ...((controller.searchQuery.isEmpty &&
+                                        !controller.showAllActivities)
+                                    ? controller.filteredActivities.take(2)
+                                    : controller.filteredActivities)
+                                .map((activity) {
+                                  String title = "";
+                                  String subtitle = activity['subtitle'];
 
-                            if (activity['titleKey'] == 'parkingRenewed') {
-                              title = S.of(context).parkingRenewed;
-                              subtitle = subtitle.replaceAll(
-                                'monthlyPremium',
-                                S.of(context).monthlyPremium,
-                              );
-                            } else if (activity['titleKey'] == 'vehicleCheckIn') {
-                              title = S.of(context).vehicleCheckIn;
-                              subtitle = subtitle.replaceAll(
-                                'parkedAtSpotA12',
-                                S.of(context).parkedAtSpot('A12'),
-                              );
-                            }
+                                  if (activity['titleKey'] ==
+                                      'parkingRenewed') {
+                                    title = S.of(context).parkingRenewed;
+                                    subtitle = subtitle.replaceAll(
+                                      'monthlyPremium',
+                                      S.of(context).monthlyPremium,
+                                    );
+                                  } else if (activity['titleKey'] ==
+                                      'vehicleCheckIn') {
+                                    title = S.of(context).vehicleCheckIn;
+                                    subtitle = subtitle.replaceAll(
+                                      'parkedAtSpotA12',
+                                      S.of(context).parkedAtSpot('A12'),
+                                    );
+                                  }
 
-                            return Column(
-                              children: [
-                                _buildActivityCard(
-                                  title,
-                                  subtitle,
-                                  activity['icon'],
-                                  activity['color'],
-                                  height,
-                                  width,
-                                ),
-                                SizedBox(height: height * 0.01),
-                              ],
-                            );
-                          }).toList(),
+                                  return Column(
+                                    children: [
+                                      _buildActivityCard(
+                                        title,
+                                        subtitle,
+                                        activity['icon'],
+                                        activity['color'],
+                                        height,
+                                        width,
+                                      ),
+                                      SizedBox(height: height * 0.01),
+                                    ],
+                                  );
+                                })
+                                .toList(),
 
                           SizedBox(height: height * 0.05), // Bottom padding
                         ],
@@ -193,7 +246,11 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(
-      HomeController controller, BuildContext context, double height, double width) {
+    HomeController controller,
+    BuildContext context,
+    double height,
+    double width,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +268,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                'Faizan Arshad',
+                controller.userName,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 22,
@@ -238,11 +295,23 @@ class HomeScreen extends StatelessWidget {
               child: Container(
                 height: height * 0.045,
                 width: height * 0.045,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFFFFC107), // Yellow background
+                  color: const Color(0xFFFFC107), // Yellow background
+                  image:
+                      controller.profilePicture != null &&
+                          controller.profilePicture!.isNotEmpty
+                      ? DecorationImage(
+                          image: NetworkImage(controller.profilePicture!),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
                 ),
-                child: const Icon(Icons.person, color: Colors.black54),
+                child:
+                    controller.profilePicture == null ||
+                        controller.profilePicture!.isEmpty
+                    ? const Icon(Icons.person, color: Colors.black54)
+                    : null,
               ),
             ),
           ],
@@ -279,23 +348,25 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  S.of(context).currentMembership,
+                  controller.membershipStatus,
                   style: const TextStyle(fontSize: 11, color: Colors.black54),
                 ),
                 SizedBox(height: height * 0.005),
                 Text(
-                  S.of(context).monthlyPremium,
+                  controller.membershipTier,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF001133),
                   ),
                 ),
-                SizedBox(height: height * 0.005),
-                Text(
-                  S.of(context).validUntil('15 Jun 2023'),
-                  style: const TextStyle(fontSize: 11, color: Colors.black54),
-                ),
+                if (controller.membershipValidUntil != null && controller.membershipValidUntil!.isNotEmpty) ...[
+                  SizedBox(height: height * 0.005),
+                  Text(
+                    S.of(context).validUntil(controller.membershipValidUntil!),
+                    style: const TextStyle(fontSize: 11, color: Colors.black54),
+                  ),
+                ],
               ],
             ),
           ),
@@ -375,7 +446,11 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildPlanRow(
-      HomeController controller, BuildContext context, double height, double width) {
+    HomeController controller,
+    BuildContext context,
+    double height,
+    double width,
+  ) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -500,7 +575,10 @@ class HomeScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFBFE5E5), // Matches bg
                       foregroundColor: const Color(0xFF003D3D), // Dark text
-                      side: const BorderSide(color: Color(0xFF003D3D), width: 1),
+                      side: const BorderSide(
+                        color: Color(0xFF003D3D),
+                        width: 1,
+                      ),
                       elevation: 0,
                       minimumSize: Size(width * 0.35, height * 0.038),
                       padding: EdgeInsets.zero,
@@ -510,7 +588,10 @@ class HomeScreen extends StatelessWidget {
                     ),
                     child: Text(
                       S.of(context).getDirections,
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -631,7 +712,10 @@ class HomeScreen extends StatelessWidget {
                     onPressed: controller.onBookNowClick,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFFE30613),
-                      side: const BorderSide(color: Color(0xFFE30613), width: 1),
+                      side: const BorderSide(
+                        color: Color(0xFFE30613),
+                        width: 1,
+                      ),
                       minimumSize: Size(width * 0.3, height * 0.038),
                       padding: EdgeInsets.zero,
                       shape: RoundedRectangleBorder(
@@ -640,7 +724,10 @@ class HomeScreen extends StatelessWidget {
                     ),
                     child: Text(
                       S.of(context).bookNow,
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -706,7 +793,10 @@ class HomeScreen extends StatelessWidget {
                     onPressed: controller.onCheckRewardsClick,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF003D3D), // Dark text
-                      side: const BorderSide(color: Color(0xFF003D3D), width: 1),
+                      side: const BorderSide(
+                        color: Color(0xFF003D3D),
+                        width: 1,
+                      ),
                       minimumSize: Size(width * 0.3, height * 0.038),
                       padding: EdgeInsets.zero,
                       shape: RoundedRectangleBorder(
@@ -715,7 +805,10 @@ class HomeScreen extends StatelessWidget {
                     ),
                     child: Text(
                       S.of(context).checkRewards,
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -853,7 +946,10 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildRegisterButton(
-      HomeController controller, BuildContext context, double height) {
+    HomeController controller,
+    BuildContext context,
+    double height,
+  ) {
     return OutlinedButton(
       onPressed: controller.onRegisterVehicleClick,
       style: OutlinedButton.styleFrom(
