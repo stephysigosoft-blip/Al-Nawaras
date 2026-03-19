@@ -1,3 +1,4 @@
+import 'package:al_nawaras/controller/profile_controller.dart';
 import 'package:al_nawaras/view/booking/booking_history.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,44 +20,56 @@ class ProfileView extends StatelessWidget {
     final height = mediaQuery.size.height;
     final padding = width * 0.06;
 
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Stack(
-                  clipBehavior: Clip.none,
+    return GetBuilder<ProfileController>(
+      init: ProfileController(),
+      builder: (controller) {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Color(0xFFE30613),
+            ),
+          );
+        }
+        return Scaffold(
+          backgroundColor: Colors.grey[100],
+          body: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
                   children: [
-                    ProfileHeader(width: width, height: height),
-                    Positioned(
-                      top: height * 0.25, // Adjust for overlap
-                      left: padding,
-                      right: padding,
-                      child: MembershipStatusCard(width: width),
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        ProfileHeader(width: width, height: height),
+                        Positioned(
+                          top: height * 0.25, // Adjust for overlap
+                          left: padding,
+                          right: padding,
+                          child: MembershipStatusCard(width: width),
+                        ),
+                      ],
+                    ),
+                    // Floating overlap pushes contents down
+                    SizedBox(height: height * 0.2), // Buffer for status card bottom
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: padding),
+                      child: Column(
+                        children: [
+                          _buildMenuList(context, width),
+                          SizedBox(height: height * 0.03),
+                          _buildSignOutButton(width),
+                          SizedBox(height: height * 0.02),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                // Floating overlap pushes contents down
-                SizedBox(height: height * 0.2), // Buffer for status card bottom
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding),
-                  child: Column(
-                    children: [
-                      _buildMenuList(context, width),
-                      SizedBox(height: height * 0.03),
-                      _buildSignOutButton(width),
-                      SizedBox(height: height * 0.02),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const DraggableHelpButton(),
+            ],
           ),
-          const DraggableHelpButton(),
-        ],
-      ),
+        );
+      }
     );
   }
 
