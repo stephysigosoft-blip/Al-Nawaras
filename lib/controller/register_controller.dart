@@ -38,39 +38,93 @@ class RegisterController extends GetxController {
 
   void createAccount() {
     if (fullNameController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please enter your Full Name', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Please enter your Full Name',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (emailController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please enter your Email Address', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Please enter your Email Address',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (!GetUtils.isEmail(emailController.text.trim())) {
-      Get.snackbar('Error', 'Please enter a valid Email Address', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Please enter a valid Email Address',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (mobileController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please enter your Mobile Number', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Please enter your Mobile Number',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (drivingLicenseController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please enter your Driving License', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Please enter your Driving License',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (passwordController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please enter your Password', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Please enter your Password',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (passwordController.text.length < 6) {
-      Get.snackbar('Error', 'Password must be at least 6 characters long', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Password must be at least 6 characters long',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (passwordController.text != confirmPasswordController.text) {
-      Get.snackbar('Error', 'Passwords do not match', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Passwords do not match',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (!isTermsAccepted) {
-      Get.snackbar('Error', 'Please accept the Terms and Conditions', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Please accept the Terms and Conditions',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     _callRegisterApi();
@@ -93,12 +147,12 @@ class RegisterController extends GetxController {
     try {
       if (kDebugMode) {
         print('\n--- API REQUEST ---');
-        print('URL: ${ApiConstants.baseUrl}register');
+        print('URL: ${ApiConstants.register}');
         print('Payload: $requestBody');
       }
 
       final response = await dio.post(
-        '${ApiConstants.baseUrl}register',
+        ApiConstants.register,
         data: requestBody,
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );
@@ -142,15 +196,29 @@ class RegisterController extends GetxController {
         }
       }
       String errorMessage = 'A network error occurred. Please try again.';
-      if (e.response != null && e.response?.data != null && e.response?.data is Map) {
+      if (e.response != null &&
+          e.response?.data != null &&
+          e.response?.data is Map) {
         errorMessage = e.response?.data['message'] ?? errorMessage;
       }
-      Get.snackbar('Error', errorMessage, backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        errorMessage,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } catch (e) {
       if (kDebugMode) {
         print('Exception caught: $e');
       }
-      Get.snackbar('Error', 'An unexpected error occurred.', backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } finally {
       isLoading = false;
       update();

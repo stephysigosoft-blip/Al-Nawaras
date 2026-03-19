@@ -80,12 +80,12 @@ class LoginController extends GetxController {
     try {
       if (kDebugMode) {
         print('\n--- API REQUEST ---');
-        print('URL: ${ApiConstants.baseUrl}login');
+        print('URL: ${ApiConstants.login}');
         print('Payload: {"login": "$login", "password": "$password"}');
       }
 
       final response = await dio.post(
-        '${ApiConstants.baseUrl}login',
+        ApiConstants.login,
         data: {"login": login, "password": password},
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );
