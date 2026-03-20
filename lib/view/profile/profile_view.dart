@@ -7,6 +7,8 @@ import '../widgets/profile_header.dart';
 import '../widgets/membership_status_card.dart';
 import '../widgets/profile_menu_item.dart';
 import '../widgets/draggable_help_button.dart';
+import '../../controller/home_controller.dart';
+import '../widgets/custom_bottom_nav_bar.dart';
 
 class ProfileView extends StatelessWidget {
   final Function(int)? onTabChanged;
@@ -21,59 +23,75 @@ class ProfileView extends StatelessWidget {
 
     final profileController = Get.put(ProfileController());
 
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: Obx(() {
-        if (profileController.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: Color(0xFFE30613)),
-          );
-        }
-        return Stack(
-          children: [
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  Stack(
-                    clipBehavior: Clip.none,
+    return GetBuilder<HomeController>(
+      init: Get.find<HomeController>(),
+      initState: (_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final homeController = Get.find<HomeController>();
+          homeController.currentIndex = 3;
+          homeController.update();
+        });
+      },
+      builder: (homeController) {
+        return Scaffold(
+          backgroundColor: Colors.grey[100],
+          body: Obx(() {
+            if (profileController.isLoading.value) {
+              return const Center(
+                child: CircularProgressIndicator(color: Color(0xFFE30613)),
+              );
+            }
+            return Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
                     children: [
-                      ProfileHeader(width: width, height: height),
-                      Positioned(
-                        top: height * 0.25, // Adjust for overlap
-                        left: padding,
-                        right: padding,
-                        child: MembershipStatusCard(
-                        width: width,
-                        status: profileController.profile.value?.membershipStatus ?? "No Status",
-                        vehicles: profileController.profile.value?.vehiclesCount ?? 0,
-                        bookings: profileController.profile.value?.bookingsCount ?? 0,
-                        services: profileController.profile.value?.servicesCount ?? 0,
-),
+                      Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          ProfileHeader(width: width, height: height),
+                          Positioned(
+                            top: height * 0.25, // Adjust for overlap
+                            left: padding,
+                            right: padding,
+                            child: MembershipStatusCard(
+                              width: width,
+                              status: profileController.profile.value?.membershipStatus ?? "No Status",
+                              vehicles: profileController.profile.value?.vehiclesCount ?? 0,
+                              bookings: profileController.profile.value?.bookingsCount ?? 0,
+                              services: profileController.profile.value?.servicesCount ?? 0,
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Floating overlap pushes contents down
+                      SizedBox(
+                        height: height * 0.2,
+                      ), // Buffer for status card bottom
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: padding),
+                        child: Column(
+                          children: [
+                            _buildMenuList(context, width),
+                            SizedBox(height: height * 0.03),
+                            _buildSignOutButton(width),
+                            SizedBox(height: height * 0.02),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  // Floating overlap pushes contents down
-                  SizedBox(
-                    height: height * 0.2,
-                  ), // Buffer for status card bottom
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: padding),
-                    child: Column(
-                      children: [
-                        _buildMenuList(context, width),
-                        SizedBox(height: height * 0.03),
-                        _buildSignOutButton(width),
-                        SizedBox(height: height * 0.02),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const DraggableHelpButton(),
-          ],
+                ),
+                const DraggableHelpButton(),
+              ],
+            );
+          }),
+          bottomNavigationBar: CustomBottomNavBar(
+            currentIndex: homeController.currentIndex,
+            onTap: homeController.changeBottomNavIndex,
+          ),
         );
-      }),
+      },
     );
   }
 }
