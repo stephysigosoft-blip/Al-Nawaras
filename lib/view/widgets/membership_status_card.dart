@@ -2,8 +2,19 @@ import 'package:flutter/material.dart';
 
 class MembershipStatusCard extends StatelessWidget {
   final double width;
+  final String status;
+  final int vehicles;
+  final int bookings;
+  final int services;
 
-  const MembershipStatusCard({super.key, required this.width});
+  const MembershipStatusCard({
+    super.key,
+    required this.width,
+    required this.status,
+    required this.vehicles,
+    required this.bookings,
+    required this.services,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +39,9 @@ class MembershipStatusCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Membership Status',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
+              Text(
+                "MemberShip Status",
+                style: TextStyle(fontSize: 15, color: Colors.grey.shade500),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -59,9 +66,9 @@ class MembershipStatusCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Monthly Premium Member',
-            style: TextStyle(
+          Text(
+            status,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Colors.black,
@@ -71,9 +78,9 @@ class MembershipStatusCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildStatBox('Vehicles', '02', width),
-              _buildStatBox('Bookings', '05', width),
-              _buildStatBox('Services', '03', width),
+              _buildStatBox('Vehicles', vehicles.toString(), width),
+              _buildStatBox('Bookings', bookings.toString(), width),
+              _buildStatBox('Services', services.toString(), width),
             ],
           ),
         ],

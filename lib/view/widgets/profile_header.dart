@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../controller/home_controller.dart';
+import '../../controller/profile_controller.dart';
 
 class ProfileHeader extends StatelessWidget {
   final double width;
@@ -74,6 +76,15 @@ class ProfileHeader extends StatelessWidget {
   }
 
   Widget _buildUserInfo(double width) {
+    final controller = Get.find<ProfileController>();
+    return Obx(() {
+    final user = controller.profile.value;
+    final box = GetStorage();
+
+    final name = user?.name ?? box.read('name') ?? 'User';
+    final mobile = user?.mobile ?? box.read('mobile') ?? 'N/A';
+    final email = user?.email ?? box.read('email') ?? 'N/A';
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: width * 0.04),
       child: Row(
@@ -87,35 +98,40 @@ class ProfileHeader extends StatelessWidget {
             child: CircleAvatar(
               radius: width * 0.09, // Dynamic size
               backgroundColor: Colors.transparent,
-              child: Icon(
-                Icons.person,
-                color: Colors.blueGrey[800],
-                size: width * 0.12,
-              ),
+              backgroundImage: user?.profileImage != null && user!.profileImage!.isNotEmpty
+                  ? NetworkImage(user.profileImage!)
+                  : null,
+              child: user?.profileImage == null || user!.profileImage!.isEmpty
+                  ? Icon(
+                      Icons.person,
+                      color: Colors.blueGrey[800],
+                      size: width * 0.12,
+                    )
+                  : null,
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
-                  'Faizan Arshad',
-                  style: TextStyle(
+                  name,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  '+97152713,0815',
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                  mobile,
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
-                  'faizan.arshad@ajgroupuse.com',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                  email,
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ],
             ),
@@ -123,5 +139,6 @@ class ProfileHeader extends StatelessWidget {
         ],
       ),
     );
+    });
   }
 }
