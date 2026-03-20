@@ -1,58 +1,88 @@
 import 'package:al_nawaras/view/payment/payment_view.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import '../config/api_constants.dart';
 
 class AdditionalServicesController extends GetxController {
-  final List<Map<String, String>> services = [
-    {
-      'title': 'Battery Replacement',
-      'image': 'lib/assets/images/battery.png',
-      'description':
-          'Includes battery health check, diagnostics, and complete battery replacement if needed. High-quality batteries only.',
-      'price': 'AED 150',
-    },
-    {
-      'title': 'Oil Change',
-      'image': 'lib/assets/images/oil charge.png',
-      'description':
-          'Scheduled service with engine oil and oil filter change. Includes visual inspection of fluid levels and filters.',
-      'price': 'AED 300',
-    },
-    {
-      'title': 'Tire Change & Balancing',
-      'image': 'lib/assets/images/tire change.png',
-      'description':
-          'Flat tire repair, tire replacement, and computerized wheel balancing. Can be done on-site.',
-      'price': 'AED 80 per tire',
-    },
-    {
-      'title': 'Cleaning Services',
-      'image': 'lib/assets/images/cleaning.png',
-      'description':
-          'Options include basic pressure wash, vacuuming, dashboard cleaning and detailed upholstery care. Choose from exterior, interior or both.',
-      'price': 'AED 50',
-    },
-    {
-      'title': 'Towing',
-      'image': 'lib/assets/images/Trolly.png',
-      'description':
-          'Professional towing service for caravans, boats, and trucks. Safe delivery from your location to Al Nawras Parking or vice versa within Dubai/Ajman area.',
-      'price': 'AED 100',
-    },
-    {
-      'title': 'Vehicle Pickup & Drop-off',
-      'image': 'lib/assets/images/vehicle pickup.png',
-      'description':
-          'Have our team pick up or drop off your vehicle directly at your home or location. Concierge-level service.',
-      'price': 'AED 120',
-    },
-    {
-      'title': 'Customer Pickup & Drop-off',
-      'image': 'lib/assets/images/customer pickup.png',
-      'description':
-          'Naswara provides seamless pickup and drop off from your home or location, delivering a truly concierge experience.',
-      'price': 'AED 120',
-    },
-  ];
+  List<Map<String, dynamic>> services = [];
+  bool isLoading = false;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchServices();
+  }
+
+  Future<void> fetchServices() async {
+    isLoading = true;
+    update();
+
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      debugPrint('\n--- API REQUEST (services) ---');
+      debugPrint('URL: ${ApiConstants.services}');
+      debugPrint('Headers: $headers');
+
+      final response = await dio.get(
+        ApiConstants.services,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (services) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          final List<dynamic> servicesData =
+              response.data['data']['services'] ?? [];
+
+          services = servicesData.map((s) {
+            String title = s['service_name'] ?? 'Service';
+            return {
+              'id': s['id']?.toString() ?? '',
+              'title': title,
+              'image': _getServiceImage(title),
+              'description': s['description'] ?? 'No description available.',
+              'price': 'AED ${s['price'] ?? '0'}',
+            };
+          }).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching services: $e');
+    } finally {
+      isLoading =
+          true; // Temporary keep true if data is empty as per user response? No, false.
+      isLoading = false;
+      update();
+    }
+  }
+
+  String _getServiceImage(String title) {
+    String lowerTitle = title.toLowerCase();
+    if (lowerTitle.contains('battery')) return 'lib/assets/images/battery.png';
+    if (lowerTitle.contains('oil')) return 'lib/assets/images/oil charge.png';
+    if (lowerTitle.contains('tire')) return 'lib/assets/images/tire change.png';
+    if (lowerTitle.contains('cleaning'))
+      return 'lib/assets/images/cleaning.png';
+    if (lowerTitle.contains('towing')) return 'lib/assets/images/Trolly.png';
+    if (lowerTitle.contains('vehicle pickup'))
+      return 'lib/assets/images/vehicle pickup.png';
+    if (lowerTitle.contains('customer pickup'))
+      return 'lib/assets/images/customer pickup.png';
+    return 'lib/assets/images/battery.png'; // Default
+  }
 
   void onBuyNowClick(int index) {
     final service = services[index];

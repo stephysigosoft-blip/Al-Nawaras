@@ -889,12 +889,19 @@ class HomeScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             padding: const EdgeInsets.all(8),
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.directions_car, color: Colors.black26),
-            ),
+            child: imagePath.startsWith('http')
+                ? Image.network(
+                    imagePath,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.directions_car, color: Colors.black26),
+                  )
+                : Image.asset(
+                    imagePath,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.directions_car, color: Colors.black26),
+                  ),
           ),
           SizedBox(width: width * 0.04),
           Expanded(

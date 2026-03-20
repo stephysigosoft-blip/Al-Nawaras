@@ -12,4 +12,29 @@ class ApiConstants {
 
   // Home
   static const String home = '${baseUrl}home';
+
+  // Parking
+  static const String locationDetails = '${baseUrl}parking/location_details';
+  static const String slotDetails = '${baseUrl}parking/slot_details';
+  static const String confirmLocation = '${baseUrl}parking/confirm_location';
+
+  // Memberships
+  static const String memberships = '${baseUrl}memberships';
+
+  // Additional Services
+  static const String services = '${baseUrl}services';
+
+  // Booking History
+  static const String parkingHistory = '${baseUrl}parking/history';
+
+  // Rewards
+  static const String rewards = '${baseUrl}rewards';
+
+  // Vehicles
+  static const String vehicles = '${baseUrl}vehicles';
+
+  /// fetch vehicle details
+
+  // Vehicle Types
+  static const String vehicleTypes = '${baseUrl}vehicle_types';
 }

@@ -1,3 +1,4 @@
+import 'package:al_nawaras/view/book_parking/book_parking_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,6 +42,8 @@ class HomeController extends GetxController {
   bool hasMoreActivities = true;
   bool isVehicleLoading = false;
   bool isActivityLoading = false;
+  bool isLoadingHistory = false;
+  List<Map<String, dynamic>> bookingHistory = [];
 
   @override
   void onInit() {
@@ -54,26 +57,26 @@ class HomeController extends GetxController {
       final storage = GetStorage();
       final token = storage.read('token');
 
+      final headers = {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
       if (kDebugMode) {
         print('\n--- API REQUEST (home) ---');
         print('URL: ${ApiConstants.home}');
-        print('Token: $token');
+        print('Headers: $headers');
       }
 
       final response = await dio.get(
         ApiConstants.home,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
-          },
-        ),
+        options: Options(headers: headers),
       );
 
       if (kDebugMode) {
         print('--- API RESPONSE (home) ---');
         print('Status Code: ${response.statusCode}');
-        print('Response Data: ${response.data}');
+        print('Response Body: ${response.data}');
         print('--------------------------\n');
       }
 
@@ -95,17 +98,22 @@ class HomeController extends GetxController {
 
           final vehicles = data['my_vehicles'] as List?;
           if (vehicles != null) {
-            allVehicles = vehicles
-                .map(
-                  (v) => {
-                    'title': v['vehicle_type_name'] ?? 'Vehicle',
-                    'license': v['license_number'] ?? '',
-                    'isParked': false,
-                    'spot': '',
-                    'image': 'lib/assets/images/Airstream.png',
-                  },
-                )
-                .toList();
+            allVehicles = vehicles.map((v) {
+              String? imageVal = v['vehicle_image']?.toString();
+              return {
+                'title': v['vehicle_type_name'] ?? 'Vehicle',
+                'license': v['license_number'] ?? '',
+                'isParked': false,
+                'spot': '',
+                // If it's null, false or empty, use default asset
+                'image':
+                    (imageVal != null &&
+                        imageVal.isNotEmpty &&
+                        imageVal != "false")
+                    ? imageVal
+                    : 'lib/assets/images/Airstream.png',
+              };
+            }).toList();
           }
 
           final activities = data['recent_activities'] as List?;
@@ -123,6 +131,61 @@ class HomeController extends GetxController {
       if (kDebugMode) {
         print('Failed to fetch home data: $e');
       }
+    }
+  }
+
+  Future<void> fetchParkingHistory() async {
+    isLoadingHistory = true;
+    update();
+
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      debugPrint('\n--- API REQUEST (parking_history) ---');
+      debugPrint('URL: ${ApiConstants.parkingHistory}');
+      debugPrint('Headers: $headers');
+
+      final response = await dio.get(
+        ApiConstants.parkingHistory,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (parking_history) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          final historyData = response.data['data']['history'] as List? ?? [];
+          bookingHistory = historyData.map((item) {
+            return {
+              'id': item['id'],
+              'title': item['membership_plan'] ?? 'Parking',
+              'subtitle':
+                  '${item['vehicle_name'] ?? 'Vehicle'} • Spot ${item['slot_number'] ?? 'N/A'}',
+              'status': item['status'] ?? 'Active',
+              'startDate': item['start_date'] ?? '',
+              'endDate': item['end_date'] ?? '',
+              'amount': 'AED ${item['price'] ?? '0'}',
+              'isActive':
+                  (item['status']?.toString().toLowerCase() == 'active'),
+              'monthYear': item['month_year'] ?? 'Recent',
+            };
+          }).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching parking history: $e');
+    } finally {
+      isLoadingHistory = false;
+      update();
     }
   }
 
@@ -232,7 +295,7 @@ class HomeController extends GetxController {
   }
 
   void onBookParkingClick() {
-    Get.to(() => const SelectParkingView());
+    Get.to(() => const BookParkingScreen());
   }
 
   void onRequestServiceClick() {
@@ -244,11 +307,11 @@ class HomeController extends GetxController {
   }
 
   void onGetDirectionsClick() {
-    if (kDebugMode) print("Get Directions Clicked");
+    Get.to(() => const SelectParkingView(isDirectionMode: true));
   }
 
   void onBookNowClick() {
-    Get.to(() => const SelectParkingView());
+    Get.to(() => const SelectParkingView(isDirectionMode: false));
   }
 
   void onCheckRewardsClick() {

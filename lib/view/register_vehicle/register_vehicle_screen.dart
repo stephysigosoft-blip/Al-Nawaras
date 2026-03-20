@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../controller/register_vehicle_controller.dart';
 
 class RegisterVehicleScreen extends StatelessWidget {
@@ -165,6 +167,7 @@ class RegisterVehicleScreen extends StatelessWidget {
                         controller.onUploadPhotoClick,
                         height,
                         width,
+                        file: controller.vehiclePhoto,
                       ),
                       SizedBox(height: height * 0.035),
                       _buildLabel('Vehicle Registration Document'),
@@ -173,6 +176,7 @@ class RegisterVehicleScreen extends StatelessWidget {
                         controller.onUploadDocClick,
                         height,
                         width,
+                        file: controller.registrationDoc,
                       ),
                       SizedBox(height: height * 0.045),
                       _buildButton(
@@ -402,8 +406,9 @@ class RegisterVehicleScreen extends StatelessWidget {
     String hint,
     VoidCallback onTap,
     double height,
-    double width,
-  ) {
+    double width, {
+    XFile? file,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -412,21 +417,29 @@ class RegisterVehicleScreen extends StatelessWidget {
         decoration: const BoxDecoration(color: Colors.white),
         child: CustomPaint(
           painter: DashPainter(),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "lib/assets/images/no image.png",
-                height: 30,
-                width: 30,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                hint,
-                style: const TextStyle(color: Colors.black26, fontSize: 12),
-              ),
-            ],
-          ),
+          child: file != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.file(File(file.path), fit: BoxFit.cover),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "lib/assets/images/no image.png",
+                      height: 30,
+                      width: 30,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      hint,
+                      style: const TextStyle(
+                        color: Colors.black26,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );
