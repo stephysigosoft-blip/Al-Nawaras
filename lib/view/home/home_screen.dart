@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:convert';
 import '../../controller/home_controller.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/draggable_help_button.dart';
@@ -251,6 +252,7 @@ class HomeScreen extends StatelessWidget {
     double height,
     double width,
   ) {
+    final img = controller.profilePicture;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,18 +300,16 @@ class HomeScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: const Color(0xFFFFC107), // Yellow background
-                  image:
-                      controller.profilePicture != null &&
-                          controller.profilePicture!.isNotEmpty
+                  image: img != null && img.isNotEmpty
                       ? DecorationImage(
-                          image: NetworkImage(controller.profilePicture!),
+                          image: img.startsWith('http')
+                              ? NetworkImage(img)
+                              : MemoryImage(base64Decode(img)) as ImageProvider,
                           fit: BoxFit.cover,
                         )
                       : null,
                 ),
-                child:
-                    controller.profilePicture == null ||
-                        controller.profilePicture!.isEmpty
+                child: img == null || img.isEmpty
                     ? const Icon(Icons.person, color: Colors.black54)
                     : null,
               ),
