@@ -41,10 +41,7 @@ class MembershipStatusCard extends StatelessWidget {
             children: [
               Text(
                 "MemberShip Status",
-                style: TextStyle(
-                  fontSize:15,
-                  color:Colors.grey.shade500
-                ),
+                style: TextStyle(fontSize: 15, color: Colors.grey.shade500),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
