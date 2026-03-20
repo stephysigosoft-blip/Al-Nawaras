@@ -1,36 +1,205 @@
-import 'package:al_nawaras/model/profile_model.dart';
-import 'package:al_nawaras/services/profile_service.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../config/api_constants.dart';
+import '../model/profile_model.dart';
 
 class ProfileController extends GetxController {
-  var isLoading = true.obs;
+  final Dio dio = Dio();
+  final box = GetStorage();
+
+  var isLoading = false.obs;
   var profile = Rxn<ProfileModel>();
-  final ProfileService service = ProfileService();
+
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+
+  final picker = ImagePicker();
+  var selectedImage = Rx<File?>(null);
+  String base64Image = "";
+
+  // 🔹 GET TOKEN
+  String? get token => box.read('token');
 
   @override
   void onInit() {
     super.onInit();
-    fetchProfileData();
+    fetchProfile();
   }
 
-  void fetchProfileData() async {
+  // ============================================================
+  // 🔹 1. FETCH PROFILE
+  // ============================================================
+  Future<void> fetchProfile() async {
     try {
       isLoading(true);
-      final box = GetStorage();
-      String? token = box.read('token'); 
+      if (token == null || token!.isEmpty) {
+  Get.snackbar("Error", "Token not found");
+  return;
+}
 
-      if (token != null) {
-        final result = await service.fetchProfile(token); 
-        if (result != null) {
-          profile.value = result;
-        }
+      final response = await dio.get(
+        ApiConstants.profile, // /api/profile
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      final data = response.data;
+
+      if (data['status'] == true) {
+        profile.value = ProfileModel.fromJson(data['data']);
+
+        // Prefill fields
+        nameController.text = profile.value?.name ?? "";
+        emailController.text = profile.value?.email ?? "";
+        phoneController.text = profile.value?.mobile ?? "";
+      } else {
+        Get.snackbar("Error", data['message']);
       }
-    } catch (e) {
-      Get.snackbar("Error",e.toString(),snackPosition:SnackPosition.BOTTOM);
+    } on DioException catch (e) {
+      Get.snackbar("Error", e.response?.data['message'] ?? "Fetch failed");
     } finally {
       isLoading(false);
-      update();
     }
+  }
+
+  // ============================================================
+  // 🔹 RESET CONTROLLERS
+  // ============================================================
+  void resetControllers() {
+    nameController.text = profile.value?.name ?? "";
+    emailController.text = profile.value?.email ?? "";
+    phoneController.text = profile.value?.mobile ?? "";
+    selectedImage.value = null;
+    base64Image = "";
+  }
+
+  // ============================================================
+  // 🔹 2. PICK IMAGE
+  // ============================================================
+  Future<void> pickImage() async {
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 40, // Compress to avoid massive base64 payloads
+      maxWidth: 800,
+    );
+
+    if (picked != null) {
+      selectedImage.value = File(picked.path);
+
+      List<int> bytes = await selectedImage.value!.readAsBytes();
+      base64Image = base64Encode(bytes);
+    }
+  }
+
+  // ============================================================
+  // 🔹 3. UPDATE PROFILE
+  // ============================================================
+  Future<void> updateProfile() async {
+    if (nameController.text.trim().isEmpty) {
+      Get.snackbar("Error", "Name cannot be empty", backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM, duration: const Duration(seconds: 1));
+      return;
+    }
+    if (emailController.text.trim().isEmpty) {
+      Get.snackbar("Error", "Email cannot be empty", backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+    if (!GetUtils.isEmail(emailController.text.trim())) {
+      Get.snackbar("Error", "Invalid email format", backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+    if (phoneController.text.trim().isEmpty) {
+      Get.snackbar("Error", "Phone number cannot be empty", backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+    if (!GetUtils.isNumericOnly(phoneController.text.trim())) {
+      Get.snackbar("Error", "Phone number must contain only digits", backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+
+    try {
+      isLoading(true);
+
+      final response = await dio.post(
+        ApiConstants.updateprofile, // /api/profile/update
+        data: {
+          "name": nameController.text,
+          "email": emailController.text,
+          "phone_number": phoneController.text,
+          if (base64Image.isNotEmpty) "profile_image": base64Image,
+        },
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      print('--- Update Profile Response ---');
+      print('Status Code: ${response.statusCode}');
+      print('Response Data: ${response.data}');
+
+      final data = response.data;
+
+      if (data['status'] == true) {
+        Get.snackbar(
+          "Success",
+          data['message'] ?? "Update successful",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 1),
+        );
+
+        await fetchProfile(); // refresh data
+        Future.delayed(const Duration(seconds: 1), () {
+          Get.back();
+        });
+      } else {
+        Get.snackbar(
+          "Error",
+          data['message'] ?? "Update failed",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 1),
+        );
+      }
+    } on DioException catch (e) {
+      String errMsg = "Update failed";
+      if (e.response != null && e.response!.data is Map) {
+        errMsg = e.response!.data['message'] ?? "Update failed";
+      } else {
+        errMsg = e.message ?? "Update failed";
+      }
+      Get.snackbar(
+        "Error",
+        errMsg,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 1),
+      );
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    super.onClose();
   }
 }
