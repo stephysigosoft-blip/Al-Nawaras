@@ -367,7 +367,7 @@ class HomeController extends GetxController {
   }
 
   void onProfileClick() {
-    if (kDebugMode) print("Profile Clicked");
+    changeBottomNavIndex(3);
   }
 
   void onRenewClick() {
