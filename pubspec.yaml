@@ -42,10 +42,13 @@ dependencies:
   get: ^4.7.2
   get_storage: ^2.1.1
   image_picker: ^1.2.1
+<<<<<<< HEAD
   http: ^1.6.0
   package_info_plus: ^9.0.0
   google_fonts: ^8.0.2
   shared_preferences: ^2.5.4
+=======
+>>>>>>> 2be31610025fc3fd702c9497a1ec6d8f34ed1caf
 
 dev_dependencies:
   flutter_test:

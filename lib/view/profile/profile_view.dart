@@ -9,6 +9,7 @@ import '../widgets/profile_menu_item.dart';
 import '../widgets/draggable_help_button.dart';
 import '../../controller/home_controller.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
+import 'Profile_update_view.dart';
 
 class ProfileView extends StatelessWidget {
   final Function(int)? onTabChanged;
@@ -99,11 +100,17 @@ class ProfileView extends StatelessWidget {
 Widget _buildMenuList(BuildContext context, double width) {
   return Column(
     children: [
-      ProfileMenuItem(
-        icon: Icons.person_outline,
-        title: 'Personal Information',
-        subtitle: 'Update your personal details',
-        width: width,
+      GestureDetector(
+        onTap: () {
+          Get.find<ProfileController>().resetControllers();
+          Get.to(() => const ProfileUpdateView());
+        },
+        child: ProfileMenuItem(
+          icon: Icons.person_outline,
+          title: 'Personal Information',
+          subtitle: 'Update your personal details',
+          width: width,
+        ),
       ),
       ProfileMenuItem(
         icon: Icons.security_outlined,

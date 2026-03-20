@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'dart:convert';
 import '../../controller/home_controller.dart';
 import '../../controller/profile_controller.dart';
 
@@ -84,6 +85,7 @@ class ProfileHeader extends StatelessWidget {
     final name = user?.name ?? box.read('name') ?? 'User';
     final mobile = user?.mobile ?? box.read('mobile') ?? 'N/A';
     final email = user?.email ?? box.read('email') ?? 'N/A';
+    final img = user?.profileImage;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: width * 0.04),
@@ -98,10 +100,12 @@ class ProfileHeader extends StatelessWidget {
             child: CircleAvatar(
               radius: width * 0.09, // Dynamic size
               backgroundColor: Colors.transparent,
-              backgroundImage: user?.profileImage != null && user!.profileImage!.isNotEmpty
-                  ? NetworkImage(user.profileImage!)
+              backgroundImage: img != null && img.isNotEmpty
+                  ? (img.startsWith('http')
+                      ? NetworkImage(img)
+                      : MemoryImage(base64Decode(img)) as ImageProvider)
                   : null,
-              child: user?.profileImage == null || user!.profileImage!.isEmpty
+              child: img == null || img.isEmpty
                   ? Icon(
                       Icons.person,
                       color: Colors.blueGrey[800],
