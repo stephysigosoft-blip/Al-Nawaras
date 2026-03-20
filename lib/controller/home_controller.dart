@@ -12,6 +12,9 @@ import '../view/rewards/rewards_view.dart';
 import '../view/home/my_vehicles_view.dart';
 import '../view/home/recent_activity_view.dart';
 import 'dart:async';
+import 'package:dio/dio.dart';
+import 'package:get_storage/get_storage.dart';
+import '../config/api_constants.dart';
 
 class HomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
@@ -21,63 +24,15 @@ class HomeController extends GetxController {
   bool showAllVehicles = false;
   bool showAllActivities = false;
 
-  final List<Map<String, dynamic>> allVehicles = [
-    {
-      'title': 'Airstream Caravel',
-      'license': 'AD-45678',
-      'isParked': true,
-      'spot': 'B-24',
-      'image': 'lib/assets/images/Airstream.png',
-    },
-    {
-      'title': 'Airstream Basecamp',
-      'license': 'DX-98123',
-      'isParked': false,
-      'spot': '',
-      'image': 'lib/assets/images/Airstream.png',
-    },
-    {
-      'title': 'Ford F-150',
-      'license': 'NY-12345',
-      'isParked': true,
-      'spot': 'C-12',
-      'image': 'lib/assets/images/Airstream.png',
-    },
-    {
-      'title': 'Tesla Model 3',
-      'license': 'CA-67890',
-      'isParked': false,
-      'spot': '',
-      'image': 'lib/assets/images/Airstream.png',
-    },
-  ];
+  String userName = "Loading...";
+  String membershipStatus = "Loading...";
+  String membershipTier = "Loading...";
+  String? membershipValidUntil;
+  bool claimReward = false;
+  String? profilePicture;
 
-  final List<Map<String, dynamic>> allActivities = [
-    {
-      'titleKey': 'parkingRenewed',
-      'subtitle': 'Today, 10:30 AM • monthlyPremium',
-      'icon': Icons.history,
-      'color': const Color(0xFF00B2FF),
-    },
-    {
-      'titleKey': 'vehicleCheckIn',
-      'subtitle': 'Yesterday, 2:15 PM • parkedAtSpotA12',
-      'icon': Icons.check_circle_outline,
-      'color': const Color(0xFF4EEB4E),
-    },
-    {
-      'titleKey': 'parkingRenewed',
-      'subtitle': '2 days ago, 09:00 AM • monthlyPremium',
-      'icon': Icons.history,
-      'color': const Color(0xFF00B2FF),
-    },
-    {
-      'titleKey': 'vehicleCheckIn',
-      'subtitle': '3 days ago, 11:45 AM • parkedAtSpotB05',
-      'icon': Icons.check_circle_outline,
-      'color': const Color(0xFF4EEB4E),
-    },
-  ];
+  List<Map<String, dynamic>> allVehicles = [];
+  List<Map<String, dynamic>> allActivities = [];
 
   List<Map<String, dynamic>> filteredVehicles = [];
   List<Map<String, dynamic>> filteredActivities = [];
@@ -90,8 +45,85 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    filteredVehicles = List.from(allVehicles);
-    filteredActivities = List.from(allActivities);
+    fetchHomeData();
+  }
+
+  Future<void> fetchHomeData() async {
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      if (kDebugMode) {
+        print('\n--- API REQUEST (home) ---');
+        print('URL: ${ApiConstants.home}');
+        print('Token: $token');
+      }
+
+      final response = await dio.get(
+        ApiConstants.home,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      if (kDebugMode) {
+        print('--- API RESPONSE (home) ---');
+        print('Status Code: ${response.statusCode}');
+        print('Response Data: ${response.data}');
+        print('--------------------------\n');
+      }
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          final data = response.data['data'];
+
+          userName = data['user_name'] ?? 'Guest';
+          profilePicture = data['profile_picture'];
+
+          final membership = data['membership_details'];
+          if (membership != null) {
+            membershipStatus = membership['status'] ?? 'No Active Plan';
+            membershipTier = membership['tier'] ?? 'Standard';
+            membershipValidUntil = membership['valid_until']?.toString();
+          }
+
+          claimReward = data['claim_reward'] == true;
+
+          final vehicles = data['my_vehicles'] as List?;
+          if (vehicles != null) {
+            allVehicles = vehicles
+                .map(
+                  (v) => {
+                    'title': v['vehicle_type_name'] ?? 'Vehicle',
+                    'license': v['license_number'] ?? '',
+                    'isParked': false,
+                    'spot': '',
+                    'image': 'lib/assets/images/Airstream.png',
+                  },
+                )
+                .toList();
+          }
+
+          final activities = data['recent_activities'] as List?;
+          if (activities != null) {
+            // Mapping for activities if they eventually have data
+            allActivities = [];
+          }
+
+          filteredVehicles = List.from(allVehicles);
+          filteredActivities = List.from(allActivities);
+          update();
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Failed to fetch home data: $e');
+      }
+    }
   }
 
   void loadMoreVehicles() {

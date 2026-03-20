@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../controller/home_controller.dart';
 import '../../generated/l10n.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_no_data.dart';
 
 class RecentActivityView extends StatelessWidget {
   const RecentActivityView({super.key});
@@ -18,13 +19,12 @@ class RecentActivityView extends StatelessWidget {
           backgroundColor: const Color(0xFFF7F7F7),
           appBar: CustomAppBar(
             title: S.of(context).recentActivity,
+            centerTitle: false,
             onBackPressed: () => Get.back(),
           ),
           body: controller.filteredActivities.isEmpty
-              ? Center(
-                  child: Text(
-                    S.of(context).currentlyNoItemsFoundPleaseTryLater,
-                  ),
+              ? CustomNoData(
+                  message: S.of(context).currentlyNoItemsFoundPleaseTryLater,
                 )
               : NotificationListener<ScrollNotification>(
                   onNotification: (ScrollNotification scrollInfo) {

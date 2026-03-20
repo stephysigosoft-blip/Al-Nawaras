@@ -70,7 +70,9 @@ class ForgotPasswordView extends StatelessWidget {
                     ),
                     SizedBox(height: height * 0.05),
                     ElevatedButton(
-                      onPressed: controller.sendOtp,
+                      onPressed: controller.isLoading
+                          ? null
+                          : controller.sendOtp,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFE30613),
                         foregroundColor: Colors.white,
@@ -80,28 +82,91 @@ class ForgotPasswordView extends StatelessWidget {
                         ),
                         elevation: 0,
                       ),
-                      child: const Text(
-                        'Send OTP',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: controller.isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Send OTP',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ],
 
                   // OTP Section
                   if (controller.isOtpSent) ...[
                     _buildLabel('Enter 6-Digit OTP'),
-                    _buildTextField(
-                      controller.otpController,
-                      'X X X X X X',
-                      Icons.security_outlined,
-                      keyboardType: TextInputType.number,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(6, (index) {
+                        return SizedBox(
+                          width: width * 0.12,
+                          height: height * 0.065,
+                          child: TextField(
+                            controller: controller.otpDigitControllers[index],
+                            focusNode: controller.otpFocusNodes[index],
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            maxLength: 1,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF001133),
+                            ),
+                            decoration: InputDecoration(
+                              counterText: '',
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: EdgeInsets.zero,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFE0E0E0),
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFE0E0E0),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: const BorderSide(
+                                  color: Color(0xFFE30613),
+                                ),
+                              ),
+                            ),
+                            onChanged: (value) {
+                              if (value.isNotEmpty && index < 5) {
+                                // Move to next field
+                                FocusScope.of(context).requestFocus(
+                                  controller.otpFocusNodes[index + 1],
+                                );
+                              } else if (value.isEmpty && index > 0) {
+                                // Move to previous field on delete
+                                FocusScope.of(context).requestFocus(
+                                  controller.otpFocusNodes[index - 1],
+                                );
+                              }
+                            },
+                          ),
+                        );
+                      }),
                     ),
                     SizedBox(height: height * 0.05),
                     ElevatedButton(
-                      onPressed: controller.verifyOtp,
+                      onPressed: controller.isLoading
+                          ? null
+                          : controller.verifyOtp,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFE30613),
                         foregroundColor: Colors.white,
@@ -111,13 +176,22 @@ class ForgotPasswordView extends StatelessWidget {
                         ),
                         elevation: 0,
                       ),
-                      child: const Text(
-                        'Verify OTP',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: controller.isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Verify OTP',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                     SizedBox(height: height * 0.025),
                     Center(

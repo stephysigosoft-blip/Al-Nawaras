@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../controller/home_controller.dart';
 import '../../generated/l10n.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_no_data.dart';
 
 class MyVehiclesView extends StatelessWidget {
   const MyVehiclesView({super.key});
@@ -18,13 +19,17 @@ class MyVehiclesView extends StatelessWidget {
           backgroundColor: const Color(0xFFF7F7F7),
           appBar: CustomAppBar(
             title: S.of(context).myVehicles,
+            centerTitle: false,
             onBackPressed: () => Get.back(),
           ),
           body: controller.filteredVehicles.isEmpty
-              ? Center(child: Text(S.of(context).currentlyNoItemsFoundPleaseTryLater))
+              ? CustomNoData(
+                  message: S.of(context).currentlyNoItemsFoundPleaseTryLater,
+                )
               : NotificationListener<ScrollNotification>(
                   onNotification: (ScrollNotification scrollInfo) {
-                    if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                    if (scrollInfo.metrics.pixels ==
+                        scrollInfo.metrics.maxScrollExtent) {
                       controller.loadMoreVehicles();
                     }
                     return true;
@@ -34,7 +39,8 @@ class MyVehiclesView extends StatelessWidget {
                       horizontal: width * 0.05,
                       vertical: height * 0.02,
                     ),
-                    itemCount: controller.filteredVehicles.length +
+                    itemCount:
+                        controller.filteredVehicles.length +
                         (controller.isVehicleLoading ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == controller.filteredVehicles.length) {
