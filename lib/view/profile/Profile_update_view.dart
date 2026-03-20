@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import '../../controller/profile_controller.dart';
+import '../../generated/l10n.dart';
 
 class ProfileUpdateView extends StatelessWidget {
   const ProfileUpdateView({super.key});
@@ -24,9 +25,9 @@ class ProfileUpdateView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
           onPressed: () => Get.back(),
         ),
-        title: const Text(
-          'Personal Information',
-          style: TextStyle(
+        title: Text(
+          S.of(context).personalInformation,
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -45,9 +46,9 @@ class ProfileUpdateView extends StatelessWidget {
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     color: Color(0xFFE30613),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30),
+                    borderRadius: BorderRadiusDirectional.only(
+                      bottomStart: Radius.circular(30),
+                      bottomEnd: Radius.circular(30),
                     ),
                   ),
                 ),
@@ -61,9 +62,9 @@ class ProfileUpdateView extends StatelessWidget {
                       children: [
                         _buildProfileImagePicker(width),
                         SizedBox(height: height * 0.04),
-                        _buildFormFields(width),
+                        _buildFormFields(context, width),
                         SizedBox(height: height * 0.05),
-                        _buildSaveButton(width),
+                        _buildSaveButton(context, width),
                       ],
                     ),
                   ),
@@ -125,9 +126,9 @@ class ProfileUpdateView extends StatelessWidget {
               );
             }),
           ),
-          Positioned(
+          PositionedDirectional(
             bottom: 4,
-            right: 4,
+            end: 4,
             child: GestureDetector(
               onTap: () => controller.pickImage(),
               child: Container(
@@ -149,28 +150,28 @@ class ProfileUpdateView extends StatelessWidget {
     );
   }
 
-  Widget _buildFormFields(double width) {
+  Widget _buildFormFields(BuildContext context, double width) {
     final controller = Get.find<ProfileController>();
     return Column(
       children: [
         _buildInputField(
-          label: 'Full Name',
-          hintText: 'Enter your full name',
+          label: S.of(context).fullName,
+          hintText: S.of(context).enterFullName,
           icon: Icons.person_outline,
           controller: controller.nameController,
         ),
         const SizedBox(height: 20),
         _buildInputField(
-          label: 'Email Address',
-          hintText: 'Enter your email',
+          label: S.of(context).emailAddress,
+          hintText: S.of(context).enterEmail,
           icon: Icons.mail_outline,
           keyboardType: TextInputType.emailAddress,
           controller: controller.emailController,
         ),
         const SizedBox(height: 20),
         _buildInputField(
-          label: 'Mobile Number',
-          hintText: 'Enter your mobile number',
+          label: S.of(context).mobileNumber,
+          hintText: S.of(context).enterMobileNumber,
           icon: Icons.phone_android_outlined,
           keyboardType: TextInputType.phone,
           controller: controller.phoneController,
@@ -227,7 +228,7 @@ class ProfileUpdateView extends StatelessWidget {
     );
   }
 
-  Widget _buildSaveButton(double width) {
+  Widget _buildSaveButton(BuildContext context, double width) {
     final controller = Get.find<ProfileController>();
     return SizedBox(
       width: double.infinity,
@@ -241,9 +242,9 @@ class ProfileUpdateView extends StatelessWidget {
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        child: const Text(
-          'Save Changes',
-          style: TextStyle(
+        child: Text(
+          S.of(context).saveChanges,
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),

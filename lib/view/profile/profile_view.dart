@@ -2,6 +2,7 @@ import 'package:al_nawaras/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../generated/l10n.dart';
 import '../welcome/welcome_screen.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/membership_status_card.dart';
@@ -51,13 +52,13 @@ class ProfileView extends StatelessWidget {
                         clipBehavior: Clip.none,
                         children: [
                           ProfileHeader(width: width, height: height),
-                          Positioned(
+                          PositionedDirectional(
                             top: height * 0.25, // Adjust for overlap
-                            left: padding,
-                            right: padding,
+                            start: padding,
+                            end: padding,
                             child: MembershipStatusCard(
                               width: width,
-                              status: profileController.profile.value?.membershipStatus ?? "No Status",
+                              status: profileController.profile.value?.membershipStatus ?? S.of(context).noStatus,
                               vehicles: profileController.profile.value?.vehiclesCount ?? 0,
                               bookings: profileController.profile.value?.bookingsCount ?? 0,
                               services: profileController.profile.value?.servicesCount ?? 0,
@@ -75,7 +76,7 @@ class ProfileView extends StatelessWidget {
                           children: [
                             _buildMenuList(context, width),
                             SizedBox(height: height * 0.03),
-                            _buildSignOutButton(width),
+                            _buildSignOutButton(context, width),
                             SizedBox(height: height * 0.02),
                           ],
                         ),
@@ -95,90 +96,89 @@ class ProfileView extends StatelessWidget {
       },
     );
   }
-}
 
-Widget _buildMenuList(BuildContext context, double width) {
-  return Column(
-    children: [
-      GestureDetector(
-        onTap: () {
-          Get.find<ProfileController>().resetControllers();
-          Get.to(() => const ProfileUpdateView());
+  Widget _buildMenuList(BuildContext context, double width) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            Get.find<ProfileController>().resetControllers();
+            Get.to(() => const ProfileUpdateView());
+          },
+          child: ProfileMenuItem(
+            icon: Icons.person_outline,
+            title: S.of(context).personalInformation,
+            subtitle: S.of(context).updatePersonalDetails,
+            width: width,
+          ),
+        ),
+        ProfileMenuItem(
+          icon: Icons.security_outlined,
+          title: S.of(context).security,
+          subtitle: S.of(context).manageSecurity,
+          width: width,
+        ),
+        ProfileMenuItem(
+          icon: Icons.credit_card_outlined,
+          title: S.of(context).paymentMethods,
+          subtitle: S.of(context).managePaymentOptions,
+          width: width,
+        ),
+        GestureDetector(
+          onTap: () {},
+          child: ProfileMenuItem(
+            icon: Icons.assignment_outlined,
+            title: S.of(context).bookings,
+            subtitle: S.of(context).viewPastBookings,
+            width: width,
+          ),
+        ),
+        ProfileMenuItem(
+          icon: Icons.help_outline,
+          title: S.of(context).helpSupport,
+          subtitle: S.of(context).getHelpAccount,
+          width: width,
+          circleBorderWidth: 2.0,
+        ),
+        ProfileMenuItem(
+          icon: Icons.error_outline,
+          title: S.of(context).aboutAlNawaras,
+          subtitle: S.of(context).learnMoreServices,
+          width: width,
+          circleBorderWidth: 2.0,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSignOutButton(BuildContext context, double width) {
+    return SizedBox(
+      width: double.infinity,
+      height: 55,
+      child: OutlinedButton(
+        onPressed: () {
+          final storage = GetStorage();
+          storage.remove('token');
+          storage.remove('partner_id');
+          storage.remove('name');
+          storage.remove('email');
+          storage.remove('mobile');
+          Get.offAll(() => const WelcomeScreen());
         },
-        child: ProfileMenuItem(
-          icon: Icons.person_outline,
-          title: 'Personal Information',
-          subtitle: 'Update your personal details',
-          width: width,
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Color(0xFFE30613), width: 1),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          backgroundColor: Colors.white,
+        ),
+        child: Text(
+          S.of(context).signOut,
+          style: const TextStyle(
+            color: Color(0xFFE30613),
+            // fontWeight: FontWeight.bold,
+            fontSize: 17,
+          ),
         ),
       ),
-      ProfileMenuItem(
-        icon: Icons.security_outlined,
-        title: 'Security',
-        subtitle: 'Manage your password and security',
-        width: width,
-      ),
-      ProfileMenuItem(
-        icon: Icons.credit_card_outlined,
-        title: 'Payment Methods',
-        subtitle: 'Manage your payment options',
-        width: width,
-      ),
-      GestureDetector(
-        onTap: () {},
-        child: ProfileMenuItem(
-          icon: Icons.assignment_outlined,
-          title: 'Booking History',
-          subtitle: 'View your past bookings',
-          width: width,
-        ),
-      ),
-
-      ProfileMenuItem(
-        icon: Icons.help_outline,
-        title: 'Help & Support',
-        subtitle: 'Get Help with your account',
-        width: width,
-        circleBorderWidth: 2.0,
-      ),
-      ProfileMenuItem(
-        icon: Icons.error_outline,
-        title: "About Al-Nawaras",
-        subtitle: "Learn more about our services",
-        width: width,
-        circleBorderWidth: 2.0,
-      ),
-    ],
-  );
-}
-
-Widget _buildSignOutButton(double width) {
-  return SizedBox(
-    width: double.infinity,
-    height: 55,
-    child: OutlinedButton(
-      onPressed: () {
-        final storage = GetStorage();
-        storage.remove('token');
-        storage.remove('partner_id');
-        storage.remove('name');
-        storage.remove('email');
-        storage.remove('mobile');
-        Get.offAll(() => const WelcomeScreen());
-      },
-      style: OutlinedButton.styleFrom(
-        side: const BorderSide(color: Color(0xFFE30613), width: 1),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        backgroundColor: Colors.white,
-      ),
-      child: const Text(
-        'Sign Out',
-        style: TextStyle(
-          color: Color(0xFFE30613),
-          // fontWeight: FontWeight.bold,
-          fontSize: 17,
-        ),
-      ),
-    ),
-  );
+    );
+  }
 }

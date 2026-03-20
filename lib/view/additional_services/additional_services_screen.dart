@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/additional_services_controller.dart';
 import '../../controller/home_controller.dart';
+import '../../generated/l10n.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/draggable_help_button.dart';
@@ -28,7 +29,7 @@ class AdditionalServicesScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: const Color(0xFFF7F7F7),
           appBar: CustomAppBar(
-            title: 'Additional Services',
+            title: S.of(context).additionalServices,
             centerTitle: false,
             onBackPressed: () {
               Get.find<HomeController>().changeBottomNavIndex(0);
@@ -43,9 +44,9 @@ class AdditionalServicesScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: height * 0.025),
-                      const Text(
-                        'Select from our range of additional services',
-                        style: TextStyle(color: Colors.black54, fontSize: 12),
+                      Text(
+                        S.of(context).selectRangeServices,
+                        style: const TextStyle(color: Colors.black54, fontSize: 12),
                       ),
                       SizedBox(height: height * 0.025),
                       // Render each service card
@@ -61,8 +62,8 @@ class AdditionalServicesScreen extends StatelessWidget {
                       else if (controller.services.isEmpty)
                         SizedBox(
                           height: height * 0.5,
-                          child: const Center(
-                            child: CustomNoData(message: "No services found"),
+                          child: Center(
+                            child: CustomNoData(message: S.of(context).noServicesFound),
                           ),
                         )
                       else
@@ -72,6 +73,7 @@ class AdditionalServicesScreen extends StatelessWidget {
                           return Padding(
                             padding: EdgeInsets.only(bottom: height * 0.03),
                             child: _buildServiceCard(
+                              context,
                               service,
                               idx,
                               controller,
@@ -100,6 +102,7 @@ class AdditionalServicesScreen extends StatelessWidget {
   }
 
   Widget _buildServiceCard(
+    BuildContext context,
     Map<String, dynamic> service,
     int index,
     AdditionalServicesController controller,
@@ -168,7 +171,10 @@ class AdditionalServicesScreen extends StatelessWidget {
               ),
               elevation: 0,
             ),
-            child: const Text('Buy Now!', style: TextStyle(fontSize: 18)),
+            child: Text(
+              S.of(context).buyNow,
+              style: const TextStyle(fontSize: 18),
+            ),
           ),
         ],
       ),

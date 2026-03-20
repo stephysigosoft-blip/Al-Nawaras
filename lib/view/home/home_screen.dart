@@ -138,7 +138,7 @@ class HomeScreen extends StatelessWidget {
                               padding: EdgeInsets.symmetric(
                                 vertical: height * 0.01,
                               ),
-                              child: const CustomNoData(message: 'No data'),
+                              child: CustomNoData(message: S.of(context).noDataAvailable),
                             )
                           else
                             ...((controller.searchQuery.isEmpty &&
@@ -184,7 +184,7 @@ class HomeScreen extends StatelessWidget {
                               padding: EdgeInsets.symmetric(
                                 vertical: height * 0.01,
                               ),
-                              child: const CustomNoData(message: 'No data'),
+                              child: CustomNoData(message: S.of(context).noDataAvailable),
                             )
                           else
                             ...((controller.searchQuery.isEmpty &&

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
 
 class CustomNoData extends StatelessWidget {
-  final String message;
+  final String? message;
   final VoidCallback? onRetry;
 
   const CustomNoData({
     super.key,
-    this.message = 'No data available',
+    this.message,
     this.onRetry,
   });
 
@@ -20,7 +21,7 @@ class CustomNoData extends StatelessWidget {
           Image.asset('lib/assets/images/no data.png', height: height * 0.12),
           SizedBox(height: height * 0.02),
           Text(
-            message,
+            message ?? S.of(context).noDataAvailable,
             style: const TextStyle(
               fontSize: 16,
               color: Colors.black54,
@@ -34,7 +35,10 @@ class CustomNoData extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE30613),
               ),
-              child: const Text('Retry', style: TextStyle(color: Colors.white)),
+              child: Text(
+                S.of(context).retry,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ],

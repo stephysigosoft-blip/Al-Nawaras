@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/login_controller.dart';
 import '../../generated/l10n.dart';
+// import '../register/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
+    final mediaQuery = MediaQuery.of(context);
+    // final width = mediaQuery.size.width;
+    final height = mediaQuery.size.height;
 
     return GetBuilder<LoginController>(
       init: LoginController(),
       builder: (controller) {
         return Scaffold(
-          backgroundColor: const Color(0xFFEFFFFB),
+          backgroundColor: Colors.white,
           body: Stack(
             children: [
               SafeArea(
@@ -28,7 +31,7 @@ class LoginScreen extends StatelessWidget {
                     children: [
                       IconButton(
                         padding: EdgeInsets.zero,
-                        alignment: Alignment.centerLeft,
+                        alignment: AlignmentDirectional.centerStart,
                         icon: const Icon(
                           Icons.arrow_back_ios_new,
                           color: Color(0xFF001133),
@@ -301,7 +304,7 @@ class LoginScreen extends StatelessWidget {
                               S.of(context).orSignInWith,
                               style: TextStyle(
                                 fontSize: 13,
-                                color: const Color(0xFF001133).withOpacity(0.7),
+                                color: const Color(0xFF001133).withValues(alpha: 0.7),
                               ),
                             ),
                           ),
@@ -354,6 +357,31 @@ class LoginScreen extends StatelessWidget {
                             ),
                             onTap: controller.signInWithX,
                             height: height,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: height * 0.03),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            S.of(context).dontHaveAccount,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF001133),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: controller.goToRegister,
+                            child: Text(
+                              S.of(context).signUp,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFFE30613),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ],
                       ),

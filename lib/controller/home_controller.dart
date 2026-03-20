@@ -48,6 +48,11 @@ class HomeController extends GetxController {
   bool isVehicleLoading = false;
   bool isActivityLoading = false;
   bool isLoadingHistory = false;
+
+  int vehicleOffset = 0;
+  int activityOffset = 0;
+  final int limit = 10;
+
   List<Map<String, dynamic>> bookingHistory = [];
 
   @override
@@ -185,7 +190,6 @@ class HomeController extends GetxController {
                 'license': v['license_number'] ?? '',
                 'isParked': false,
                 'spot': '',
-                // If it's null, false or empty, use default asset
                 'image':
                     (imageVal != null &&
                         imageVal.isNotEmpty &&
@@ -194,12 +198,26 @@ class HomeController extends GetxController {
                     : 'lib/assets/images/Airstream.png',
               };
             }).toList();
+            vehicleOffset = allVehicles.length;
+            hasMoreVehicles = vehicles.length >= limit;
           }
 
           final activities = data['recent_activities'] as List?;
           if (activities != null) {
-            // Mapping for activities if they eventually have data
-            allActivities = [];
+            allActivities = activities.map((a) {
+              return {
+                'titleKey':
+                    a['title_key'] ??
+                    (a['type'] == 'renew'
+                        ? 'parkingRenewed'
+                        : 'vehicleCheckIn'),
+                'subtitle': a['subtitle'] ?? '',
+                'icon': _getActivityIcon(a['type']),
+                'color': _getActivityColor(a['type']),
+              };
+            }).toList();
+            activityOffset = allActivities.length;
+            hasMoreActivities = activities.length >= limit;
           }
 
           filteredVehicles = List.from(allVehicles);
@@ -212,6 +230,18 @@ class HomeController extends GetxController {
         print('Failed to fetch home data: $e');
       }
     }
+  }
+
+  IconData _getActivityIcon(String? type) {
+    if (type == 'renew') return Icons.history;
+    if (type == 'checkin') return Icons.check_circle_outline;
+    return Icons.notifications_none;
+  }
+
+  Color _getActivityColor(String? type) {
+    if (type == 'renew') return const Color(0xFF00B2FF);
+    if (type == 'checkin') return const Color(0xFF4EEB4E);
+    return Colors.grey;
   }
 
   Future<void> fetchParkingHistory() async {
@@ -269,62 +299,126 @@ class HomeController extends GetxController {
     }
   }
 
-  void loadMoreVehicles() {
+  Future<void> loadMoreVehicles() async {
     if (isVehicleLoading || !hasMoreVehicles) return;
     isVehicleLoading = true;
     update();
 
-    // Simulate API delay
-    Timer(const Duration(seconds: 1), () {
-      final more = [
-        {
-          'title': 'GMC Sierra ${filteredVehicles.length + 1}',
-          'license': 'SH-24680',
-          'isParked': true,
-          'spot': 'D-05',
-          'image': 'lib/assets/images/Airstream.png',
-        },
-        {
-          'title': 'Range Rover ${filteredVehicles.length + 2}',
-          'license': 'DX-13579',
-          'isParked': false,
-          'spot': '',
-          'image': 'lib/assets/images/Airstream.png',
-        },
-      ];
-      filteredVehicles.addAll(more);
-      if (filteredVehicles.length >= 10) hasMoreVehicles = false;
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final response = await dio.get(
+        ApiConstants.vehicles,
+        queryParameters: {'offset': vehicleOffset, 'limit': limit},
+        options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          final List vData = response.data['data']['vehicles'] ?? [];
+          final newVehicles = vData.map((v) {
+            String? imageVal = v['vehicle_image']?.toString();
+            return {
+              'title': v['vehicle_type_name'] ?? 'Vehicle',
+              'license': v['license_number'] ?? '',
+              'isParked': false,
+              'spot': '',
+              'image':
+                  (imageVal != null &&
+                      imageVal.isNotEmpty &&
+                      imageVal != "false")
+                  ? imageVal
+                  : 'lib/assets/images/Airstream.png',
+            };
+          }).toList();
+
+          allVehicles.addAll(newVehicles);
+          vehicleOffset += newVehicles.length;
+          hasMoreVehicles = newVehicles.length >= limit;
+
+          onSearchChanged(searchController.text); // Refresh filtered list
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) print('Error loading more vehicles: $e');
+    } finally {
       isVehicleLoading = false;
       update();
-    });
+    }
   }
 
-  void loadMoreActivities() {
+  Future<void> loadMoreActivities() async {
     if (isActivityLoading || !hasMoreActivities) return;
     isActivityLoading = true;
     update();
 
-    // Simulate API delay
-    Timer(const Duration(seconds: 1), () {
-      final more = [
-        {
-          'titleKey': 'parkingRenewed',
-          'subtitle': 'Last week • monthlyPremium',
-          'icon': Icons.history,
-          'color': const Color(0xFF00B2FF),
+    try {
+      // Assuming activities can be fetched from home or dedicated endpoint
+      // For now, if home API doesn't support pagination, we might just load once
+      // but let's try a generic approach if an endpoint exists.
+      // Since no separate recent_activities endpoint is in ApiConstants,
+      // we'll assume the Home API can take offset/limit if relevant.
+
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final response = await dio.get(
+        ApiConstants.home,
+        queryParameters: {
+          'activity_offset': activityOffset,
+          'activity_limit': limit,
         },
-        {
-          'titleKey': 'vehicleCheckIn',
-          'subtitle': 'Last week • parkedAtSpotC01',
-          'icon': Icons.check_circle_outline,
-          'color': const Color(0xFF4EEB4E),
-        },
-      ];
-      filteredActivities.addAll(more);
-      if (filteredActivities.length >= 10) hasMoreActivities = false;
+        options: Options(
+          headers: {
+            if (token != null) 'Authorization': 'Bearer $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          final activities =
+              response.data['data']['recent_activities'] as List?;
+          if (activities != null && activities.isNotEmpty) {
+            final newActivities = activities.map((a) {
+              return {
+                'titleKey':
+                    a['title_key'] ??
+                    (a['type'] == 'renew'
+                        ? 'parkingRenewed'
+                        : 'vehicleCheckIn'),
+                'subtitle': a['subtitle'] ?? '',
+                'icon': _getActivityIcon(a['type']),
+                'color': _getActivityColor(a['type']),
+              };
+            }).toList();
+
+            allActivities.addAll(newActivities);
+            activityOffset += newActivities.length;
+            hasMoreActivities = newActivities.length >= limit;
+
+            onSearchChanged(searchController.text); // Refresh filtered list
+          } else {
+            hasMoreActivities = false;
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) print('Error loading more activities: $e');
+      hasMoreActivities = false;
+    } finally {
       isActivityLoading = false;
       update();
-    });
+    }
   }
 
   void changeBottomNavIndex(int index) {

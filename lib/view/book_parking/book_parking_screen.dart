@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/book_parking_controller.dart';
+import '../../generated/l10n.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/draggable_help_button.dart';
 
@@ -18,7 +19,7 @@ class BookParkingScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: const Color(0xFFF7F7F7),
           appBar: CustomAppBar(
-            title: 'Book Parking',
+            title: S.of(context).bookParking,
             centerTitle: false,
             onBackPressed: () {
               Get.back();
@@ -36,26 +37,46 @@ class BookParkingScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: height * 0.025),
-                            _buildLabel('Select Vehicle'),
-                            _buildVehicleCard(controller, width, height),
+                            _buildLabel(S.of(context).selectVehicle),
+                            _buildVehicleCard(
+                              context,
+                              controller,
+                              width,
+                              height,
+                            ),
                             SizedBox(height: height * 0.035),
-                            _buildLabel('Parking Type'),
-                            _buildParkingTypeRow(controller, width, height),
+                            _buildLabel(S.of(context).parkingType),
+                            _buildParkingTypeRow(
+                              context,
+                              controller,
+                              width,
+                              height,
+                            ),
                             SizedBox(height: height * 0.035),
-                            _buildLabel('Membership Package'),
-                            _buildMembershipList(controller, width, height),
+                            _buildLabel(S.of(context).membershipPackage),
+                            _buildMembershipList(
+                              context,
+                              controller,
+                              width,
+                              height,
+                            ),
                             SizedBox(height: height * 0.035),
-                            _buildDateTimeSection(controller, width, height),
+                            _buildDateTimeSection(
+                              context,
+                              controller,
+                              width,
+                              height,
+                            ),
                             SizedBox(height: height * 0.035),
-                            _buildLabel('Add-on Services (Optional)'),
-                            _buildAddonList(controller, width, height),
+                            _buildLabel(S.of(context).addonServicesOptional),
+                            _buildAddonList(context, controller, width, height),
                             SizedBox(height: height * 0.05),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  _buildBottomAction(controller, width, height),
+                  _buildBottomAction(context, controller, width, height),
                 ],
               ),
               const DraggableHelpButton(),
@@ -81,6 +102,7 @@ class BookParkingScreen extends StatelessWidget {
   }
 
   Widget _buildVehicleCard(
+    BuildContext context,
     BookParkingController controller,
     double width,
     double height,
@@ -105,10 +127,10 @@ class BookParkingScreen extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Center(
+        child: Center(
           child: Text(
-            "No vehicles found",
-            style: TextStyle(color: Colors.black45),
+            S.of(context).noVehiclesFound,
+            style: const TextStyle(color: Colors.black45),
           ),
         ),
       );
@@ -137,7 +159,7 @@ class BookParkingScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black.withOpacity(0.05)),
+          border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
         ),
         child: Row(
           children: [
@@ -153,7 +175,7 @@ class BookParkingScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    v['vehicle_type_name'] ?? 'Generic Vehicle',
+                    v['vehicle_type_name'] ?? S.of(context).genericVehicle,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
@@ -161,7 +183,7 @@ class BookParkingScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'License: ${v['license_number'] ?? 'N/A'}',
+                    '${S.of(context).license}: ${v['license_number'] ?? 'N/A'}',
                     style: const TextStyle(fontSize: 12, color: Colors.black45),
                   ),
                 ],
@@ -175,6 +197,7 @@ class BookParkingScreen extends StatelessWidget {
   }
 
   Widget _buildParkingTypeRow(
+    BuildContext context,
     BookParkingController controller,
     double width,
     double height,
@@ -183,20 +206,26 @@ class BookParkingScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _buildParkingTypeItem(
+          context,
           'Unshaded',
-          AssetImage("lib/assets/images/unshaded.png"),
+          S.of(context).unshaded,
+          const AssetImage("lib/assets/images/unshaded.png"),
           controller,
           width,
         ),
         _buildParkingTypeItem(
+          context,
           'Shaded',
-          AssetImage("lib/assets/images/shaded.png"),
+          S.of(context).shaded,
+          const AssetImage("lib/assets/images/shaded.png"),
           controller,
           width,
         ),
         _buildParkingTypeItem(
+          context,
           'Air Conditioned',
-          AssetImage("lib/assets/images/air conditioned.png"),
+          S.of(context).airConditioned,
+          const AssetImage("lib/assets/images/air conditioned.png"),
           controller,
           width,
         ),
@@ -205,14 +234,16 @@ class BookParkingScreen extends StatelessWidget {
   }
 
   Widget _buildParkingTypeItem(
+    BuildContext context,
+    String typeKey,
     String title,
     AssetImage image,
     BookParkingController controller,
     double width,
   ) {
-    final isSelected = controller.selectedParkingType == title;
+    final isSelected = controller.selectedParkingType == typeKey;
     return GestureDetector(
-      onTap: () => controller.setParkingType(title),
+      onTap: () => controller.setParkingType(typeKey),
       child: Container(
         width: width * 0.28,
         height: 100,
@@ -222,7 +253,7 @@ class BookParkingScreen extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF00B2FF)
-                : Colors.black.withOpacity(0.05),
+                : Colors.black.withValues(alpha: 0.05),
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -230,9 +261,9 @@ class BookParkingScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Align(
-              alignment: Alignment.topLeft,
+              alignment: AlignmentDirectional.topStart,
               child: Padding(
-                padding: const EdgeInsets.only(left: 8, top: 4),
+                padding: const EdgeInsetsDirectional.only(start: 8, top: 4),
                 child: Container(
                   height: 14,
                   width: 14,
@@ -264,6 +295,7 @@ class BookParkingScreen extends StatelessWidget {
             Text(
               title,
               style: const TextStyle(fontSize: 11, color: Colors.black),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -272,6 +304,7 @@ class BookParkingScreen extends StatelessWidget {
   }
 
   Widget _buildMembershipList(
+    BuildContext context,
     BookParkingController controller,
     double width,
     double height,
@@ -290,7 +323,9 @@ class BookParkingScreen extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: Colors.black.withOpacity(0.05)),
+                  bottom: BorderSide(
+                    color: Colors.black.withValues(alpha: 0.05),
+                  ),
                 ),
               ),
               child: Row(
@@ -350,6 +385,7 @@ class BookParkingScreen extends StatelessWidget {
   }
 
   Widget _buildDateTimeSection(
+    BuildContext context,
     BookParkingController controller,
     double width,
     double height,
@@ -357,9 +393,9 @@ class BookParkingScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Date & Time',
-          style: TextStyle(
+        Text(
+          S.of(context).dateTime,
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
             color: Colors.black54,
@@ -372,9 +408,9 @@ class BookParkingScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Start Date',
-                    style: TextStyle(fontSize: 12, color: Colors.black54),
+                  Text(
+                    S.of(context).startDate,
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
                   const SizedBox(height: 8),
                   _buildDateField('dd/mm/yyyy', controller.dateController),
@@ -386,9 +422,9 @@ class BookParkingScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Start Time',
-                    style: TextStyle(fontSize: 12, color: Colors.black54),
+                  Text(
+                    S.of(context).startTime,
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
                   const SizedBox(height: 8),
                   _buildDateField('--- -- --', controller.timeController),
@@ -407,7 +443,7 @@ class BookParkingScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.black.withOpacity(0.08)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
       ),
       child: TextField(
         controller: controller,
@@ -423,6 +459,7 @@ class BookParkingScreen extends StatelessWidget {
   }
 
   Widget _buildAddonList(
+    BuildContext context,
     BookParkingController controller,
     double width,
     double height,
@@ -497,6 +534,7 @@ class BookParkingScreen extends StatelessWidget {
   }
 
   Widget _buildBottomAction(
+    BuildContext context,
     BookParkingController controller,
     double width,
     double height,
@@ -519,9 +557,9 @@ class BookParkingScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Total Amount',
-                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                Text(
+                  S.of(context).totalAmount,
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
                 ),
                 SizedBox(height: height * 0.01),
                 Text(
@@ -529,7 +567,7 @@ class BookParkingScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     // fontWeight: FontWeight.bold,
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -545,9 +583,9 @@ class BookParkingScreen extends StatelessWidget {
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                'Next',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              child: Text(
+                S.of(context).next,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -568,15 +606,15 @@ class BookParkingScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withValues(alpha: 0.4),
                 width: 1.5,
               ),
             ),
           ),
           if (isSelected)
-            Positioned(
+            PositionedDirectional(
               top: -3,
-              left: 2,
+              start: 2,
               child: CustomPaint(
                 size: const Size(18, 18),
                 painter: TickPainter(),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/membership_plans_controller.dart';
+import '../../generated/l10n.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/draggable_help_button.dart';
 import '../widgets/custom_no_data.dart';
@@ -18,8 +19,8 @@ class MembershipPlansScreen extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           backgroundColor: const Color(0xFFF7F7F7),
-          appBar: const CustomAppBar(
-            title: 'Membership Plans',
+          appBar: CustomAppBar(
+            title: S.of(context).membershipPlans,
             centerTitle: false,
           ),
           body: Stack(
@@ -31,9 +32,9 @@ class MembershipPlansScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: height * 0.025),
-                      const Text(
-                        'Choose the membership plan that best suits your needs',
-                        style: TextStyle(color: Colors.black54, fontSize: 13),
+                      Text(
+                        S.of(context).choosePlanNeeds,
+                        style: const TextStyle(color: Colors.black54, fontSize: 13),
                       ),
                       SizedBox(height: height * 0.025),
                       // Render each plan card
@@ -49,9 +50,9 @@ class MembershipPlansScreen extends StatelessWidget {
                       else if (controller.plans.isEmpty)
                         SizedBox(
                           height: height * 0.4,
-                          child: const Center(
+                          child: Center(
                             child: CustomNoData(
-                              message: "No membership plans found",
+                              message: S.of(context).noPlansFound,
                             ),
                           ),
                         )
@@ -62,6 +63,7 @@ class MembershipPlansScreen extends StatelessWidget {
                           return Padding(
                             padding: EdgeInsets.only(bottom: height * 0.02),
                             child: _buildPlanCard(
+                              context,
                               plan,
                               idx,
                               controller,
@@ -84,6 +86,7 @@ class MembershipPlansScreen extends StatelessWidget {
   }
 
   Widget _buildPlanCard(
+    BuildContext context,
     Map<String, dynamic> plan,
     int index,
     MembershipPlansController controller,
@@ -111,9 +114,9 @@ class MembershipPlansScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             decoration: const BoxDecoration(
               color: Color(0xFF00B2FF),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
+              borderRadius: BorderRadiusDirectional.only(
+                topStart: Radius.circular(15),
+                topEnd: Radius.circular(15),
               ),
             ),
             child: Text(
@@ -152,7 +155,7 @@ class MembershipPlansScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'per ' + (plan['period'] ?? 'month'),
+                          '${S.of(context).per} ${(plan['period'] ?? 'month')}',
                           style: const TextStyle(
                             fontSize: 11,
                             color: Colors.black38,
@@ -174,9 +177,9 @@ class MembershipPlansScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         minimumSize: const Size(40, 40),
                       ),
-                      child: const Text(
-                        'Select',
-                        style: TextStyle(
+                      child: Text(
+                        S.of(context).select,
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -196,15 +199,15 @@ class MembershipPlansScreen extends StatelessWidget {
                             Icons.check,
                             size: 16,
                             color: Colors.green,
-                            shadows: [
+                            shadows: const [
                               Shadow(
                                 color: Colors.green,
-                                offset: const Offset(0.5, 0),
+                                offset: Offset(0.5, 0),
                                 blurRadius: 0,
                               ),
                               Shadow(
                                 color: Colors.green,
-                                offset: const Offset(-0.5, 0),
+                                offset: Offset(-0.5, 0),
                                 blurRadius: 0,
                               ),
                             ],

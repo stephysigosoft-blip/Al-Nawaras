@@ -30,9 +30,7 @@ class RewardsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              0.04,
-            ), // ignore: deprecated_member_use
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 10),
           ),

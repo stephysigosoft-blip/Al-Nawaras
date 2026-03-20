@@ -6,6 +6,7 @@ import '../widgets/draggable_help_button.dart';
 import 'package:get/get.dart';
 import '../../controller/rewards_controller.dart';
 import '../widgets/custom_no_data.dart';
+import '../../generated/l10n.dart';
 
 class RewardsView extends StatelessWidget {
   const RewardsView({super.key});
@@ -38,8 +39,11 @@ class RewardsView extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
               ),
             ),
-            body: const Center(
-              child: CustomNoData(message: "Unable to load rewards"),
+            body: Center(
+              child: CustomNoData(
+                message: S.of(context).unableToLoadRewards,
+                onRetry: () => controller.fetchRewardsData(),
+              ),
             ),
           );
         }
@@ -64,16 +68,30 @@ class RewardsView extends StatelessWidget {
                           email: data['email'] ?? '',
                         ),
                         Positioned(
-                          top: height * 0.25, // Position overlap curve
+                          top:
+                              height *
+                              0.25, // Adjusted to match original overlap
                           left: padding,
                           right: padding,
                           child: RewardsCard(
                             width: width,
-                            points: '${data['points'] ?? 0} Points',
-                            membershipType: data['membership_type'] ?? 'Silver Member',
-                            memberSince: 'Member Since ${data['member_since'] ?? '2023'}',
-                            progress: (data['progress_bar_data']?['percentage'] ?? 0) / 100.0,
-                            membershipImage: controller.getMemberImage(data['membership_type']),
+                            points: S
+                                .of(context)
+                                .pointsCount(data['points']?.toString() ?? '0'),
+                            membershipType:
+                                data['membership_type'] ?? 'Silver Member',
+                            memberSince: S
+                                .of(context)
+                                .memberSince(
+                                  data['member_since']?.toString() ?? '2023',
+                                ),
+                            progress:
+                                (data['progress_bar_data']?['percentage'] ??
+                                    0) /
+                                100.0,
+                            membershipImage: controller.getMemberImage(
+                              data['membership_type'],
+                            ),
                           ),
                         ),
                       ],
@@ -85,31 +103,34 @@ class RewardsView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Earn Points',
-                            style: TextStyle(
-                              // fontWeight: FontWeight.w900,
+                          Text(
+                            S.of(context).howToEarnPoints,
+                            style: const TextStyle(
                               fontSize: 17,
                               color: Colors.black,
                             ),
                           ),
                           const SizedBox(height: 12),
-                          _buildEarnPointsList(data['earn_points_rules'] as List? ?? []),
+                          _buildEarnPointsList(
+                            data['earn_points_rules'] as List? ?? [],
+                          ),
                           const SizedBox(height: 24),
-                          const Text(
-                            'Redeem Points',
-                            style: TextStyle(
-                              // fontWeight: FontWeight.w900,
+                          Text(
+                            S.of(context).redeemYourRewards,
+                            style: const TextStyle(
                               fontSize: 17,
                               color: Colors.black,
                             ),
                           ),
                           const SizedBox(height: 12),
-                          _buildRedeemPointsSection(width, data['redeemable_rewards'] as List? ?? []),
+                          _buildRedeemPointsSection(
+                            width,
+                            data['redeemable_rewards'] as List? ?? [],
+                          ),
                           const SizedBox(height: 24),
-                          _buildShareAndEarnSection(width),
+                          _buildShareAndEarnSection(context, width),
                           const SizedBox(height: 24),
-                          _buildTermsAndConditionsButton(width),
+                          _buildTermsAndConditionsButton(context, width),
                           const SizedBox(height: 32), // Space for bottom
                         ],
                       ),
@@ -127,21 +148,20 @@ class RewardsView extends StatelessWidget {
 
   Widget _buildEarnPointsList(List rules) {
     if (rules.isEmpty) {
-      // Default placeholders if rules are empty but API status is true
       return Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),
           ],
         ),
         padding: const EdgeInsets.all(20),
-        child: const Center(child: Text("No rules found")),
+        child: Center(child: Text(S.of(Get.context!).noRulesFound)),
       );
     }
 
@@ -150,7 +170,7 @@ class RewardsView extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -174,18 +194,22 @@ class RewardsView extends StatelessWidget {
 
   AssetImage _getEarnIcon(String title) {
     String t = title.toLowerCase();
-    if (t.contains('slot')) return const AssetImage("lib/assets/images/book slot.png");
-    if (t.contains('add-ons')) return const AssetImage("lib/assets/images/purchase addon.png");
-    if (t.contains('refer')) return const AssetImage("lib/assets/images/refere frnd.png");
-    if (t.contains('review')) return const AssetImage("lib/assets/images/Write review.png");
+    if (t.contains('slot'))
+      return const AssetImage("lib/assets/images/book slot.png");
+    if (t.contains('add-ons'))
+      return const AssetImage("lib/assets/images/purchase addon.png");
+    if (t.contains('refer'))
+      return const AssetImage("lib/assets/images/refere frnd.png");
+    if (t.contains('review'))
+      return const AssetImage("lib/assets/images/Write review.png");
     return const AssetImage("lib/assets/images/book slot.png");
   }
 
   Widget _buildRedeemPointsSection(double width, List rewards) {
     if (rewards.isEmpty) {
-      return const SizedBox(
+      return SizedBox(
         height: 100,
-        child: Center(child: Text("No redeemable rewards available")),
+        child: Center(child: Text(S.of(Get.context!).noRedeemableRewards)),
       );
     }
 
@@ -214,9 +238,7 @@ class RewardsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              0.03,
-            ), // ignore: deprecated_member_use
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -235,7 +257,7 @@ class RewardsView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            Text(points, style: TextStyle(fontSize: 16)),
+            Text(points, style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 12),
             SizedBox(
               height: width * 0.085,
@@ -249,11 +271,10 @@ class RewardsView extends StatelessWidget {
                   ),
                   padding: EdgeInsets.zero,
                 ),
-                child: const Text(
-                  'Redeem',
-                  style: TextStyle(
-                    color: const Color(0xFFE30613),
-                    //fontWeight: FontWeight.bold,
+                child: Text(
+                  S.of(Get.context!).redeem,
+                  style: const TextStyle(
+                    color: Color(0xFFE30613),
                     fontSize: 13,
                   ),
                 ),
@@ -265,17 +286,14 @@ class RewardsView extends StatelessWidget {
     );
   }
 
-  Widget _buildShareAndEarnSection(double width) {
+  Widget _buildShareAndEarnSection(BuildContext context, double width) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        // borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              0.03,
-            ), // ignore: deprecated_member_use
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -286,19 +304,15 @@ class RewardsView extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
-                  'Share & Earn',
-                  style: TextStyle(
-                    // fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                    color: Colors.black87,
-                  ),
+                  S.of(context).shareEarn,
+                  style: const TextStyle(fontSize: 17, color: Colors.black87),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'Invite friends and earn more points!',
-                  style: TextStyle(color: Colors.black54, fontSize: 13),
+                  S.of(context).inviteFriendsPoints,
+                  style: const TextStyle(color: Colors.black54, fontSize: 13),
                 ),
               ],
             ),
@@ -310,22 +324,15 @@ class RewardsView extends StatelessWidget {
             child: OutlinedButton(
               onPressed: () {},
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(
-                  color: const Color(0xFFE30613),
-                  width: 1,
-                ),
+                side: const BorderSide(color: Color(0xFFE30613), width: 1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
                 padding: EdgeInsets.zero,
               ),
-              child: const Text(
-                'Share',
-                style: TextStyle(
-                  color: const Color(0xFFE30613),
-                  // fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                ),
+              child: Text(
+                S.of(context).share,
+                style: const TextStyle(color: Color(0xFFE30613), fontSize: 13),
               ),
             ),
           ),
@@ -334,7 +341,7 @@ class RewardsView extends StatelessWidget {
     );
   }
 
-  Widget _buildTermsAndConditionsButton(double width) {
+  Widget _buildTermsAndConditionsButton(BuildContext context, double width) {
     return SizedBox(
       width: double.infinity,
       height: width * 0.12,
@@ -344,13 +351,9 @@ class RewardsView extends StatelessWidget {
           side: const BorderSide(color: Color(0xFFFFCDD2), width: 2),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: const Text(
-          'View Terms & Conditions',
-          style: TextStyle(
-            color: const Color(0xFFE30613),
-            // fontWeight: FontWeight.w600,
-            fontSize: 15,
-          ),
+        child: Text(
+          S.of(context).viewTerms,
+          style: const TextStyle(color: Color(0xFFE30613), fontSize: 15),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
 
 class RewardsHeader extends StatelessWidget {
   final double width;
@@ -45,9 +46,9 @@ class RewardsHeader extends StatelessWidget {
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Text(
-                      'Nawras Rewards',
-                      style: TextStyle(
+                    Text(
+                      S.of(context).rewards,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
