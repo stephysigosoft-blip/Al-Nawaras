@@ -12,6 +12,10 @@ class ApiConstants {
   static const String profile = '${baseUrl}profile';
   static const String updateprofile = '${baseUrl}profile/update';
 
+  // Chat
+  static const String getMessages = '${baseUrl}messages';
+  static const String sendMessage = '${baseUrl}messages/send';
+
 
   static const String sendOtp = '${baseUrl}forgot_password/send_otp';
   static const String verifyOtp = '${baseUrl}forgot_password/verify_otp';
