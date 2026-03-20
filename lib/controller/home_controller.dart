@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:al_nawaras/view/book_parking/book_parking_screen.dart';
+import 'package:dio/dio.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,9 +16,10 @@ import '../view/home/home_screen.dart';
 import '../view/rewards/rewards_view.dart';
 import '../view/home/my_vehicles_view.dart';
 import '../view/home/recent_activity_view.dart';
-import 'dart:async';
-import 'package:dio/dio.dart';
-import 'package:get_storage/get_storage.dart';
+import 'dart:io';
+import 'package:package_info_plus/package_info_plus.dart';
+import '../view/login/login_screen.dart';
+import '../view/settings/maintenance.dart';
 import '../config/api_constants.dart';
 
 class HomeController extends GetxController {
@@ -48,7 +53,82 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    fetchSettings();
     fetchHomeData();
+  }
+
+  Future<void> fetchSettings() async {
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      String buildNumber = packageInfo.version;
+
+      final dio = Dio();
+      final response = await dio.get(ApiConstants.settings);
+
+      if (kDebugMode) {
+        print('\n--- API REQUEST (settings) ---');
+        print('URL: ${ApiConstants.settings}');
+        print('--- API RESPONSE (settings) ---');
+        print('Response Body: ${response.data}');
+      }
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data']['settings'];
+        if (data != null) {
+          bool maintenanceAndroid = data['maintenance_android'] == 1;
+          bool maintenanceIos = data['maintenance_ios'] == 1;
+          String? reason =
+              data['maintenance_reason_ios']?.toString() ??
+              data['maintenance_reason_android']?.toString();
+
+          if (Platform.isAndroid && maintenanceAndroid) {
+            Get.offAll(() => Maintenance(serverDownReason: reason));
+          } else if (Platform.isIOS && maintenanceIos) {
+            Get.offAll(() => Maintenance(serverDownReason: reason));
+          } else {
+            // Check for updates
+            String playStoreVersion = data['play_store_version'] ?? "1.0.0";
+            String appStoreVersion = data['app_store_version'] ?? "1.0.0";
+            bool forceUpdateAndroid = data['play_store_update'] == 1;
+            bool forceUpdateIos = data['app_store_update'] == 1;
+
+            if (Platform.isAndroid &&
+                forceUpdateAndroid &&
+                _versionToCode(playStoreVersion) >
+                    _versionToCode(buildNumber)) {
+              // Get.offAll(() => const NeedAnUpdate()); // If you have this screen
+            } else if (Platform.isIOS &&
+                forceUpdateIos &&
+                _versionToCode(appStoreVersion) > _versionToCode(buildNumber)) {
+              // Get.offAll(() => const NeedAnUpdate()); // If you have this screen
+            }
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Failed to fetch settings: $e');
+      }
+    }
+  }
+
+  int _versionToCode(String version) {
+    try {
+      List<String> codes = version.split('.');
+      int code = 0;
+      for (int i = 0; i < codes.length; i++) {
+        code += int.parse(codes[i]) * (1000 ^ (2 - i));
+      }
+      return code;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  Future<void> logOut() async {
+    final storage = GetStorage();
+    await storage.erase();
+    Get.offAll(() => const LoginScreen());
   }
 
   Future<void> fetchHomeData() async {

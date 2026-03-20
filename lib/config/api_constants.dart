@@ -7,7 +7,7 @@ class ApiConstants {
   static const String register = '${baseUrl}register';
   static const String checkUser = '${baseUrl}check_user';
   static const String forgotPassword = '${baseUrl}forgot-password';
-  
+
   // Profile
   static const String profile = '${baseUrl}profile';
   static const String updateprofile = '${baseUrl}profile/update';
@@ -16,7 +16,7 @@ class ApiConstants {
   static const String getMessages = '${baseUrl}messages';
   static const String sendMessage = '${baseUrl}messages/send';
 
-
+  // Forgot Password
   static const String sendOtp = '${baseUrl}forgot_password/send_otp';
   static const String verifyOtp = '${baseUrl}forgot_password/verify_otp';
 
@@ -47,5 +47,7 @@ class ApiConstants {
 
   // Vehicle Types
   static const String vehicleTypes = '${baseUrl}vehicle_types';
-}
 
+  // Settings
+  static const String settings = '${baseUrl}settings';
+}
