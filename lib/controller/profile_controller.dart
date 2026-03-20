@@ -40,17 +40,13 @@ class ProfileController extends GetxController {
     try {
       isLoading(true);
       if (token == null || token!.isEmpty) {
-  Get.snackbar("Error", "Token not found");
-  return;
-}
+        Get.snackbar("Error", "Token not found");
+        return;
+      }
 
       final response = await dio.get(
         ApiConstants.profile, // /api/profile
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-          },
-        ),
+        options: Options(headers: {"Authorization": "Bearer $token"}),
       );
 
       final data = response.data;
@@ -106,23 +102,54 @@ class ProfileController extends GetxController {
   // ============================================================
   Future<void> updateProfile() async {
     if (nameController.text.trim().isEmpty) {
-      Get.snackbar("Error", "Name cannot be empty", backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM, duration: const Duration(seconds: 1));
+      Get.snackbar(
+        "Error",
+        "Name cannot be empty",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 1),
+      );
       return;
     }
     if (emailController.text.trim().isEmpty) {
-      Get.snackbar("Error", "Email cannot be empty", backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        "Error",
+        "Email cannot be empty",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (!GetUtils.isEmail(emailController.text.trim())) {
-      Get.snackbar("Error", "Invalid email format", backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        "Error",
+        "Invalid email format",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (phoneController.text.trim().isEmpty) {
-      Get.snackbar("Error", "Phone number cannot be empty", backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        "Error",
+        "Phone number cannot be empty",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
     if (!GetUtils.isNumericOnly(phoneController.text.trim())) {
-      Get.snackbar("Error", "Phone number must contain only digits", backgroundColor: Colors.red, colorText: Colors.white, snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        "Error",
+        "Phone number must contain only digits",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 
@@ -139,9 +166,7 @@ class ProfileController extends GetxController {
         },
         options: Options(
           contentType: Headers.formUrlEncodedContentType,
-          headers: {
-            "Authorization": "Bearer $token",
-          },
+          headers: {"Authorization": "Bearer $token"},
         ),
       );
 
