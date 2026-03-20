@@ -214,11 +214,7 @@ packages:
     source: hosted
     version: "1.0.2"
   http:
-<<<<<<< HEAD
-    dependency: transitive
-=======
     dependency: "direct main"
->>>>>>> 38f3afc86e3e8c1e6304234d1f40afd4b9c14983
     description:
       name: http
       sha256: "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412"

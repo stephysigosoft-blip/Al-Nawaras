@@ -41,11 +41,8 @@ dependencies:
   dio: ^5.9.0
   get: ^4.7.2
   get_storage: ^2.1.1
-<<<<<<< HEAD
   image_picker: ^1.2.1
-=======
   http: ^1.6.0
->>>>>>> 38f3afc86e3e8c1e6304234d1f40afd4b9c14983
 
 dev_dependencies:
   flutter_test:
