@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../controller/membership_plans_controller.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/draggable_help_button.dart';
+import '../widgets/custom_no_data.dart';
 
 class MembershipPlansScreen extends StatelessWidget {
   const MembershipPlansScreen({super.key});
@@ -36,20 +37,39 @@ class MembershipPlansScreen extends StatelessWidget {
                       ),
                       SizedBox(height: height * 0.025),
                       // Render each plan card
-                      ...controller.plans.asMap().entries.map((entry) {
-                        int idx = entry.key;
-                        var plan = entry.value;
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: height * 0.02),
-                          child: _buildPlanCard(
-                            plan,
-                            idx,
-                            controller,
-                            height,
-                            width,
+                      if (controller.isLoading)
+                        SizedBox(
+                          height: height * 0.4,
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFFE30613),
+                            ),
                           ),
-                        );
-                      }),
+                        )
+                      else if (controller.plans.isEmpty)
+                        SizedBox(
+                          height: height * 0.4,
+                          child: const Center(
+                            child: CustomNoData(
+                              message: "No membership plans found",
+                            ),
+                          ),
+                        )
+                      else
+                        ...controller.plans.asMap().entries.map((entry) {
+                          int idx = entry.key;
+                          var plan = entry.value;
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: height * 0.02),
+                            child: _buildPlanCard(
+                              plan,
+                              idx,
+                              controller,
+                              height,
+                              width,
+                            ),
+                          );
+                        }),
                       SizedBox(height: height * 0.05),
                     ],
                   ),

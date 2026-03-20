@@ -3,8 +3,18 @@ import 'package:flutter/material.dart';
 class RewardsHeader extends StatelessWidget {
   final double width;
   final double height;
+  final String userName;
+  final String phoneNumber;
+  final String email;
 
-  const RewardsHeader({super.key, required this.width, required this.height});
+  const RewardsHeader({
+    super.key,
+    required this.width,
+    required this.height,
+    required this.userName,
+    required this.phoneNumber,
+    required this.email,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -89,24 +99,24 @@ class RewardsHeader extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
-                  'Faizan Arshad',
-                  style: TextStyle(
+                  userName,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  '+971 52 713 0815',
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                  phoneNumber,
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
-                  'faizan.arshad@ajgroupuae.com',
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                  email,
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
               ],
             ),

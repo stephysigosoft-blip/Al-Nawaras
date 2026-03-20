@@ -1,78 +1,75 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../view/payment/payment_view.dart';
+import '../config/api_constants.dart';
 
 class MembershipPlansController extends GetxController {
-  final List<Map<String, dynamic>> plans = [
-    {
-      'title': 'Hourly Plan',
-      'price': 'AED 15',
-      'unit': 'per hour',
-      'features': [
-        'Flexible parking duration',
-        'Access to basic facilities',
-        'Pay as you go',
-      ],
-    },
-    {
-      'title': 'Weekly Plan',
-      'price': 'AED 500',
-      'unit': 'per week',
-      'features': [
-        '7-day continuous parking',
-        'Premium shaded parking spots',
-        '10% discount on additional services',
-        '1 free basic cleaning service',
-      ],
-    },
-    {
-      'title': 'Monthly Plan',
-      'price': 'AED 1,500',
-      'unit': 'per month',
-      'features': [
-        '28-day continuous parking',
-        'Premium shaded parking spots',
-        '20% discount on additional services',
-        '2 free cleaning services',
-        '1 free towing service',
-      ],
-    },
-    {
-      'title': '3 Months Plan',
-      'price': 'AED 4,000',
-      'unit': 'for 3 months',
-      'features': [
-        '90-day continuous parking',
-        'Premium shaded parking spots',
-        '25% discount on additional services',
-        '5 free cleaning services',
-        '1 free towing service',
-      ],
-    },
-    {
-      'title': '6 Months Plan',
-      'price': 'AED 7,500',
-      'unit': 'for 6 months',
-      'features': [
-        '180-day continuous parking',
-        'Premium shaded parking spots',
-        '25% discount on additional services',
-        '8 free cleaning services',
-        '2 free towing services',
-      ],
-    },
-    {
-      'title': '1 Year Plan',
-      'price': 'AED 14,000',
-      'unit': 'for a Year',
-      'features': [
-        '365-day continuous parking',
-        'Premium shaded parking spots',
-        '25% discount on additional services',
-        '12 free cleaning services',
-        '6 free towing services',
-      ],
-    },
-  ];
+  List<Map<String, dynamic>> plans = [];
+  bool isLoading = false;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchMembershipPlans();
+  }
+
+  Future<void> fetchMembershipPlans() async {
+    isLoading = true;
+    update();
+
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      debugPrint('\n--- API REQUEST (memberships) ---');
+      debugPrint('URL: ${ApiConstants.memberships}');
+      debugPrint('Headers: $headers');
+
+      final response = await dio.get(
+        ApiConstants.memberships,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (memberships) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          final List<dynamic> memberships = response.data['data']['memberships'];
+          plans = memberships.map((m) {
+            String featuresStr = m['list_of_features']?.toString() ?? "";
+            List<String> features = featuresStr.isNotEmpty
+                ? featuresStr.split(',').map((f) => f.trim()).toList()
+                : ["Basic Membership Benefits"];
+
+            return {
+              'id': m['id'],
+              'title': m['plan_type'] ?? 'Standard Plan',
+              'price': 'AED ${m['plan_price']}',
+              'unit': m['duration'] ?? 'month',
+              'period': m['duration']?.toString().toLowerCase() ?? 'month',
+              'features': features,
+              'description': m['short_description'] ?? "",
+            };
+          }).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching memberships: $e');
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
 
   void onSelectPlan(int index) {
     final plan = plans[index];

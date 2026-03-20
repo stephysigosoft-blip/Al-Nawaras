@@ -5,6 +5,7 @@ import '../../controller/home_controller.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/draggable_help_button.dart';
+import '../widgets/custom_no_data.dart';
 
 class AdditionalServicesScreen extends StatelessWidget {
   const AdditionalServicesScreen({super.key});
@@ -48,20 +49,37 @@ class AdditionalServicesScreen extends StatelessWidget {
                       ),
                       SizedBox(height: height * 0.025),
                       // Render each service card
-                      ...controller.services.asMap().entries.map((entry) {
-                        int idx = entry.key;
-                        var service = entry.value;
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: height * 0.03),
-                          child: _buildServiceCard(
-                            service,
-                            idx,
-                            controller,
-                            height,
-                            width,
+                      if (controller.isLoading)
+                        SizedBox(
+                          height: height * 0.5,
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFFE30613),
+                            ),
                           ),
-                        );
-                      }),
+                        )
+                      else if (controller.services.isEmpty)
+                        SizedBox(
+                          height: height * 0.5,
+                          child: const Center(
+                            child: CustomNoData(message: "No services found"),
+                          ),
+                        )
+                      else
+                        ...controller.services.asMap().entries.map((entry) {
+                          int idx = entry.key;
+                          var service = entry.value;
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: height * 0.03),
+                            child: _buildServiceCard(
+                              service,
+                              idx,
+                              controller,
+                              height,
+                              width,
+                            ),
+                          );
+                        }),
                       SizedBox(height: height * 0.05),
                     ],
                   ),
@@ -82,7 +100,7 @@ class AdditionalServicesScreen extends StatelessWidget {
   }
 
   Widget _buildServiceCard(
-    Map<String, String> service,
+    Map<String, dynamic> service,
     int index,
     AdditionalServicesController controller,
     double height,

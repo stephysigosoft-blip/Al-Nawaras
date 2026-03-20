@@ -1,11 +1,78 @@
 import 'package:al_nawaras/view/payment/payment_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
+import 'package:get_storage/get_storage.dart';
+import '../config/api_constants.dart';
 
 class BookParkingController extends GetxController {
-  String selectedVehicle = 'Airstream Caravel';
+  bool isLoadingVehicles = false;
+  List<Map<String, dynamic>> vehiclesList = [];
+  Map<String, dynamic>? selectedVehicleData;
+
   String selectedParkingType = 'Shaded';
   String selectedMembership = 'Hourly';
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchVehicles();
+  }
+
+  Future<void> fetchVehicles() async {
+    isLoadingVehicles = true;
+    update();
+
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      debugPrint('\n--- API REQUEST (vehicles) ---');
+      debugPrint('URL: ${ApiConstants.vehicles}');
+      debugPrint('Headers: $headers');
+
+      final response = await dio.get(
+        ApiConstants.vehicles,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (vehicles) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          final List vData = response.data['data']['vehicles'] ?? [];
+          vehiclesList = vData.map((e) => e as Map<String, dynamic>).toList();
+
+          if (vehiclesList.isNotEmpty) {
+            selectedVehicleData = vehiclesList[0];
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching vehicles: $e');
+    } finally {
+      isLoadingVehicles = false;
+      update();
+    }
+  }
+
+  void setSelectedVehicle(Map<String, dynamic> vehicle) {
+    selectedVehicleData = vehicle;
+    update();
+  }
+
+  String getVehicleImage(String? typeName) {
+    // Mapping based on common names or defaults
+    return 'lib/assets/images/Airstream.png';
+  }
 
   final List<String> parkingTypes = ['Unshaded', 'Shaded', 'Air Conditioned'];
   final List<Map<String, String>> membershipPackages = [
@@ -96,7 +163,10 @@ class BookParkingController extends GetxController {
         subtotal: 'AED 700.00',
         vat: 'AED 35.00',
         details: [
-          {'label': 'Vehicle', 'value': selectedVehicle},
+          {
+            'label': 'Vehicle',
+            'value': selectedVehicleData?['vehicle_type_name'] ?? 'N/A',
+          },
           {'label': 'Membership', 'value': selectedMembership},
           {'label': 'Type', 'value': selectedParkingType},
         ],

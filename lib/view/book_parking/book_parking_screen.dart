@@ -37,7 +37,7 @@ class BookParkingScreen extends StatelessWidget {
                           children: [
                             SizedBox(height: height * 0.025),
                             _buildLabel('Select Vehicle'),
-                            _buildVehicleCard(width, height),
+                            _buildVehicleCard(controller, width, height),
                             SizedBox(height: height * 0.035),
                             _buildLabel('Parking Type'),
                             _buildParkingTypeRow(controller, width, height),
@@ -80,45 +80,96 @@ class BookParkingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVehicleCard(double width, double height) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            'lib/assets/images/Airstream.png',
-            height: 50,
-            width: 80,
-            fit: BoxFit.contain,
+  Widget _buildVehicleCard(
+    BookParkingController controller,
+    double width,
+    double height,
+  ) {
+    if (controller.isLoadingVehicles) {
+      return Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Center(
+          child: CircularProgressIndicator(color: Color(0xFFE30613)),
+        ),
+      );
+    }
+
+    if (controller.vehiclesList.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Center(
+          child: Text(
+            "No vehicles found",
+            style: TextStyle(color: Colors.black45),
           ),
-          const SizedBox(width: 15),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Airstream Caravel',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Color(0xFF001133),
-                  ),
-                ),
-                Text(
-                  'License: AD-45678',
-                  style: TextStyle(fontSize: 12, color: Colors.black45),
-                ),
-              ],
+        ),
+      );
+    }
+
+    final v = controller.selectedVehicleData;
+    if (v == null) return const SizedBox();
+
+    return PopupMenuButton<Map<String, dynamic>>(
+      onSelected: (vehicle) => controller.setSelectedVehicle(vehicle),
+      offset: const Offset(0, 80),
+      itemBuilder: (context) {
+        return controller.vehiclesList.map((vehicle) {
+          return PopupMenuItem<Map<String, dynamic>>(
+            value: vehicle,
+            child: Text(
+              '${vehicle['vehicle_type_name']} (${vehicle['license_number']})',
+              style: const TextStyle(fontSize: 13),
             ),
-          ),
-          const Icon(Icons.keyboard_arrow_down, color: Colors.black38),
-        ],
+          );
+        }).toList();
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black.withOpacity(0.05)),
+        ),
+        child: Row(
+          children: [
+            Image.asset(
+              controller.getVehicleImage(v['vehicle_type_name']),
+              height: 50,
+              width: 80,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    v['vehicle_type_name'] ?? 'Generic Vehicle',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Color(0xFF001133),
+                    ),
+                  ),
+                  Text(
+                    'License: ${v['license_number'] ?? 'N/A'}',
+                    style: const TextStyle(fontSize: 12, color: Colors.black45),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.keyboard_arrow_down, color: Colors.black38),
+          ],
+        ),
       ),
     );
   }

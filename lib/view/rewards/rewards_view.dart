@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../widgets/rewards_header.dart';
 import '../widgets/rewards_action_item.dart';
 import '../widgets/draggable_help_button.dart';
+import 'package:get/get.dart';
+import '../../controller/rewards_controller.dart';
+import '../widgets/custom_no_data.dart';
 
 class RewardsView extends StatelessWidget {
   const RewardsView({super.key});
@@ -14,80 +17,140 @@ class RewardsView extends StatelessWidget {
     final height = mediaQuery.size.height;
     final padding = width * 0.05;
 
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Stack(
-                  clipBehavior: Clip.none,
+    return GetBuilder<RewardsController>(
+      init: RewardsController(),
+      builder: (controller) {
+        if (controller.isLoading) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(color: Color(0xFFE30613)),
+            ),
+          );
+        }
+
+        if (controller.rewardsData == null) {
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color(0xFF00B0FF),
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            body: const Center(
+              child: CustomNoData(message: "Unable to load rewards"),
+            ),
+          );
+        }
+
+        final data = controller.rewardsData!;
+
+        return Scaffold(
+          backgroundColor: Colors.grey[100],
+          body: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
                   children: [
-                    RewardsHeader(width: width, height: height),
-                    Positioned(
-                      top: height * 0.25, // Position overlap curve
-                      left: padding,
-                      right: padding,
-                      child: RewardsCard(width: width),
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        RewardsHeader(
+                          width: width,
+                          height: height,
+                          userName: data['name'] ?? 'User',
+                          phoneNumber: data['phone_number'] ?? '',
+                          email: data['email'] ?? '',
+                        ),
+                        Positioned(
+                          top: height * 0.25, // Position overlap curve
+                          left: padding,
+                          right: padding,
+                          child: RewardsCard(
+                            width: width,
+                            points: '${data['points'] ?? 0} Points',
+                            membershipType: data['membership_type'] ?? 'Silver Member',
+                            memberSince: 'Member Since ${data['member_since'] ?? '2023'}',
+                            progress: (data['progress_bar_data']?['percentage'] ?? 0) / 100.0,
+                            membershipImage: controller.getMemberImage(data['membership_type']),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Buffer space for the overlapping card
+                    SizedBox(height: height * 0.2),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: padding),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Earn Points',
+                            style: TextStyle(
+                              // fontWeight: FontWeight.w900,
+                              fontSize: 17,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildEarnPointsList(data['earn_points_rules'] as List? ?? []),
+                          const SizedBox(height: 24),
+                          const Text(
+                            'Redeem Points',
+                            style: TextStyle(
+                              // fontWeight: FontWeight.w900,
+                              fontSize: 17,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildRedeemPointsSection(width, data['redeemable_rewards'] as List? ?? []),
+                          const SizedBox(height: 24),
+                          _buildShareAndEarnSection(width),
+                          const SizedBox(height: 24),
+                          _buildTermsAndConditionsButton(width),
+                          const SizedBox(height: 32), // Space for bottom
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                // Buffer space for the overlapping card
-                SizedBox(height: height * 0.2),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Earn Points',
-                        style: TextStyle(
-                          // fontWeight: FontWeight.w900,
-                          fontSize: 17,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _buildEarnPointsList(),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Redeem Points',
-                        style: TextStyle(
-                          // fontWeight: FontWeight.w900,
-                          fontSize: 17,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _buildRedeemPointsSection(width),
-                      const SizedBox(height: 24),
-                      _buildShareAndEarnSection(width),
-                      const SizedBox(height: 24),
-                      _buildTermsAndConditionsButton(width),
-                      const SizedBox(height: 32), // Space for bottom
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const DraggableHelpButton(),
+            ],
           ),
-          const DraggableHelpButton(),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildEarnPointsList() {
+  Widget _buildEarnPointsList(List rules) {
+    if (rules.isEmpty) {
+      // Default placeholders if rules are empty but API status is true
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(20),
+        child: const Center(child: Text("No rules found")),
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        // borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              0.03,
-            ), // ignore: deprecated_member_use
+            color: Colors.black.withOpacity(0.03),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -96,48 +159,49 @@ class RewardsView extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Column(
-          children: const [
-            RewardsActionItem(
-              icon: AssetImage("lib/assets/images/book slot.png"),
-              title: 'Book a Slot',
-              points: '+10 pts',
-            ),
-            RewardsActionItem(
-              icon: AssetImage("lib/assets/images/purchase addon.png"),
-              title: 'Purchase Add-ons',
-              points: '+5 pts',
-            ),
-            RewardsActionItem(
-              icon: AssetImage("lib/assets/images/refere frnd.png"),
-              title: 'Refer a Friend',
-              points: '+50 pts',
-            ),
-            RewardsActionItem(
-              icon: AssetImage("lib/assets/images/Write review.png"),
-              title: 'Write a Review',
-              points: '+15 pts',
-            ),
-          ],
+          children: rules.map((r) {
+            String title = r['title'] ?? 'Title';
+            return RewardsActionItem(
+              icon: _getEarnIcon(title),
+              title: title,
+              points: '+${r['points'] ?? 0} pts',
+            );
+          }).toList(),
         ),
       ),
     );
   }
 
-  Widget _buildRedeemPointsSection(double width) {
+  AssetImage _getEarnIcon(String title) {
+    String t = title.toLowerCase();
+    if (t.contains('slot')) return const AssetImage("lib/assets/images/book slot.png");
+    if (t.contains('add-ons')) return const AssetImage("lib/assets/images/purchase addon.png");
+    if (t.contains('refer')) return const AssetImage("lib/assets/images/refere frnd.png");
+    if (t.contains('review')) return const AssetImage("lib/assets/images/Write review.png");
+    return const AssetImage("lib/assets/images/book slot.png");
+  }
+
+  Widget _buildRedeemPointsSection(double width, List rewards) {
+    if (rewards.isEmpty) {
+      return const SizedBox(
+        height: 100,
+        child: Center(child: Text("No redeemable rewards available")),
+      );
+    }
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: [
-          _buildRedeemCard('Free Day\nPass', '100 pts', width),
-          const SizedBox(width: 12),
-          _buildRedeemCard('AED 50\nOFF', '200 pts', width),
-          const SizedBox(width: 12),
-          _buildRedeemCard('Free\nCleaning', '150 pts', width),
-          const SizedBox(width: 12),
-          _buildRedeemCard('Free Oil\nChange', '200 pts', width),
-          const SizedBox(width: 12),
-          _buildRedeemCard('Free Pick\n& Drop', '200 pts', width),
-        ],
+        children: rewards.map((r) {
+          return Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: _buildRedeemCard(
+              r['title']?.toString().replaceAll(' ', '\n') ?? 'Reward',
+              '${r['points'] ?? 0} pts',
+              width,
+            ),
+          );
+        }).toList(),
       ),
     );
   }

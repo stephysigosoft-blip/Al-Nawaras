@@ -2,8 +2,21 @@ import 'package:flutter/material.dart';
 
 class RewardsCard extends StatelessWidget {
   final double width;
+  final String points;
+  final String membershipType;
+  final String memberSince;
+  final double progress;
+  final String membershipImage;
 
-  const RewardsCard({super.key, required this.width});
+  const RewardsCard({
+    super.key,
+    required this.width,
+    required this.points,
+    required this.membershipType,
+    required this.memberSince,
+    required this.progress,
+    required this.membershipImage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +43,7 @@ class RewardsCard extends StatelessWidget {
           Row(
             children: [
               Image.asset(
-                'lib/assets/images/Silver member.png',
+                membershipImage,
                 width: width * 0.22,
                 height: width * 0.22,
               ),
@@ -49,28 +62,28 @@ class RewardsCard extends StatelessWidget {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           Text(
-            'Silver Member',
-            style: TextStyle(
+            membershipType,
+            style: const TextStyle(
               // fontWeight: FontWeight.bold,
               fontSize: 15,
               color: Colors.black54,
             ),
           ),
-          SizedBox(height: 2),
+          const SizedBox(height: 2),
           Text(
-            '1,250 Points',
-            style: TextStyle(
+            points,
+            style: const TextStyle(
               // fontWeight: FontWeight.w900,
               fontSize: 24,
               color: Colors.black54,
             ),
           ),
-          SizedBox(height: 2),
+          const SizedBox(height: 2),
           Text(
-            'Member Since Jan 2023',
-            style: TextStyle(color: Colors.grey, fontSize: 11.5),
+            memberSince,
+            style: const TextStyle(color: Colors.grey, fontSize: 11.5),
           ),
         ],
       ),
@@ -98,7 +111,7 @@ class RewardsCard extends StatelessWidget {
             ),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
-              widthFactor: 0.40, // fill progress factor
+              widthFactor: progress, // fill progress factor
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.greenAccent.shade400,

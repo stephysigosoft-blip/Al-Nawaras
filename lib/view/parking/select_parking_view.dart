@@ -1,5 +1,8 @@
-import 'package:al_nawaras/view/book_parking/book_parking_screen.dart';
+import 'package:al_nawaras/view/home/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:get_storage/get_storage.dart';
+import '../../config/api_constants.dart';
 
 class _SlotRowConfig {
   final double top;
@@ -8,8 +11,6 @@ class _SlotRowConfig {
   final double slotW;
   final double slotH;
   final String prefix;
-  final List<int> booked;
-  final bool shaded;
 
   _SlotRowConfig({
     required this.top,
@@ -18,21 +19,28 @@ class _SlotRowConfig {
     required this.slotW,
     required this.slotH,
     required this.prefix,
-    this.booked = const [],
-    this.shaded = false,
   });
 }
 
 class SelectParkingView extends StatefulWidget {
-  const SelectParkingView({super.key});
+  final bool isDirectionMode;
+  const SelectParkingView({super.key, this.isDirectionMode = false});
 
   @override
   State<SelectParkingView> createState() => _SelectParkingViewState();
 }
 
 class _SelectParkingViewState extends State<SelectParkingView> {
-  String selectedSlotCode = "FTP-12";
-  String selectedLocation = "Food Truck Parking";
+  String selectedSlotCode = ""; // Empty by default
+  String selectedSlotNumber = ""; // Empty by default
+  String selectedLocationCode = ""; // Empty by default
+  String selectedLocation = "";
+  String selectedLocationType = "";
+  String selectedSlotSize = "";
+  bool isLoadingData = false;
+
+  List<String> bookedSlots = [];
+  List<String> shadedSlots = [];
 
   final double canvasWidth = 2800.0;
   final double canvasHeight = 900.0;
@@ -50,7 +58,6 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         slotW: 42,
         slotH: 48,
         prefix: 'JTSP',
-        booked: [3, 4],
       ),
       _SlotRowConfig(
         top: 250, // Shuttles inside 220-340 track
@@ -59,7 +66,6 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         slotW: 46,
         slotH: 55,
         prefix: 'FTP',
-        booked: [5, 6],
       ),
       _SlotRowConfig(
         top: 410, // Shuttles inside 380-500 track
@@ -68,7 +74,6 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         slotW: 42,
         slotH: 50,
         prefix: 'BTP',
-        shaded: true,
       ),
       _SlotRowConfig(
         top: 570, // Shuttles inside 540-660 track
@@ -77,9 +82,376 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         slotW: 42,
         slotH: 50,
         prefix: 'CTP',
-        shaded: true,
       ),
     ];
+
+    // Booked and Shaded slots are now dynamic.
+    // They will be populated as you select slots or if an API is provided to list all.
+    bookedSlots = [];
+    shadedSlots = [];
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.isDirectionMode) {
+        _fetchDynamicParkingDetails();
+      } else {
+        _fetchVehicleTypes();
+      }
+    });
+  }
+
+  Future<void> _fetchVehicleTypes() async {
+    try {
+      setState(() {
+        isLoadingData = true;
+      });
+
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      debugPrint('\n--- API REQUEST (vehicle_types) ---');
+      debugPrint('URL: ${ApiConstants.vehicleTypes}');
+      debugPrint('Headers: $headers');
+
+      final response = await dio.get(
+        ApiConstants.vehicleTypes,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (vehicle_types) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          final List types = response.data['data'] as List? ?? [];
+
+          if (mounted) {
+            setState(() {
+              for (var type in types) {
+                String? name = type['slot_type_name']?.toString().toUpperCase();
+                if (name != null) {
+                  // If a vehicle type exists, we mark its area as tentatively booked for these demo slots
+                  if (name.contains('JETSKI')) {
+                    if (!bookedSlots.contains('JTSP-01'))
+                      bookedSlots.add('JTSP-01');
+                  } else if (name.contains('FOOD TRUCK')) {
+                    if (!bookedSlots.contains('FTP-01'))
+                      bookedSlots.add('FTP-01');
+                  } else if (name.contains('BOATS')) {
+                    if (!bookedSlots.contains('BTP-01'))
+                      bookedSlots.add('BTP-01');
+                  } else if (name.contains('CARAVAN')) {
+                    if (!bookedSlots.contains('CTP-01'))
+                      bookedSlots.add('CTP-01');
+                  }
+                }
+              }
+            });
+          }
+
+          if (types.isNotEmpty) {
+            // Check if we should fetch dynamic parking details based on vehicle types
+            _fetchDynamicParkingDetails();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching vehicle types: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingData = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _fetchDynamicParkingDetails() async {
+    try {
+      setState(() {
+        isLoadingData = true;
+      });
+
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      debugPrint('\n--- API REQUEST (location_details) ---');
+      debugPrint('URL: ${ApiConstants.locationDetails}');
+      debugPrint('Parameters: {booking_id: 1}');
+
+      // 1. Fetch location details
+      final locationResponse = await dio.get(
+        ApiConstants.locationDetails,
+        queryParameters: {'booking_id': 1},
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (location_details) ---');
+      debugPrint('Status Code: ${locationResponse.statusCode}');
+      debugPrint('Response Data: ${locationResponse.data}');
+      debugPrint('--------------------------\n');
+
+      if (locationResponse.statusCode == 200 && locationResponse.data != null) {
+        if (locationResponse.data['status'] == true) {
+          final data = locationResponse.data['data'];
+          if (data != null && data['slot_number'] != null) {
+            final returnedSlotNumber = data['slot_number'];
+            await _fetchSlotDetails(returnedSlotNumber, headers, dio);
+            return;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching parking details: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingData = false;
+        });
+      }
+    }
+  }
+
+  String _getPrefixFromSlotNumber(String slotNumber) {
+    if (slotNumber.contains('JETSKI')) return 'JTSP';
+    if (slotNumber.contains('FOOD TRUCK')) return 'FTP';
+    if (slotNumber.contains('BOATS')) return 'BTP';
+    if (slotNumber.contains('CARAVAN')) return 'CTP';
+    return '';
+  }
+
+  String _getNumberFromSlotNumber(String slotNumber) {
+    // Expected format "A01 - JETSKI" or "B12 - FOOD TRUCK"
+    final regex = RegExp(r'[A-D](\d+) -');
+    final match = regex.firstMatch(slotNumber);
+    if (match != null) {
+      return match.group(1) ?? "";
+    }
+    return "";
+  }
+
+  Future<void> _fetchSlotDetails(
+    String slotNumber,
+    Map<String, dynamic> headers,
+    Dio dio,
+  ) async {
+    debugPrint('\n--- API REQUEST (slot_details) ---');
+    debugPrint('URL: ${ApiConstants.slotDetails}');
+    debugPrint('Body: {"slot_number": "$slotNumber"}');
+
+    final slotResponse = await dio.post(
+      ApiConstants.slotDetails,
+      data: {'slot_number': slotNumber},
+      options: Options(
+        headers: headers,
+        contentType: Headers.formUrlEncodedContentType,
+      ),
+    );
+
+    debugPrint('--- API RESPONSE (slot_details) ---');
+    debugPrint('Status Code: ${slotResponse.statusCode}');
+    debugPrint('Response Data: ${slotResponse.data}');
+    debugPrint('--------------------------\n');
+
+    if (slotResponse.statusCode == 200 && slotResponse.data != null) {
+      if (slotResponse.data['status'] == true) {
+        final data = slotResponse.data['data'];
+        if (mounted && data != null) {
+          setState(() {
+            if (widget.isDirectionMode) {
+              final prefix = _getPrefixFromSlotNumber(slotNumber);
+              final num = _getNumberFromSlotNumber(slotNumber);
+              if (prefix.isNotEmpty && num.isNotEmpty) {
+                selectedSlotCode = "$prefix-$num";
+              }
+            }
+
+            selectedLocation =
+                data['location_name']?.toString() ??
+                _getFriendlyLocation(
+                  selectedSlotCode.isNotEmpty
+                      ? selectedSlotCode.split('-').first
+                      : slotNumber.split('-').first,
+                );
+            selectedLocationType =
+                data['location_type']?.toString() ??
+                _getLocationType(slotNumber.split('-').first);
+            selectedSlotSize =
+                data['slot_size']?.toString() ??
+                _getSlotSize(slotNumber.split('-').first);
+            selectedSlotNumber = data['slot_number']?.toString() ?? "N/A";
+            selectedLocationCode = data['location_code']?.toString() ?? "N/A";
+
+            if (data.containsKey('is_booked')) {
+              if (data['is_booked'] == true) {
+                if (!bookedSlots.contains(selectedSlotCode))
+                  bookedSlots.add(selectedSlotCode);
+              } else {
+                bookedSlots.remove(selectedSlotCode);
+              }
+            }
+            if (data.containsKey('shaded_slot')) {
+              if (data['shaded_slot'] == true) {
+                if (!shadedSlots.contains(selectedSlotCode))
+                  shadedSlots.add(selectedSlotCode);
+              } else {
+                shadedSlots.remove(selectedSlotCode);
+              }
+            }
+          });
+        }
+      }
+    }
+  }
+
+  Future<void> _onSlotSelected(String codeString, String formattedSlot) async {
+    setState(() {
+      selectedSlotCode = codeString; // Keep internal code for UI matching
+      selectedSlotNumber = formattedSlot;
+      selectedLocation = _getFriendlyLocation(codeString.split('-').first);
+      selectedLocationType = _getLocationType(codeString.split('-').first);
+      selectedSlotSize = _getSlotSize(codeString.split('-').first);
+      isLoadingData = true;
+    });
+
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+      await _fetchSlotDetails(formattedSlot, headers, dio);
+    } catch (e) {
+      debugPrint('Error fetching slot details: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingData = false;
+        });
+      }
+    }
+  }
+
+  String _formatSlotCode(String prefix, int index) {
+    String formattedPrefix = prefix;
+    String locationName = "";
+
+    switch (prefix) {
+      case 'JTSP':
+        formattedPrefix = "A";
+        locationName = "JETSKI";
+        break;
+      case 'FTP':
+        formattedPrefix = "B";
+        locationName = "FOOD TRUCK";
+        break;
+      case 'BTP':
+        formattedPrefix = "C";
+        locationName = "BOATS";
+        break;
+      case 'CTP':
+        formattedPrefix = "D";
+        locationName = "CARAVAN";
+        break;
+    }
+
+    return "$formattedPrefix${index.toString().padLeft(2, '0')} - $locationName";
+  }
+
+  Future<void> _confirmLocation() async {
+    setState(() {
+      isLoadingData = true;
+    });
+
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      final Map<String, dynamic> requestBody = {
+        'booking_id': 1,
+        'slot_number': _formatSlotCode(
+          selectedSlotCode.split('-').first,
+          int.parse(selectedSlotCode.split('-').last),
+        ),
+      };
+
+      debugPrint('\n--- API REQUEST (confirm_location) ---');
+      debugPrint('URL: ${ApiConstants.confirmLocation}');
+      debugPrint('Body: $requestBody');
+
+      final response = await dio.post(
+        ApiConstants.confirmLocation,
+        data: requestBody,
+        options: Options(
+          headers: headers,
+          contentType: Headers.formUrlEncodedContentType,
+        ),
+      );
+
+      debugPrint('--- API RESPONSE (confirm_location) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+      debugPrint('--------------------------\n');
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          if (mounted) {
+            _showCustomSnackBar(
+              response.data['message'] ??
+                  'Location and slot confirmed successfully',
+            );
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              (route) => false,
+            );
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: const Color(0xFFE30613),
+                behavior: SnackBarBehavior.floating,
+                margin: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                content: Text(
+                  response.data['message'] ?? 'Failed to confirm location',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error confirming location: $e');
+      _showCustomSnackBar('Error confirming location', isError: true);
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingData = false;
+        });
+      }
+    }
   }
 
   @override
@@ -88,54 +460,70 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       backgroundColor: const Color(0xFFEFEFEF),
       appBar: AppBar(
         backgroundColor: const Color(0xFFE30613),
-        title: const Text(
-          'Select Parking Location',
-          style: TextStyle(
+        title: Text(
+          widget.isDirectionMode
+              ? 'Vehicle Direction'
+              : 'Select Parking Location',
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
+        centerTitle: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 19),
           onPressed: () => Navigator.of(context).pop(),
         ),
         elevation: 0,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          _buildInstructions(),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: GestureDetector(
-                  onTapDown: (details) =>
-                      _handleCanvasTap(details.localPosition),
-                  child: Container(
-                    width: canvasWidth,
-                    height: canvasHeight,
-                    color: const Color(0xFF242424),
-                    child: Stack(
-                      children: [
-                        // Single Layer: Full CustomPaint layout covering road connects AND overlaps interactively
-                        Positioned.fill(
-                          child: CustomPaint(
-                            painter: _CompleteMapPainter(
-                              selectedCode: selectedSlotCode,
-                              slotRows: _slotRows,
+          Column(
+            children: [
+              _buildInstructions(),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: GestureDetector(
+                      onTapDown: (details) =>
+                          _handleCanvasTap(details.localPosition),
+                      child: Container(
+                        width: canvasWidth,
+                        height: canvasHeight,
+                        color: const Color(0xFF242424),
+                        child: Stack(
+                          children: [
+                            // Single Layer: Full CustomPaint layout covering road connects AND overlaps interactively
+                            Positioned.fill(
+                              child: CustomPaint(
+                                painter: _CompleteMapPainter(
+                                  selectedCode: selectedSlotCode,
+                                  slotRows: _slotRows,
+                                  bookedSlots: bookedSlots,
+                                  shadedSlots: shadedSlots,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
+              _buildFooterPanel(),
+            ],
           ),
-          _buildFooterPanel(),
+          if (isLoadingData)
+            Container(
+              color: Colors.black12,
+              child: const Center(
+                child: CircularProgressIndicator(color: Color(0xFFE30613)),
+              ),
+            ),
         ],
       ),
     );
@@ -156,12 +544,10 @@ class _SelectParkingViewState extends State<SelectParkingView> {
           if (px >= slotStartX && px <= slotStartX + row.slotW) {
             final codeString =
                 "${row.prefix}-${(i + 1).toString().padLeft(2, '0')}";
-            if (row.booked.contains(i + 1)) return; // Booked
+            if (bookedSlots.contains(codeString)) return; // Booked
 
-            setState(() {
-              selectedSlotCode = codeString;
-              selectedLocation = _getFriendlyLocation(row.prefix);
-            });
+            final formattedSlot = _formatSlotCode(row.prefix, i + 1);
+            _onSlotSelected(codeString, formattedSlot);
             return;
           }
         }
@@ -224,25 +610,14 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildLegendRow(),
-          const SizedBox(height: 18),
-          _buildInfoRow('Location Code : ', selectedSlotCode),
-          _buildInfoRow('Location : ', selectedLocation),
-          _buildInfoRow(
-            'Location Type : ',
-            _getLocationType(
-              selectedSlotCode.contains('-')
-                  ? selectedSlotCode.split('-')[0]
-                  : 'FTP',
-            ),
-          ),
-          _buildInfoRow(
-            'Size : ',
-            _getSlotSize(
-              selectedSlotCode.contains('-')
-                  ? selectedSlotCode.split('-')[0]
-                  : 'FTP',
-            ),
-          ),
+          if (selectedSlotCode.isNotEmpty) ...[
+            const SizedBox(height: 18),
+            _buildInfoRow('Location Code : ', selectedLocationCode),
+            _buildInfoRow('Slot Number : ', selectedSlotNumber),
+            _buildInfoRow('Location : ', selectedLocation),
+            _buildInfoRow('Location Type : ', selectedLocationType),
+            _buildInfoRow('Size : ', selectedSlotSize),
+          ],
 
           const SizedBox(height: 14),
           Padding(
@@ -256,12 +631,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
                 ),
                 elevation: 0,
               ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => BookParkingScreen()),
-                );
-              },
+              onPressed: selectedSlotCode.isEmpty ? null : _confirmLocation,
               child: const Text(
                 'Confirm Location',
                 style: TextStyle(
@@ -303,6 +673,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
   }
 
   Widget _buildInfoRow(String label, String value) {
+    if (value.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2.5),
       child: Row(
@@ -326,13 +697,43 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       ),
     );
   }
+
+  void _showCustomSnackBar(String message, {bool isError = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: isError
+            ? const Color(0xFFE30613)
+            : const Color(0xFF2ECC71),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
 }
 
 class _CompleteMapPainter extends CustomPainter {
   final String selectedCode;
   final List<_SlotRowConfig> slotRows;
+  final List<String> bookedSlots;
+  final List<String> shadedSlots;
 
-  _CompleteMapPainter({required this.selectedCode, required this.slotRows});
+  _CompleteMapPainter({
+    required this.selectedCode,
+    required this.slotRows,
+    required this.bookedSlots,
+    required this.shadedSlots,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -399,8 +800,6 @@ class _CompleteMapPainter extends CustomPainter {
         slotW: row.slotW,
         slotH: row.slotH,
         prefix: row.prefix,
-        booked: row.booked,
-        shaded: row.shaded,
       );
     }
   }
@@ -457,8 +856,6 @@ class _CompleteMapPainter extends CustomPainter {
     required double slotW,
     required double slotH,
     required String prefix,
-    List<int> booked = const [],
-    bool shaded = false,
   }) {
     final availablePaint = Paint()
       ..color = const Color(0xFF2A2A2A)
@@ -481,12 +878,13 @@ class _CompleteMapPainter extends CustomPainter {
 
     for (int i = 0; i < count; i++) {
       final codeString = "$prefix-${(i + 1).toString().padLeft(2, '0')}";
-      final isBooked = booked.contains(i + 1);
+      final isBooked = bookedSlots.contains(codeString);
       final isSelected = codeString == selectedCode;
+      final isShaded = shadedSlots.contains(codeString);
 
       Paint cellPaint = availablePaint;
+      if (isShaded) cellPaint = shadedPaint;
       if (isBooked) cellPaint = bookedPaint;
-      if (shaded) cellPaint = shadedPaint;
       if (isSelected) cellPaint = selectedPaint;
 
       final double x = startX + (i * slotW * 0.82);
