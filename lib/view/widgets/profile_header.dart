@@ -98,11 +98,16 @@ class ProfileHeader extends StatelessWidget {
             child: CircleAvatar(
               radius: width * 0.09, // Dynamic size
               backgroundColor: Colors.transparent,
-              child: Icon(
-                Icons.person,
-                color: Colors.blueGrey[800],
-                size: width * 0.12,
-              ),
+              backgroundImage: user?.profileImage != null && user!.profileImage!.isNotEmpty
+                  ? NetworkImage(user.profileImage!)
+                  : null,
+              child: user?.profileImage == null || user!.profileImage!.isEmpty
+                  ? Icon(
+                      Icons.person,
+                      color: Colors.blueGrey[800],
+                      size: width * 0.12,
+                    )
+                  : null,
             ),
           ),
           const SizedBox(width: 16),
