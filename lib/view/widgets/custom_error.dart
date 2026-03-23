@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
 
 class CustomError extends StatelessWidget {
-  final String message;
+  final String? message;
   final VoidCallback? onRetry;
 
-  const CustomError({
-    super.key,
-    this.message = 'Something went wrong',
-    this.onRetry,
-  });
+  const CustomError({super.key, this.message, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +14,14 @@ class CustomError extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: height * 0.1, color: const Color(0xFFE30613)),
+          Icon(
+            Icons.error_outline,
+            size: height * 0.1,
+            color: const Color(0xFFE30613),
+          ),
           SizedBox(height: height * 0.02),
           Text(
-            message,
+            message ?? S.of(context).somethingWentWrong,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 16,
@@ -35,9 +36,12 @@ class CustomError extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE30613),
               ),
-              child: const Text('Try Again', style: TextStyle(color: Colors.white)),
+              child: Text(
+                S.of(context).tryAgain,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
-          ]
+          ],
         ],
       ),
     );

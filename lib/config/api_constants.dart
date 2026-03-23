@@ -50,4 +50,8 @@ class ApiConstants {
 
   // Settings
   static const String settings = '${baseUrl}settings';
+
+  // Payment
+  static const String paymentSummary = '${baseUrl}payment/summary';
+  static const String paymentConfirm = '${baseUrl}payment/confirm';
 }

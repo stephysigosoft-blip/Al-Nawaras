@@ -1,234 +1,200 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
+import '../home/home_screen.dart';
+import '../widgets/draggable_help_button.dart';
 import 'package:get/get.dart';
-import '../../controller/home_controller.dart';
 
 class PaymentSuccessView extends StatelessWidget {
   const PaymentSuccessView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Media query for screen proportions
     final mediaQuery = MediaQuery.of(context);
     final width = mediaQuery.size.width;
-    final padding = width * 0.06;
+    final height = mediaQuery.size.height;
+    final padding = width * 0.05;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFE30613),
+        backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'Payment Successful',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close, color: Colors.black, size: 28),
+            onPressed: () {
+              Get.offAll(() => const HomeScreen());
+            },
           ),
-        ),
-        centerTitle: false,
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(padding),
-        child: Column(
-          children: [
-            const SizedBox(height: 32),
-            const Text(
-              'Thank you!',
-              style: TextStyle(
-                color: const Color(0xFFE30613),
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Your payment has been processed\nsuccessfully.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, height: 1.4),
-            ),
-            const SizedBox(height: 24),
-            _buildSummaryCard(width),
-            const SizedBox(height: 24),
-            Text(
-              'A confirmation email and invoice have been\nsent to your registered email address.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, height: 1.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Need assistance? Call us at 800-NAWRAS.',
-              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.find<HomeController>().changeBottomNavIndex(0);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE30613),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Close',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      // bottomNavigationBar: _buildBottomNav(),
-    );
-  }
-
-  Widget _buildSummaryCard(double width) {
-    return Container(
-      padding: EdgeInsets.all(width * 0.04),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(
-              0.05,
-            ), // ignore: deprecated_member_use
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
+          SizedBox(width: padding),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
-          const Text(
-            'Monthly Membership',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: const [
-              Text('Shaded Parking', style: TextStyle(fontSize: 12)),
-              Spacer(),
-              Text(
-                'AED 1,500',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: padding),
+              child: Column(
+                children: [
+                  SizedBox(height: height * 0.02),
+                  // Success Animation / Icon Placeholder
+                  Container(
+                    height: height * 0.12,
+                    width: height * 0.12,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8F5E9),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Container(
+                        height: height * 0.08,
+                        width: height * 0.08,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF4CAF50),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: height * 0.03),
+                  Text(
+                    S.of(context).paymentSuccessful,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: height * 0.01),
+                  Text(
+                    S.of(context).thankYou,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  SizedBox(height: height * 0.015),
+                  Text(
+                    S.of(context).paymentProcessedSuccessfully,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black54,
+                      height: 1.5,
+                    ),
+                  ),
+                  SizedBox(height: height * 0.04),
+                  // Summary Container
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF9F9F9),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildSummaryItem(S.of(context).monthlyMembership, S.of(context).shadedParkingDetail, isHeader: true),
+                        const Divider(height: 30, thickness: 1),
+                        _buildSummaryItem(S.of(context).vehicle, 'Airstream Caravel'),
+                        _buildSummaryItem(S.of(context).duration, S.of(context).thirtyDays),
+                        _buildSummaryItem(S.of(context).startDateLabel, '15 May 2023'),
+                        _buildSummaryItem(S.of(context).endDateLabel, '15 Jun 2023'),
+                        const Divider(height: 30, thickness: 1),
+                        _buildSummaryItem(S.of(context).subtotalLabel, 'AED 1,500.00'),
+                        _buildSummaryItem(S.of(context).vatLabel, 'AED 75.00'),
+                        const Divider(height: 30, thickness: 1),
+                        _buildSummaryItem(S.of(context).totalLabel, 'AED 1,575.00', isBold: true),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: height * 0.04),
+                  Text(
+                    S.of(context).confirmationEmailSent,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
+                  ),
+                  SizedBox(height: height * 0.06),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.offAll(() => const HomeScreen());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE30613),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        S.of(context).close,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: height * 0.03),
+                  Text(
+                    S.of(context).needAssistanceCall,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(height: height * 0.04),
+                ],
               ),
-            ],
+            ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Divider(height: 1, thickness: 1),
-          ),
-          _buildDetailRow('Vehicle', 'Airstream Caravel'),
-          const SizedBox(height: 8),
-          _buildDetailRow('Duration', '30 Days'),
-          const SizedBox(height: 8),
-          _buildDetailRow('Start Date', '15 May 2023'),
-          const SizedBox(height: 8),
-          _buildDetailRow('End Date', '15 Jun 2023'),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Divider(height: 1, thickness: 1),
-          ),
-          _buildTotalRow('Subtotal', 'AED 1,500.00'),
-          const SizedBox(height: 8),
-          _buildTotalRow('VAT (5%)', 'AED 75.00'),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
-                'Total',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-              Text(
-                'AED 1,575.00',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ],
-          ),
+          const DraggableHelpButton(),
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 12)),
-        Text(
-          value,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-        ),
-      ],
+  Widget _buildSummaryItem(String label, String value,
+      {bool isHeader = false, bool isBold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: isHeader ? 16 : 14,
+              fontWeight: isHeader || isBold ? FontWeight.bold : FontWeight.normal,
+              color: isHeader ? Colors.black : Colors.grey[600],
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: isHeader ? 16 : 14,
+              fontWeight: isHeader || isBold ? FontWeight.bold : FontWeight.w600,
+              color: isHeader ? const Color(0xFFE30613) : Colors.black,
+            ),
+          ),
+        ],
+      ),
     );
   }
-
-  Widget _buildTotalRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: TextStyle(fontSize: 12)),
-        Text(value, style: TextStyle(fontSize: 12)),
-      ],
-    );
-  }
-
-  //   Widget _buildBottomNav() {
-  //     return Container(
-  //       decoration: BoxDecoration(
-  //         color: Colors.white,
-  //         boxShadow: [
-  //           BoxShadow(
-  //             color: Colors.black.withOpacity(
-  //               0.05,
-  //             ), // ignore: deprecated_member_use
-  //             blurRadius: 10,
-  //             offset: const Offset(0, -4),
-  //           ),
-  //         ],
-  //       ),
-  //       child: BottomNavigationBar(
-  //         currentIndex: 0,
-  //         type: BottomNavigationBarType.fixed,
-  //         selectedItemColor: Colors.grey,
-  //         unselectedItemColor: Colors.grey,
-  //         showUnselectedLabels: true,
-  //         selectedLabelStyle: const TextStyle(fontSize: 11),
-  //         unselectedLabelStyle: const TextStyle(fontSize: 11),
-  //         items: const [
-  //           BottomNavigationBarItem(
-  //             icon: Icon(Icons.home_outlined),
-  //             label: 'Home',
-  //           ),
-  //           BottomNavigationBarItem(
-  //             icon: Icon(Icons.calendar_today_outlined),
-  //             label: 'Bookings',
-  //           ),
-  //           BottomNavigationBarItem(
-  //             icon: Icon(Icons.build_outlined),
-  //             label: 'Services',
-  //           ),
-  //           BottomNavigationBarItem(
-  //             icon: Icon(Icons.person_outline),
-  //             label: 'Profile',
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //   }
 }

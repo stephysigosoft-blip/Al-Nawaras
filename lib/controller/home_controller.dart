@@ -21,6 +21,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../view/login/login_screen.dart';
 import '../view/settings/maintenance.dart';
 import '../config/api_constants.dart';
+import 'dart:math' as math;
 
 class HomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
@@ -65,7 +66,7 @@ class HomeController extends GetxController {
   Future<void> fetchSettings() async {
     try {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      String buildNumber = packageInfo.version;
+      String buildVersion = packageInfo.version;
 
       final dio = Dio();
       final response = await dio.get(ApiConstants.settings);
@@ -78,11 +79,17 @@ class HomeController extends GetxController {
       }
 
       if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['data']['settings'];
+        final data = response.data['data']?['settings'];
         if (data != null) {
           bool maintenanceAndroid = data['maintenance_android'] == 1;
           bool maintenanceIos = data['maintenance_ios'] == 1;
-          String? reason =
+
+          String? reason = Platform.isAndroid
+              ? data['maintenance_reason_android']?.toString()
+              : data['maintenance_reason_ios']?.toString();
+
+          // Fallback if platform-specific reason is missing
+          reason ??=
               data['maintenance_reason_ios']?.toString() ??
               data['maintenance_reason_android']?.toString();
 
@@ -92,19 +99,22 @@ class HomeController extends GetxController {
             Get.offAll(() => Maintenance(serverDownReason: reason));
           } else {
             // Check for updates
-            String playStoreVersion = data['play_store_version'] ?? "1.0.0";
-            String appStoreVersion = data['app_store_version'] ?? "1.0.0";
+            String playStoreVersion =
+                data['play_store_version']?.toString() ?? "1.0.0";
+            String appStoreVersion =
+                data['app_store_version']?.toString() ?? "1.0.0";
             bool forceUpdateAndroid = data['play_store_update'] == 1;
             bool forceUpdateIos = data['app_store_update'] == 1;
 
             if (Platform.isAndroid &&
                 forceUpdateAndroid &&
                 _versionToCode(playStoreVersion) >
-                    _versionToCode(buildNumber)) {
+                    _versionToCode(buildVersion)) {
               // Get.offAll(() => const NeedAnUpdate()); // If you have this screen
             } else if (Platform.isIOS &&
                 forceUpdateIos &&
-                _versionToCode(appStoreVersion) > _versionToCode(buildNumber)) {
+                _versionToCode(appStoreVersion) >
+                    _versionToCode(buildVersion)) {
               // Get.offAll(() => const NeedAnUpdate()); // If you have this screen
             }
           }
@@ -122,7 +132,8 @@ class HomeController extends GetxController {
       List<String> codes = version.split('.');
       int code = 0;
       for (int i = 0; i < codes.length; i++) {
-        code += int.parse(codes[i]) * (1000 ^ (2 - i));
+        // Correct versioning multiplication to handle correctly (major, minor, patch)
+        code += int.parse(codes[i]) * math.pow(1000, 2 - i).toInt();
       }
       return code;
     } catch (e) {
@@ -138,6 +149,9 @@ class HomeController extends GetxController {
 
   Future<void> fetchHomeData() async {
     try {
+      // Check maintenance status every time home data is fetched/refreshed
+      fetchSettings();
+
       final dio = Dio();
       final storage = GetStorage();
       final token = storage.read('token');

@@ -1,5 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:al_nawaras/view/payment/payment_success_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
+import '../../config/api_constants.dart';
+import '../../generated/l10n.dart';
 import '../widgets/payment_summary_card.dart';
 import '../widgets/payment_method_item.dart';
 import '../widgets/credit_card_form.dart';
@@ -12,6 +16,7 @@ class PaymentView extends StatefulWidget {
   final String? amount;
   final String? subtotal;
   final String? vat;
+  final String? total;
   final List<Map<String, String>>? details;
 
   const PaymentView({
@@ -21,6 +26,7 @@ class PaymentView extends StatefulWidget {
     this.amount,
     this.subtotal,
     this.vat,
+    this.total,
     this.details,
   });
 
@@ -49,9 +55,9 @@ class _PaymentViewState extends State<PaymentView> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Payment',
-          style: TextStyle(
+        title: Text(
+          S.of(context).payment,
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -69,9 +75,9 @@ class _PaymentViewState extends State<PaymentView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Payment Summary',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).paymentSummary,
+                        style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -80,23 +86,24 @@ class _PaymentViewState extends State<PaymentView> {
                       SizedBox(height: height * 0.015),
                       PaymentSummaryCard(
                         width: width,
-                        title: widget.title ?? 'Monthly Membership',
-                        subtitle: widget.subtitle ?? 'Shaded Parking',
+                        title: widget.title ?? S.of(context).monthlyMembership,
+                        subtitle: widget.subtitle ?? S.of(context).shadedParkingDetail,
                         amount: widget.amount ?? 'AED 1,500',
                         subtotal: widget.subtotal ?? 'AED 1,500.00',
                         vat: widget.vat ?? 'AED 75.00',
+                        total: widget.total,
                         details: widget.details ??
-                            const [
-                              {'label': 'Vehicle', 'value': 'Airstream Caravel'},
-                              {'label': 'Duration', 'value': '30 Days'},
-                              {'label': 'Start Date', 'value': '15 May 2023'},
-                              {'label': 'End Date', 'value': '15 Jun 2023'},
+                            [
+                              {'label': S.of(context).vehicle, 'value': 'Airstream Caravel'},
+                              {'label': S.of(context).duration, 'value': S.of(context).thirtyDays},
+                              {'label': S.of(context).startDateLabel, 'value': '15 May 2023'},
+                              {'label': S.of(context).endDateLabel, 'value': '15 Jun 2023'},
                             ],
                       ),
                       SizedBox(height: height * 0.03),
-                      const Text(
-                        'Payment Method',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).paymentMethod,
+                        style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -124,7 +131,7 @@ class _PaymentViewState extends State<PaymentView> {
       children: [
         PaymentMethodItem(
           index: 0,
-          title: 'Credit/Debit Card',
+          title: S.of(context).creditDebitCard,
           trailing: CustomLogos.buildMastercard(),
           isSelected: selectedPaymentMethod == 0,
           isExpanded: selectedPaymentMethod == 0,
@@ -135,7 +142,7 @@ class _PaymentViewState extends State<PaymentView> {
         const SizedBox(height: 12),
         PaymentMethodItem(
           index: 1,
-          title: 'Apple Pay',
+          title: S.of(context).applePayLabel,
           trailing: CustomLogos.buildApplePay(),
           isSelected: selectedPaymentMethod == 1,
           isExpanded: selectedPaymentMethod == 1,
@@ -145,7 +152,7 @@ class _PaymentViewState extends State<PaymentView> {
         const SizedBox(height: 12),
         PaymentMethodItem(
           index: 2,
-          title: 'Google Pay',
+          title: S.of(context).googlePayLabel,
           trailing: CustomLogos.buildGooglePay(width),
           isSelected: selectedPaymentMethod == 2,
           isExpanded: selectedPaymentMethod == 2,
@@ -155,7 +162,7 @@ class _PaymentViewState extends State<PaymentView> {
         const SizedBox(height: 12),
         PaymentMethodItem(
           index: 3,
-          title: 'PayPal',
+          title: S.of(context).payPalLabel,
           trailing: CustomLogos.buildPayPal(width),
           isSelected: selectedPaymentMethod == 3,
           isExpanded: selectedPaymentMethod == 3,
@@ -165,7 +172,7 @@ class _PaymentViewState extends State<PaymentView> {
         const SizedBox(height: 12),
         PaymentMethodItem(
           index: 4,
-          title: 'Nol Pay',
+          title: S.of(context).nolPayLabel,
           trailing: CustomLogos.buildNolPay(width),
           isSelected: selectedPaymentMethod == 4,
           isExpanded: selectedPaymentMethod == 4,
@@ -175,7 +182,7 @@ class _PaymentViewState extends State<PaymentView> {
         const SizedBox(height: 12),
         PaymentMethodItem(
           index: 5,
-          title: 'Cash on site',
+          title: S.of(context).cashOnSite,
           trailing: CustomLogos.buildCashOnSite(width),
           isSelected: selectedPaymentMethod == 5,
           isExpanded: selectedPaymentMethod == 5,
@@ -205,9 +212,9 @@ class _PaymentViewState extends State<PaymentView> {
             ),
           ),
           const SizedBox(width: 8),
-          const Text(
-            'Save card for future payments',
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+          Text(
+            S.of(context).saveCardForFuture,
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
           ),
         ],
       ),
@@ -215,6 +222,10 @@ class _PaymentViewState extends State<PaymentView> {
   }
 
   Widget _buildStickyFooter(BuildContext context, double width, double height) {
+    String totalStr = widget.total ?? (widget.subtotal == null
+        ? "AED 1,575.00"
+        : _calculateTotal(widget.subtotal!, widget.vat ?? "AED 0.00"));
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(width * 0.04),
@@ -237,12 +248,76 @@ class _PaymentViewState extends State<PaymentView> {
             width: double.infinity,
             height: 48,
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const PaymentSuccessView(),
-                  ),
-                );
+              onPressed: () async {
+                // As per user request, call payment/confirm with fixed booking_id=1
+                try {
+                  final dio = Dio();
+                  final storage = GetStorage();
+                  final token = storage.read('token');
+                  
+                  final headers = {
+                    if (token != null) 'Authorization': 'Bearer $token',
+                    'Accept': 'application/json',
+                  };
+
+                  // Parse numerical value from totalStr or amount
+                  String priceStr = totalStr.replaceAll(RegExp(r'[^0-9.]'), '');
+                  double numericAmount = double.tryParse(priceStr) ?? 500.0;
+
+                  final Map<String, dynamic> requestBody = {
+                    "booking_id": 1,
+                    "amount": numericAmount,
+                    "payment_gateway": "stripe",
+                    "payment_reference": "gateway_payment_reference"
+                  };
+
+                  debugPrint('\n--- API REQUEST (payment/confirm) ---');
+                  debugPrint('URL: ${ApiConstants.paymentConfirm}');
+                  debugPrint('Body: $requestBody');
+
+                  final response = await dio.post(
+                    ApiConstants.paymentConfirm,
+                    data: requestBody,
+                    options: Options(
+                      headers: headers,
+                      contentType: Headers.formUrlEncodedContentType,
+                    ),
+                  );
+
+                  debugPrint('--- API RESPONSE (payment/confirm) ---');
+                  debugPrint('Status Code: ${response.statusCode}');
+                  debugPrint('Response Data: ${response.data}');
+
+                  if (response.statusCode == 200 && response.data != null && response.data['status'] == true) {
+                    if (mounted) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const PaymentSuccessView(),
+                        ),
+                      );
+                    }
+                  } else {
+                    // Fail gracefully or show message without changing UI?
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(response.data['message'] ?? 'Payment confirmation failed.'),
+                          backgroundColor: const Color(0xFFE30613),
+                        ),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  debugPrint('Error confirming payment: $e');
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Error connecting to Server'),
+                        backgroundColor: Color(0xFFE30613),
+                      ),
+                    );
+                  }
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE30613),
@@ -251,7 +326,7 @@ class _PaymentViewState extends State<PaymentView> {
                 ),
               ),
               child: Text(
-                'Pay ${widget.subtotal == null ? "AED 1,575.00" : _calculateTotal(widget.subtotal!, widget.vat ?? "AED 0.00")}',
+                S.of(context).payAmount(totalStr),
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -261,10 +336,10 @@ class _PaymentViewState extends State<PaymentView> {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'By proceeding, you agree to our Terms of Service\nand Privacy Policy',
+          Text(
+            S.of(context).agreeToTermsPrivacy,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey, fontSize: 10),
+            style: const TextStyle(color: Colors.grey, fontSize: 10),
           ),
         ],
       ),

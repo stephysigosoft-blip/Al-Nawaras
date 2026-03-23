@@ -39,7 +39,9 @@ class Maintenance extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(left: 15, right: 15),
                 child: Text(
-                  serverDownReason.toString(),
+                  (serverDownReason != null && serverDownReason!.isNotEmpty && serverDownReason != "null")
+                      ? serverDownReason!
+                      : S.of(context).noDataAvailable, // Fallback to a localized string or generic message
                   textAlign: TextAlign.center,
                   style: GoogleFonts.rubik(
                     fontSize: 13,
