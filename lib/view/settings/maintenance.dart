@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../generated/l10n.dart';
 
 class Maintenance extends StatelessWidget {
-  Maintenance({super.key, required this.serverDownReason});
+  const Maintenance({super.key, required this.serverDownReason});
   final String? serverDownReason;
   @override
   Widget build(BuildContext context) {
@@ -53,6 +52,6 @@ class Maintenance extends StatelessWidget {
           ),
         ),
       ),
-    );
+     );
   }
 }
