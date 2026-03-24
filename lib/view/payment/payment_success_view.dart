@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../controller/home_controller.dart';
+import '../booking/booking_history.dart';
 
 class PaymentSuccessView extends StatelessWidget {
   const PaymentSuccessView({super.key});
@@ -68,7 +68,7 @@ class PaymentSuccessView extends StatelessWidget {
               height: 48,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.find<HomeController>().changeBottomNavIndex(0);
+                  Get.offAll(() => const BookingHistoryView());
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFE30613),
@@ -90,7 +90,6 @@ class PaymentSuccessView extends StatelessWidget {
           ],
         ),
       ),
-      // bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -187,48 +186,4 @@ class PaymentSuccessView extends StatelessWidget {
       ],
     );
   }
-
-  //   Widget _buildBottomNav() {
-  //     return Container(
-  //       decoration: BoxDecoration(
-  //         color: Colors.white,
-  //         boxShadow: [
-  //           BoxShadow(
-  //             color: Colors.black.withOpacity(
-  //               0.05,
-  //             ), // ignore: deprecated_member_use
-  //             blurRadius: 10,
-  //             offset: const Offset(0, -4),
-  //           ),
-  //         ],
-  //       ),
-  //       child: BottomNavigationBar(
-  //         currentIndex: 0,
-  //         type: BottomNavigationBarType.fixed,
-  //         selectedItemColor: Colors.grey,
-  //         unselectedItemColor: Colors.grey,
-  //         showUnselectedLabels: true,
-  //         selectedLabelStyle: const TextStyle(fontSize: 11),
-  //         unselectedLabelStyle: const TextStyle(fontSize: 11),
-  //         items: const [
-  //           BottomNavigationBarItem(
-  //             icon: Icon(Icons.home_outlined),
-  //             label: 'Home',
-  //           ),
-  //           BottomNavigationBarItem(
-  //             icon: Icon(Icons.calendar_today_outlined),
-  //             label: 'Bookings',
-  //           ),
-  //           BottomNavigationBarItem(
-  //             icon: Icon(Icons.build_outlined),
-  //             label: 'Services',
-  //           ),
-  //           BottomNavigationBarItem(
-  //             icon: Icon(Icons.person_outline),
-  //             label: 'Profile',
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //   }
 }

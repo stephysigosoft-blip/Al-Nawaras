@@ -46,6 +46,10 @@ dependencies:
   package_info_plus: ^9.0.0
   google_fonts: ^8.0.2
   shared_preferences: ^2.5.4
+  google_sign_in: ^6.2.1
+  firebase_core: ^4.5.0
+  firebase_auth: ^6.2.0
+  flutter_facebook_auth: ^7.1.1
 
 
 dev_dependencies:

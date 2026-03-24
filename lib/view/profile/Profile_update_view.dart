@@ -97,10 +97,6 @@ class ProfileUpdateView extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(4),
-            decoration: const BoxDecoration(
-              color: Colors.yellow,
-              shape: BoxShape.circle,
-            ),
             child: Obx(() {
               final user = controller.profile.value;
               final selected = controller.selectedImage.value;

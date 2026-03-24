@@ -327,7 +327,7 @@ class LoginScreen extends StatelessWidget {
                                     color: Colors.red,
                                   ),
                             ),
-                            onTap: controller.signInWithGoogle,
+                            onTap:controller.googleLogin,
                             height: height,
                           ),
                           _buildSocialButton(

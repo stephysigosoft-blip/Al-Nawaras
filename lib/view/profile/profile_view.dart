@@ -1,14 +1,13 @@
 import 'package:al_nawaras/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import '../../generated/l10n.dart';
-import '../welcome/welcome_screen.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/membership_status_card.dart';
 import '../widgets/profile_menu_item.dart';
 import '../widgets/draggable_help_button.dart';
 import '../../controller/home_controller.dart';
+import '../../controller/logout_controller.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import 'Profile_update_view.dart';
 
@@ -58,10 +57,30 @@ class ProfileView extends StatelessWidget {
                             end: padding,
                             child: MembershipStatusCard(
                               width: width,
-                              status: profileController.profile.value?.membershipStatus ?? S.of(context).noStatus,
-                              vehicles: profileController.profile.value?.vehiclesCount ?? 0,
-                              bookings: profileController.profile.value?.bookingsCount ?? 0,
-                              services: profileController.profile.value?.servicesCount ?? 0,
+                              status:
+                                  profileController
+                                      .profile
+                                      .value
+                                      ?.membershipStatus ??
+                                  S.of(context).noStatus,
+                              vehicles:
+                                  profileController
+                                      .profile
+                                      .value
+                                      ?.vehiclesCount ??
+                                  0,
+                              bookings:
+                                  profileController
+                                      .profile
+                                      .value
+                                      ?.bookingsCount ??
+                                  0,
+                              services:
+                                  profileController
+                                      .profile
+                                      .value
+                                      ?.servicesCount ??
+                                  0,
                             ),
                           ),
                         ],
@@ -152,22 +171,40 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildSignOutButton(BuildContext context, double width) {
+    final logoutController = Get.put(LogoutController());
     return SizedBox(
       width: double.infinity,
       height: 55,
       child: OutlinedButton(
         onPressed: () {
-          final storage = GetStorage();
-          storage.remove('token');
-          storage.remove('partner_id');
-          storage.remove('name');
-          storage.remove('email');
-          storage.remove('mobile');
-          Get.offAll(() => const WelcomeScreen());
+          Get.dialog(
+            AlertDialog(
+              title: const Text("Logout"),
+              content: const Text("Are you sure you want to logout?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Get.back(),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Get.back();
+                    logoutController.logOut();
+                  },
+                  child: const Text(
+                    "Yes",
+                    style: TextStyle(color: Color(0xFFE30613)),
+                  ),
+                ),
+              ],
+            ),
+          );
         },
         style: OutlinedButton.styleFrom(
           side: const BorderSide(color: Color(0xFFE30613), width: 1),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           backgroundColor: Colors.white,
         ),
         child: Text(

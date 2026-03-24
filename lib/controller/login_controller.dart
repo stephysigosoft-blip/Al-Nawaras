@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import '../config/api_constants.dart';
 import '../view/register/register_screen.dart';
 import '../view/home/home_screen.dart';
@@ -11,6 +13,7 @@ import '../view/login/forgot_password_view.dart';
 class LoginController extends GetxController {
   final emailOrMobileController = TextEditingController();
   final passwordController = TextEditingController();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(); 
 
   final box = GetStorage();
   final Dio dio = Dio();
@@ -189,15 +192,141 @@ class LoginController extends GetxController {
     Get.to(() => const ForgotPasswordView());
   }
 
-  void signInWithGoogle() {
-    if (kDebugMode) {
-      print("Google Sign In");
+  // Google Login
+
+  Future<void> googleLogin() async {
+    try {
+      isLoading= true;
+      update();
+
+      // 🔹 Step 1: Google Sign-In
+      final user = await _googleSignIn.signIn();
+
+      if (user == null) {
+        isLoading= false;
+        update();
+        return; // user cancelled login
+      }
+
+      // 🔹 Step 2: Get Tokens
+      final auth = await user.authentication;
+
+      final idToken = auth.idToken;
+
+      if (idToken == null) {
+        Get.snackbar("Error", "Failed to get Google token");
+        return;
+      }
+      print("ID TOKEN: $idToken");
+
+      // 🔹 Step 3: Call API
+      final response = await dio.post(
+        ApiConstants.socialLogin,
+        options: Options(contentType: Headers.formUrlEncodedContentType),
+        data: {
+          "provider": "google",
+          "auth_token": idToken,
+          "email": user.email,
+        },
+      );
+
+      final data = response.data;
+
+      if (response.statusCode == 200 && data["status"] == true) {
+        // 🔹 Step 4: Save Token
+        box.write("token", data["data"]["token"]);
+        print("SAVED TOKEN: ${box.read("token")}");
+        box.write("name", data["data"]["name"]);
+        box.write("email", data["data"]["email"]);
+
+        Get.snackbar("Success", "Login successful");
+
+        // 🔹 Step 5: Navigate
+        Get.offAll(() => const HomeScreen());
+      } else {
+        Get.snackbar("Error", data["message"]);
+      }
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('Social Login Error (DioException): ${e.message}');
+        if (e.response != null) {
+          print('Response Error Data: ${e.response?.data}');
+        }
+      }
+      String errorMessage = 'A network error occurred. Please try again.';
+      if (e.response != null && e.response?.data is Map) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      Get.snackbar("Error", errorMessage);
+    } catch (e) {
+      print("Error: $e");
+      Get.snackbar("Error", e.toString());
+    } finally {
+      isLoading = false;
+      update();
     }
   }
 
-  void signInWithFacebook() {
-    if (kDebugMode) {
-      print("Facebook Sign In");
+  Future<void> signInWithFacebook() async {
+    try {
+      isLoading = true;
+      update();
+
+      // 🔹 Step 1: Facebook Login
+      final LoginResult result = await FacebookAuth.instance.login();
+
+      if (result.status == LoginStatus.success) {
+        final AccessToken accessToken = result.accessToken!;
+        if (kDebugMode) print("Facebook Access Token: ${accessToken.tokenString}");
+
+        // 🔹 Step 2: Call API
+        final response = await dio.post(
+          ApiConstants.socialLogin,
+          options: Options(contentType: Headers.formUrlEncodedContentType),
+          data: {
+            "provider": "facebook",
+            "access_token": accessToken.tokenString,
+          },
+        );
+
+        final data = response.data;
+
+        if (response.statusCode == 200 && data["status"] == true) {
+          // 🔹 Step 3: Save Token
+          box.write("token", data["data"]["token"]);
+          box.write("name", data["data"]["name"]);
+          box.write("email", data["data"]["email"]);
+
+          Get.snackbar("Success", "Login successful");
+
+          // 🔹 Step 4: Navigate
+          Get.offAll(() => const HomeScreen());
+        } else {
+          Get.snackbar("Error", data["message"] ?? "Login failed");
+        }
+      } else if (result.status == LoginStatus.cancelled) {
+        if (kDebugMode) print("Facebook Login Cancelled");
+      } else {
+        Get.snackbar("Error", result.message ?? "Facebook login failed");
+      }
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('Facebook Login Error (DioException): ${e.message}');
+        if (e.response != null) {
+          print('Response Error Data: ${e.response?.data}');
+        }
+      }
+      String errorMessage = 'A network error occurred. Please try again.';
+      if (e.response != null && e.response?.data is Map) {
+        errorMessage = e.response?.data['message'] ?? errorMessage;
+      }
+      Get.snackbar("Error", errorMessage);
+    } catch (e) {
+      if (kDebugMode) print("Error: $e");
+      Get.snackbar("Error", e.toString());
+    } finally {
+      isLoading = false;
+      update();
     }
   }
 
