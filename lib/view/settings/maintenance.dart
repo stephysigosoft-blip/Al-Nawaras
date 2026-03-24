@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../generated/l10n.dart';
 class Maintenance extends StatelessWidget {
   const Maintenance({super.key, required this.serverDownReason});
   final String? serverDownReason;
