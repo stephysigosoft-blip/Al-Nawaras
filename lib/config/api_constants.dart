@@ -54,4 +54,7 @@ class ApiConstants {
   // Payment
   static const String paymentSummary = '${baseUrl}payment/summary';
   static const String paymentConfirm = '${baseUrl}payment/confirm';
+
+  // Notifications
+  static const String notifications = '${baseUrl}notifications';
 }

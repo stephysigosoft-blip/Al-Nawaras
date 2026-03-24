@@ -458,5 +458,7 @@
   "@activeStatus": {},
   "needHelp": "تحتاج مساعدة؟",
   "alNawaras": "النورس",
-  "weWillBeBackSoon": "سنعود قريباً"
+  "weWillBeBackSoon": "سنعود قريباً",
+  "noNotifications": "لا توجد إشعارات",
+  "@noNotifications": {}
 }

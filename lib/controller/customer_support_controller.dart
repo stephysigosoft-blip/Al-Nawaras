@@ -61,7 +61,7 @@ class ChatController extends GetxController {
       );
 
       print('Status Code: ${response.statusCode}');
-      // print('Response Data: ${response.data}');
+      print('Response Data: ${response.data}');
 
       final data = response.data;
       if (data != null && data['status'] == true) {
@@ -131,6 +131,11 @@ class ChatController extends GetxController {
 
       messageController.clear(); // Clear input right away
       update(); // Update UI optimistically
+
+      print('--- API REQUEST (send_message) ---');
+      print('URL: ${ApiConstants.sendMessage}');
+      print('Payload: {"message": "${text.trim()}"}');
+      print('Headers: {"Authorization": "Bearer $token"}');
 
       final response = await dio.post(
         ApiConstants.sendMessage,

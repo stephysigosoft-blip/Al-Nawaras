@@ -458,5 +458,7 @@
   "@activeStatus": {},
   "needHelp": "Need help?",
   "alNawaras": "Al NAWRAS",
-  "weWillBeBackSoon": "We'll be back soon"
+  "weWillBeBackSoon": "We'll be back soon",
+  "noNotifications": "No notifications",
+  "@noNotifications": {}
 }

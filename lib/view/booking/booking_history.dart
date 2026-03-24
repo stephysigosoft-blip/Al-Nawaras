@@ -110,11 +110,7 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
               ),
 
               // Help button
-              const PositionedDirectional(
-                bottom: 100,
-                end: 20,
-                child: DraggableHelpButton(),
-              ),
+              const DraggableHelpButton(),
             ],
           ),
           bottomNavigationBar: CustomBottomNavBar(

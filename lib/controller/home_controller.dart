@@ -16,6 +16,7 @@ import '../view/home/home_screen.dart';
 import '../view/rewards/rewards_view.dart';
 import '../view/home/my_vehicles_view.dart';
 import '../view/home/recent_activity_view.dart';
+import '../view/notifications/notifications_view.dart';
 import 'dart:io';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../view/login/login_screen.dart';
@@ -145,10 +146,27 @@ class HomeController extends GetxController {
     }
   }
 
+  bool _isLoggingOut = false;
   Future<void> logOut() async {
-    final storage = GetStorage();
-    await storage.erase();
-    Get.offAll(() => const LoginScreen());
+    if (_isLoggingOut) return;
+    _isLoggingOut = true;
+
+    try {
+      final storage = GetStorage();
+      await storage.erase();
+
+      // Clear specific user related data just in case erase() is not immediate enough for sync reads
+      userName = "Loading...";
+      membershipStatus = "Loading...";
+      profilePicture = null;
+
+      // Ensure we only navigate if we are not already going there
+      if (Get.currentRoute != '/LoginScreen') {
+        Get.offAll(() => const LoginScreen());
+      }
+    } finally {
+      _isLoggingOut = false;
+    }
   }
 
   Future<void> fetchHomeData() async {
@@ -159,6 +177,11 @@ class HomeController extends GetxController {
       final dio = Dio();
       final storage = GetStorage();
       final token = storage.read('token');
+
+      if (token == null || token.toString().isEmpty || token == "null") {
+        if (kDebugMode) print('No token found, skipping home data fetch.');
+        return;
+      }
 
       final headers = {
         'Authorization': 'Bearer $token',
@@ -246,6 +269,9 @@ class HomeController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         print('Failed to fetch home data: $e');
+      }
+      if (e is DioException && e.response?.statusCode == 401) {
+        logOut();
       }
     }
   }
@@ -349,6 +375,11 @@ class HomeController extends GetxController {
       final storage = GetStorage();
       final token = storage.read('token');
 
+      debugPrint('\n--- API REQUEST (more_vehicles) ---');
+      debugPrint('URL: ${ApiConstants.vehicles}');
+      debugPrint('Query: {offset: $vehicleOffset, limit: $limit}');
+      debugPrint('Headers: {"Authorization": "Bearer $token"}');
+
       final response = await dio.get(
         ApiConstants.vehicles,
         queryParameters: {'offset': vehicleOffset, 'limit': limit},
@@ -359,6 +390,10 @@ class HomeController extends GetxController {
           },
         ),
       );
+
+      debugPrint('--- API RESPONSE (more_vehicles) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
 
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == true) {
@@ -410,6 +445,13 @@ class HomeController extends GetxController {
       final storage = GetStorage();
       final token = storage.read('token');
 
+      debugPrint('\n--- API REQUEST (more_activities) ---');
+      debugPrint('URL: ${ApiConstants.home}');
+      debugPrint(
+        'Query: {activity_offset: $activityOffset, activity_limit: $limit}',
+      );
+      debugPrint('Headers: {"Authorization": "Bearer $token"}');
+
       final response = await dio.get(
         ApiConstants.home,
         queryParameters: {
@@ -423,6 +465,10 @@ class HomeController extends GetxController {
           },
         ),
       );
+
+      debugPrint('--- API RESPONSE (more_activities) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
 
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == true) {
@@ -497,7 +543,7 @@ class HomeController extends GetxController {
   }
 
   void onNotificationClick() {
-    if (kDebugMode) print("Notification Clicked");
+    Get.to(() => const NotificationsView());
   }
 
   void onProfileClick() {

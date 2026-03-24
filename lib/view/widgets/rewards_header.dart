@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../generated/l10n.dart';
+import '../notifications/notifications_view.dart';
 
 class RewardsHeader extends StatelessWidget {
   final double width;
@@ -61,7 +63,7 @@ class RewardsHeader extends StatelessWidget {
                         color: Colors.white,
                         size: 24,
                       ),
-                      onPressed: () {},
+                      onPressed: () => Get.to(() => const NotificationsView()),
                     ),
                   ],
                 ),

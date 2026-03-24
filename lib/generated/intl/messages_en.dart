@@ -226,6 +226,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noInternetConnection": MessageLookupByLibrary.simpleMessage(
       "No Internet Connection",
     ),
+    "noNotifications": MessageLookupByLibrary.simpleMessage("No notifications"),
     "noPlansFound": MessageLookupByLibrary.simpleMessage(
       "No membership plans found",
     ),
