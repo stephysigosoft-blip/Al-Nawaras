@@ -40,8 +40,11 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
             backgroundColor: const Color(0xFFE30613),
             elevation: 0,
             leading: IconButton(
-              icon:
-                  const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: 20,
+              ),
               onPressed: () {
                 if (Navigator.of(context).canPop()) {
                   Navigator.of(context).pop();
@@ -107,9 +110,9 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
               ),
 
               // Help button
-              const Positioned(
+              const PositionedDirectional(
                 bottom: 100,
-                right: 20,
+                end: 20,
                 child: DraggableHelpButton(),
               ),
             ],
@@ -129,7 +132,8 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
     // Filter logic based on _selectedTab
     final filteredHistory = controller.bookingHistory.where((item) {
       if (_selectedTab == 'All') return true;
-      return item['status']?.toString().toLowerCase() == _selectedTab.toLowerCase();
+      return item['status']?.toString().toLowerCase() ==
+          _selectedTab.toLowerCase();
     }).toList();
 
     if (filteredHistory.isEmpty && _selectedTab != 'All') {
@@ -137,15 +141,22 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
         SizedBox(
           height: 300,
           child: Center(
-            child: CustomNoData(message: S.of(context).noEntriesForTab(_selectedTab)),
+            child: CustomNoData(
+              message: S.of(context).noEntriesForTab(_selectedTab),
+            ),
           ),
         ),
       ];
     }
 
+    String displayTab = _selectedTab;
+    if (_selectedTab == 'All') displayTab = S.of(context).allTab;
+    if (_selectedTab == 'Active') displayTab = S.of(context).activeTab;
+    if (_selectedTab == 'Completed') displayTab = S.of(context).completedTab;
+
     return [
       Text(
-        _selectedTab,
+        displayTab,
         style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
@@ -153,22 +164,25 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
         ),
       ),
       const SizedBox(height: 12),
-      ...filteredHistory.map((item) => Column(
-            children: [
-              BookingCard(
-                title: item['title'] ?? 'Parking',
-                subtitle: item['subtitle'] ?? '',
-                status: item['status'] ?? 'N/A',
-                startDate: item['startDate'] ?? '',
-                endDate: item['endDate'] ?? '',
-                amount: item['amount'] ?? 'AED 0.00',
-                isActive: item['isActive'] == true,
-                actions: _buildActionButtons(item['status']?.toString() ?? ''),
-              ),
-              const SizedBox(height: 16),
-            ],
-          )),
-      if (filteredHistory.isNotEmpty) _buildLoadMoreButton(),
+      ...filteredHistory.map(
+        (item) => Column(
+          children: [
+            BookingCard(
+              title: item['title'] ?? 'Parking',
+              subtitle: item['subtitle'] ?? '',
+              status: item['status'] ?? 'N/A',
+              startDate: item['startDate'] ?? '',
+              endDate: item['endDate'] ?? '',
+              amount: item['amount'] ?? 'AED 0.00',
+              isActive: item['isActive'] == true,
+              actions: _buildActionButtons(item['status']?.toString() ?? ''),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+      if (filteredHistory.isNotEmpty && controller.hasMoreHistory)
+        _buildLoadMoreButton(controller),
     ];
   }
 
@@ -247,26 +261,32 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
     }
   }
 
-  Widget _buildLoadMoreButton() {
+  Widget _buildLoadMoreButton(HomeController controller) {
     return SizedBox(
       width: double.infinity,
-      child: TextButton(
-        onPressed: () {},
-        style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          backgroundColor: Colors.white,
-        ),
-        child: Text(
-          S.of(context).loadMore,
-          style: const TextStyle(
-            color: Colors.grey,
-            // fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-        ),
-      ),
+      child: controller.isHistoryLoadingMore
+          ? const Center(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: CircularProgressIndicator(
+                  color: Color(0xFFE30613),
+                  strokeWidth: 2,
+                ),
+              ),
+            )
+          : TextButton(
+              onPressed: () => controller.loadMoreParkingHistory(),
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                backgroundColor: Colors.white,
+              ),
+              child: Text(
+                S.of(context).loadMore,
+                style: const TextStyle(color: Colors.grey, fontSize: 18),
+              ),
+            ),
     );
   }
 }

@@ -58,6 +58,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "By proceeding, you agree to our Terms of Service\nand Privacy Policy",
     ),
     "airConditioned": MessageLookupByLibrary.simpleMessage("Air Conditioned"),
+    "alNawaras": MessageLookupByLibrary.simpleMessage("Al NAWRAS"),
     "allTab": MessageLookupByLibrary.simpleMessage("All"),
     "alreadyHaveAccount": MessageLookupByLibrary.simpleMessage(
       "Already have an account? ",
@@ -212,6 +213,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "needAssistanceCall": MessageLookupByLibrary.simpleMessage(
       "Need assistance? Call us at 800-NAWRAS.",
     ),
+    "needHelp": MessageLookupByLibrary.simpleMessage("Need help?"),
     "next": MessageLookupByLibrary.simpleMessage("Next"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
     "noBookingHistoryFound": MessageLookupByLibrary.simpleMessage(
@@ -368,6 +370,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "View Terms & Conditions",
     ),
     "washService": MessageLookupByLibrary.simpleMessage("Wash Service"),
+    "weWillBeBackSoon": MessageLookupByLibrary.simpleMessage(
+      "We\'ll be back soon",
+    ),
     "welcome": MessageLookupByLibrary.simpleMessage("Welcome"),
     "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome Back!"),
     "welcomeDescription": MessageLookupByLibrary.simpleMessage(

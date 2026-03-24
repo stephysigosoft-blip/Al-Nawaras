@@ -455,5 +455,8 @@
   "membershipStatusLabel": "حالة العضوية",
   "@membershipStatusLabel": {},
   "activeStatus": "نشط",
-  "@activeStatus": {}
+  "@activeStatus": {},
+  "needHelp": "تحتاج مساعدة؟",
+  "alNawaras": "النورس",
+  "weWillBeBackSoon": "سنعود قريباً"
 }

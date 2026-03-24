@@ -68,10 +68,10 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: height * 0.001),
-                      const Center(
+                      Center(
                         child: Text(
-                          'Al NAWRAS',
-                          style: TextStyle(
+                          S.of(context).alNawaras,
+                          style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF001133),

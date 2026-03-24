@@ -1703,6 +1703,26 @@ class S {
   String get activeStatus {
     return Intl.message('Active', name: 'activeStatus', desc: '', args: []);
   }
+
+  /// `Need help?`
+  String get needHelp {
+    return Intl.message('Need help?', name: 'needHelp', desc: '', args: []);
+  }
+
+  /// `Al NAWRAS`
+  String get alNawaras {
+    return Intl.message('Al NAWRAS', name: 'alNawaras', desc: '', args: []);
+  }
+
+  /// `We'll be back soon`
+  String get weWillBeBackSoon {
+    return Intl.message(
+      'We\'ll be back soon',
+      name: 'weWillBeBackSoon',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

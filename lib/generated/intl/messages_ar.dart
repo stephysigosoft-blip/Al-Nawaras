@@ -54,6 +54,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "من خلال المتابعة، فإنك توافق على شروط الخدمة\nوسياسة الخصوصية الخاصة بنا",
     ),
     "airConditioned": MessageLookupByLibrary.simpleMessage("مكيف"),
+    "alNawaras": MessageLookupByLibrary.simpleMessage("النورس"),
     "allTab": MessageLookupByLibrary.simpleMessage("الكل"),
     "alreadyHaveAccount": MessageLookupByLibrary.simpleMessage(
       "هل لديك حساب بالفعل؟",
@@ -198,6 +199,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "needAssistanceCall": MessageLookupByLibrary.simpleMessage(
       "هل تحتاج إلى مساعدة؟ اتصل بنا على 800-NAWRAS.",
     ),
+    "needHelp": MessageLookupByLibrary.simpleMessage("تحتاج مساعدة؟"),
     "next": MessageLookupByLibrary.simpleMessage("التالي"),
     "no": MessageLookupByLibrary.simpleMessage("لا"),
     "noBookingHistoryFound": MessageLookupByLibrary.simpleMessage(
@@ -354,6 +356,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "viewTerms": MessageLookupByLibrary.simpleMessage("عرض الشروط والأحكام"),
     "washService": MessageLookupByLibrary.simpleMessage("خدمة غسيل"),
+    "weWillBeBackSoon": MessageLookupByLibrary.simpleMessage("سنعود قريباً"),
     "welcome": MessageLookupByLibrary.simpleMessage("مرحباً"),
     "welcomeBack": MessageLookupByLibrary.simpleMessage("مرحباً بعودتك!"),
     "welcomeDescription": MessageLookupByLibrary.simpleMessage(

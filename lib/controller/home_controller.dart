@@ -52,7 +52,11 @@ class HomeController extends GetxController {
 
   int vehicleOffset = 0;
   int activityOffset = 0;
+  int historyOffset = 0;
   final int limit = 10;
+
+  bool hasMoreHistory = true;
+  bool isHistoryLoadingMore = false;
 
   List<Map<String, dynamic>> bookingHistory = [];
 
@@ -258,8 +262,16 @@ class HomeController extends GetxController {
     return Colors.grey;
   }
 
-  Future<void> fetchParkingHistory() async {
-    isLoadingHistory = true;
+  Future<void> fetchParkingHistory({bool reset = true}) async {
+    if (reset) {
+      historyOffset = 0;
+      hasMoreHistory = true;
+      isLoadingHistory = true;
+      bookingHistory.clear();
+    } else {
+      if (!hasMoreHistory || isHistoryLoadingMore) return;
+      isHistoryLoadingMore = true;
+    }
     update();
 
     try {
@@ -274,21 +286,23 @@ class HomeController extends GetxController {
 
       debugPrint('\n--- API REQUEST (parking_history) ---');
       debugPrint('URL: ${ApiConstants.parkingHistory}');
+      debugPrint('Query: {offset: $historyOffset, limit: $limit}');
       debugPrint('Headers: $headers');
 
       final response = await dio.get(
         ApiConstants.parkingHistory,
+        queryParameters: {'offset': historyOffset, 'limit': limit},
         options: Options(headers: headers),
       );
 
       debugPrint('--- API RESPONSE (parking_history) ---');
       debugPrint('Status Code: ${response.statusCode}');
-      debugPrint('Response Body: ${response.data}');
+      // debugPrint('Response Body: ${response.data}');
 
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == true) {
           final historyData = response.data['data']['history'] as List? ?? [];
-          bookingHistory = historyData.map((item) {
+          final newItems = historyData.map((item) {
             return {
               'id': item['id'],
               'title': item['membership_plan'] ?? 'Parking',
@@ -303,14 +317,26 @@ class HomeController extends GetxController {
               'monthYear': item['month_year'] ?? 'Recent',
             };
           }).toList();
+
+          bookingHistory.addAll(newItems);
+          historyOffset += newItems.length;
+          hasMoreHistory = newItems.length >= limit;
+        } else {
+          hasMoreHistory = false;
         }
       }
     } catch (e) {
       debugPrint('Error fetching parking history: $e');
+      hasMoreHistory = false;
     } finally {
       isLoadingHistory = false;
+      isHistoryLoadingMore = false;
       update();
     }
+  }
+
+  Future<void> loadMoreParkingHistory() async {
+    await fetchParkingHistory(reset: false);
   }
 
   Future<void> loadMoreVehicles() async {

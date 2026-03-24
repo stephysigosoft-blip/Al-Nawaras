@@ -13,7 +13,7 @@ class Maintenance extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Padding(
-          padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 50),
+          padding: const EdgeInsetsDirectional.only(start: 15.0, end: 15, bottom: 50),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -27,7 +27,7 @@ class Maintenance extends StatelessWidget {
 
               const SizedBox(height: 20),
               Text(
-                "We'll be back soon",
+                S.of(context).weWillBeBackSoon,
                 style: GoogleFonts.rubik(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -37,7 +37,7 @@ class Maintenance extends StatelessWidget {
 
               const SizedBox(height: 8),
               Container(
-                padding: EdgeInsets.only(left: 15, right: 15),
+                padding: const EdgeInsetsDirectional.only(start: 15, end: 15),
                 child: Text(
                   (serverDownReason != null && serverDownReason!.isNotEmpty && serverDownReason != "null")
                       ? serverDownReason!

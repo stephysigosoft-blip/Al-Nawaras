@@ -455,5 +455,8 @@
   "membershipStatusLabel": "Membership Status",
   "@membershipStatusLabel": {},
   "activeStatus": "Active",
-  "@activeStatus": {}
+  "@activeStatus": {},
+  "needHelp": "Need help?",
+  "alNawaras": "Al NAWRAS",
+  "weWillBeBackSoon": "We'll be back soon"
 }
