@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -44,10 +45,23 @@ class ProfileController extends GetxController {
         return;
       }
 
+      if (kDebugMode) {
+        print('\n--- API REQUEST (profile) ---');
+        print('URL: ${ApiConstants.profile}');
+        print('Headers: {"Authorization": "Bearer $token"}');
+      }
+
       final response = await dio.get(
         ApiConstants.profile, // /api/profile
         options: Options(headers: {"Authorization": "Bearer $token"}),
       );
+
+      if (kDebugMode) {
+        print('--- API RESPONSE (profile) ---');
+        print('Status Code: ${response.statusCode}');
+        print('Response Body: ${response.data}');
+        print('--------------------------\n');
+      }
 
       final data = response.data;
 

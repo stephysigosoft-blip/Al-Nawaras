@@ -32,21 +32,42 @@ class CustomerSupportView extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: controller.isLoading.value && controller.messages.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    reverse: true, // Bottom to top scroll behavior
-                    padding: const EdgeInsets.all(16),
-                    itemCount: controller.messages.length,
-                    itemBuilder: (context, index) {
-                      final msg = controller.messages[index];
-                      return _buildMessageItem(
-                        text: msg['text'] ?? '',
-                        isMe: msg['isMe'] ?? false,
-                        sender: msg['sender'] ?? '',
+            child: Obx(() {
+              if (controller.isLoading.value && controller.messages.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (scrollInfo.metrics.pixels ==
+                      scrollInfo.metrics.maxScrollExtent) {
+                    controller.loadMoreMessages();
+                  }
+                  return true;
+                },
+                child: ListView.builder(
+                  reverse: true, // Bottom to top scroll behavior
+                  padding: const EdgeInsets.all(16),
+                  itemCount: controller.messages.length +
+                      (controller.isFetchingMore.value ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == controller.messages.length) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
                       );
-                    },
-                  ),
+                    }
+                    final msg = controller.messages[index];
+                    return _buildMessageItem(
+                      text: msg['text'] ?? '',
+                      isMe: msg['isMe'] ?? false,
+                      sender: msg['sender'] ?? '',
+                    );
+                  },
+                ),
+              );
+            }),
           ),
           _buildBottomInput(controller),
         ],
@@ -162,7 +183,7 @@ class CustomerSupportView extends StatelessWidget {
 
   Widget _buildBottomInput(ChatController controller) {
     return Container(
-      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 24, top: 12),
+      padding: const EdgeInsetsDirectional.only(start: 16, end: 16, bottom: 24, top: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [

@@ -16,11 +16,13 @@ import '../view/home/home_screen.dart';
 import '../view/rewards/rewards_view.dart';
 import '../view/home/my_vehicles_view.dart';
 import '../view/home/recent_activity_view.dart';
+import '../view/notifications/notifications_view.dart';
 import 'dart:io';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../view/login/login_screen.dart';
 import '../view/settings/maintenance.dart';
 import '../config/api_constants.dart';
+import 'dart:math' as math;
 
 class HomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
@@ -51,7 +53,11 @@ class HomeController extends GetxController {
 
   int vehicleOffset = 0;
   int activityOffset = 0;
+  int historyOffset = 0;
   final int limit = 10;
+
+  bool hasMoreHistory = true;
+  bool isHistoryLoadingMore = false;
 
   List<Map<String, dynamic>> bookingHistory = [];
 
@@ -65,7 +71,7 @@ class HomeController extends GetxController {
   Future<void> fetchSettings() async {
     try {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      String buildNumber = packageInfo.version;
+      String buildVersion = packageInfo.version;
 
       final dio = Dio();
       final response = await dio.get(ApiConstants.settings);
@@ -78,11 +84,17 @@ class HomeController extends GetxController {
       }
 
       if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['data']['settings'];
+        final data = response.data['data']?['settings'];
         if (data != null) {
           bool maintenanceAndroid = data['maintenance_android'] == 1;
           bool maintenanceIos = data['maintenance_ios'] == 1;
-          String? reason =
+
+          String? reason = Platform.isAndroid
+              ? data['maintenance_reason_android']?.toString()
+              : data['maintenance_reason_ios']?.toString();
+
+          // Fallback if platform-specific reason is missing
+          reason ??=
               data['maintenance_reason_ios']?.toString() ??
               data['maintenance_reason_android']?.toString();
 
@@ -92,19 +104,22 @@ class HomeController extends GetxController {
             Get.offAll(() => Maintenance(serverDownReason: reason));
           } else {
             // Check for updates
-            String playStoreVersion = data['play_store_version'] ?? "1.0.0";
-            String appStoreVersion = data['app_store_version'] ?? "1.0.0";
+            String playStoreVersion =
+                data['play_store_version']?.toString() ?? "1.0.0";
+            String appStoreVersion =
+                data['app_store_version']?.toString() ?? "1.0.0";
             bool forceUpdateAndroid = data['play_store_update'] == 1;
             bool forceUpdateIos = data['app_store_update'] == 1;
 
             if (Platform.isAndroid &&
                 forceUpdateAndroid &&
                 _versionToCode(playStoreVersion) >
-                    _versionToCode(buildNumber)) {
+                    _versionToCode(buildVersion)) {
               // Get.offAll(() => const NeedAnUpdate()); // If you have this screen
             } else if (Platform.isIOS &&
                 forceUpdateIos &&
-                _versionToCode(appStoreVersion) > _versionToCode(buildNumber)) {
+                _versionToCode(appStoreVersion) >
+                    _versionToCode(buildVersion)) {
               // Get.offAll(() => const NeedAnUpdate()); // If you have this screen
             }
           }
@@ -122,7 +137,8 @@ class HomeController extends GetxController {
       List<String> codes = version.split('.');
       int code = 0;
       for (int i = 0; i < codes.length; i++) {
-        code += int.parse(codes[i]) * (1000 ^ (2 - i));
+        // Correct versioning multiplication to handle correctly (major, minor, patch)
+        code += int.parse(codes[i]) * math.pow(1000, 2 - i).toInt();
       }
       return code;
     } catch (e) {
@@ -130,17 +146,42 @@ class HomeController extends GetxController {
     }
   }
 
+  bool _isLoggingOut = false;
   Future<void> logOut() async {
-    final storage = GetStorage();
-    await storage.erase();
-    Get.offAll(() => const LoginScreen());
+    if (_isLoggingOut) return;
+    _isLoggingOut = true;
+
+    try {
+      final storage = GetStorage();
+      await storage.erase();
+
+      // Clear specific user related data just in case erase() is not immediate enough for sync reads
+      userName = "Loading...";
+      membershipStatus = "Loading...";
+      profilePicture = null;
+
+      // Ensure we only navigate if we are not already going there
+      if (Get.currentRoute != '/LoginScreen') {
+        Get.offAll(() => const LoginScreen());
+      }
+    } finally {
+      _isLoggingOut = false;
+    }
   }
 
   Future<void> fetchHomeData() async {
     try {
+      // Check maintenance status every time home data is fetched/refreshed
+      fetchSettings();
+
       final dio = Dio();
       final storage = GetStorage();
       final token = storage.read('token');
+
+      if (token == null || token.toString().isEmpty || token == "null") {
+        if (kDebugMode) print('No token found, skipping home data fetch.');
+        return;
+      }
 
       final headers = {
         'Authorization': 'Bearer $token',
@@ -229,6 +270,9 @@ class HomeController extends GetxController {
       if (kDebugMode) {
         print('Failed to fetch home data: $e');
       }
+      if (e is DioException && e.response?.statusCode == 401) {
+        logOut();
+      }
     }
   }
 
@@ -244,8 +288,16 @@ class HomeController extends GetxController {
     return Colors.grey;
   }
 
-  Future<void> fetchParkingHistory() async {
-    isLoadingHistory = true;
+  Future<void> fetchParkingHistory({bool reset = true}) async {
+    if (reset) {
+      historyOffset = 0;
+      hasMoreHistory = true;
+      isLoadingHistory = true;
+      bookingHistory.clear();
+    } else {
+      if (!hasMoreHistory || isHistoryLoadingMore) return;
+      isHistoryLoadingMore = true;
+    }
     update();
 
     try {
@@ -260,21 +312,23 @@ class HomeController extends GetxController {
 
       debugPrint('\n--- API REQUEST (parking_history) ---');
       debugPrint('URL: ${ApiConstants.parkingHistory}');
+      debugPrint('Query: {offset: $historyOffset, limit: $limit}');
       debugPrint('Headers: $headers');
 
       final response = await dio.get(
         ApiConstants.parkingHistory,
+        queryParameters: {'offset': historyOffset, 'limit': limit},
         options: Options(headers: headers),
       );
 
       debugPrint('--- API RESPONSE (parking_history) ---');
       debugPrint('Status Code: ${response.statusCode}');
-      debugPrint('Response Body: ${response.data}');
+      // debugPrint('Response Body: ${response.data}');
 
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == true) {
           final historyData = response.data['data']['history'] as List? ?? [];
-          bookingHistory = historyData.map((item) {
+          final newItems = historyData.map((item) {
             return {
               'id': item['id'],
               'title': item['membership_plan'] ?? 'Parking',
@@ -289,14 +343,26 @@ class HomeController extends GetxController {
               'monthYear': item['month_year'] ?? 'Recent',
             };
           }).toList();
+
+          bookingHistory.addAll(newItems);
+          historyOffset += newItems.length;
+          hasMoreHistory = newItems.length >= limit;
+        } else {
+          hasMoreHistory = false;
         }
       }
     } catch (e) {
       debugPrint('Error fetching parking history: $e');
+      hasMoreHistory = false;
     } finally {
       isLoadingHistory = false;
+      isHistoryLoadingMore = false;
       update();
     }
+  }
+
+  Future<void> loadMoreParkingHistory() async {
+    await fetchParkingHistory(reset: false);
   }
 
   Future<void> loadMoreVehicles() async {
@@ -309,6 +375,11 @@ class HomeController extends GetxController {
       final storage = GetStorage();
       final token = storage.read('token');
 
+      debugPrint('\n--- API REQUEST (more_vehicles) ---');
+      debugPrint('URL: ${ApiConstants.vehicles}');
+      debugPrint('Query: {offset: $vehicleOffset, limit: $limit}');
+      debugPrint('Headers: {"Authorization": "Bearer $token"}');
+
       final response = await dio.get(
         ApiConstants.vehicles,
         queryParameters: {'offset': vehicleOffset, 'limit': limit},
@@ -319,6 +390,10 @@ class HomeController extends GetxController {
           },
         ),
       );
+
+      debugPrint('--- API RESPONSE (more_vehicles) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
 
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == true) {
@@ -370,6 +445,13 @@ class HomeController extends GetxController {
       final storage = GetStorage();
       final token = storage.read('token');
 
+      debugPrint('\n--- API REQUEST (more_activities) ---');
+      debugPrint('URL: ${ApiConstants.home}');
+      debugPrint(
+        'Query: {activity_offset: $activityOffset, activity_limit: $limit}',
+      );
+      debugPrint('Headers: {"Authorization": "Bearer $token"}');
+
       final response = await dio.get(
         ApiConstants.home,
         queryParameters: {
@@ -383,6 +465,10 @@ class HomeController extends GetxController {
           },
         ),
       );
+
+      debugPrint('--- API RESPONSE (more_activities) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
 
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == true) {
@@ -457,7 +543,7 @@ class HomeController extends GetxController {
   }
 
   void onNotificationClick() {
-    if (kDebugMode) print("Notification Clicked");
+    Get.to(() => const NotificationsView());
   }
 
   void onProfileClick() {

@@ -218,7 +218,7 @@ class RewardsView extends StatelessWidget {
       child: Row(
         children: rewards.map((r) {
           return Padding(
-            padding: const EdgeInsets.only(right: 12.0),
+            padding: const EdgeInsetsDirectional.only(end: 12.0),
             child: _buildRedeemCard(
               r['title']?.toString().replaceAll(' ', '\n') ?? 'Reward',
               '${r['points'] ?? 0} pts',

@@ -7,6 +7,7 @@ class PaymentSummaryCard extends StatelessWidget {
   final String amount;
   final String subtotal;
   final String vat;
+  final String? total;
   final List<Map<String, String>> details;
 
   const PaymentSummaryCard({
@@ -17,6 +18,7 @@ class PaymentSummaryCard extends StatelessWidget {
     this.amount = 'AED 1,500',
     this.subtotal = 'AED 1,500.00',
     this.vat = 'AED 75.00',
+    this.total,
     this.details = const [
       {'label': 'Vehicle', 'value': 'Airstream Caravel'},
       {'label': 'Duration', 'value': '30 Days'},
@@ -117,9 +119,9 @@ class PaymentSummaryCard extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               Text(
-                subtotal == 'AED 1,500.00' && vat == 'AED 75.00'
+                total ?? (subtotal == 'AED 1,500.00' && vat == 'AED 75.00'
                     ? 'AED 1,575.00'
-                    : _calculateTotal(subtotal, vat),
+                    : _calculateTotal(subtotal, vat)),
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ],

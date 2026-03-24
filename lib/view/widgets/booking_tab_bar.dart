@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
 
 class BookingTabBar extends StatelessWidget {
   final String selectedTab;
@@ -24,19 +25,19 @@ class BookingTabBar extends StatelessWidget {
       child: Row(
         children: [
           _TabItem(
-            title: 'All',
+            title: S.of(context).allTab,
             isSelected: selectedTab == 'All',
             width: width,
             onTap: () => onTabChanged('All'),
           ),
           _TabItem(
-            title: 'Active',
+            title: S.of(context).activeTab,
             isSelected: selectedTab == 'Active',
             width: width,
             onTap: () => onTabChanged('Active'),
           ),
           _TabItem(
-            title: 'Completed',
+            title: S.of(context).completedTab,
             isSelected: selectedTab == 'Completed',
             width: width,
             onTap: () => onTabChanged('Completed'),

@@ -1,50 +1,61 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
 
 class CustomNetworkError extends StatelessWidget {
-  final VoidCallback? onRetry;
+  final VoidCallback onRetry;
 
-  const CustomNetworkError({
-    super.key,
-    this.onRetry,
-  });
+  const CustomNetworkError({super.key, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
+    final height = MediaQuery.of(context).size.height;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.wifi_off, size: height * 0.1, color: Colors.grey),
+          Icon(
+            Icons.wifi_off_outlined,
+            size: height * 0.1,
+            color: const Color(0xFFE30613),
+          ),
           SizedBox(height: height * 0.02),
-          const Text(
-            'No Internet Connection',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.black87,
+          Text(
+            S.of(context).noInternetConnection,
+            style: const TextStyle(
+              fontSize: 20,
               fontWeight: FontWeight.bold,
+              color: Color(0xFF001133),
             ),
           ),
           SizedBox(height: height * 0.01),
-          const Text(
-            'Please check your network and try again.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black54,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Text(
+              S.of(context).checkNetworkDetail,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14, color: Colors.black54),
             ),
           ),
-          if (onRetry != null) ...[
-            SizedBox(height: height * 0.04),
-            ElevatedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh, color: Colors.white),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE30613),
+          SizedBox(height: height * 0.04),
+          ElevatedButton(
+            onPressed: onRetry,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE30613),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-              label: const Text('Try Again', style: TextStyle(color: Colors.white)),
             ),
-          ]
+            child: Text(
+              S.of(context).tryAgain,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ],
       ),
     );

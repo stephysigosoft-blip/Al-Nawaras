@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
 
 class BookingCard extends StatelessWidget {
   final String title;
@@ -88,9 +89,9 @@ class BookingCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _DetailItem(label: 'Start Date', value: startDate),
-              _DetailItem(label: 'End Date', value: endDate),
-              _DetailItem(label: 'Amount', value: amount),
+              _DetailItem(label: S.of(context).startDateLabel, value: startDate),
+              _DetailItem(label: S.of(context).endDateLabel, value: endDate),
+              _DetailItem(label: S.of(context).amountLabel, value: amount),
             ],
           ),
           SizedBox(height: width * 0.04),

@@ -108,7 +108,7 @@ class RewardsCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
             child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               widthFactor: progress, // fill progress factor
               child: Container(
                 decoration: BoxDecoration(

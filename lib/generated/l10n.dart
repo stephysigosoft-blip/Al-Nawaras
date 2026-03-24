@@ -1168,6 +1168,571 @@ class S {
       args: [],
     );
   }
+
+  /// `Payment Successful`
+  String get paymentSuccessful {
+    return Intl.message(
+      'Payment Successful',
+      name: 'paymentSuccessful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Thank you!`
+  String get thankYou {
+    return Intl.message('Thank you!', name: 'thankYou', desc: '', args: []);
+  }
+
+  /// `Your payment has been processed\nsuccessfully.`
+  String get paymentProcessedSuccessfully {
+    return Intl.message(
+      'Your payment has been processed\nsuccessfully.',
+      name: 'paymentProcessedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A confirmation email and invoice have been\nsent to your registered email address.`
+  String get confirmationEmailSent {
+    return Intl.message(
+      'A confirmation email and invoice have been\nsent to your registered email address.',
+      name: 'confirmationEmailSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Need assistance? Call us at 800-NAWRAS.`
+  String get needAssistanceCall {
+    return Intl.message(
+      'Need assistance? Call us at 800-NAWRAS.',
+      name: 'needAssistanceCall',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Close`
+  String get close {
+    return Intl.message('Close', name: 'close', desc: '', args: []);
+  }
+
+  /// `Monthly Membership`
+  String get monthlyMembership {
+    return Intl.message(
+      'Monthly Membership',
+      name: 'monthlyMembership',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shaded Parking`
+  String get shadedParkingDetail {
+    return Intl.message(
+      'Shaded Parking',
+      name: 'shadedParkingDetail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle`
+  String get vehicle {
+    return Intl.message('Vehicle', name: 'vehicle', desc: '', args: []);
+  }
+
+  /// `Duration`
+  String get duration {
+    return Intl.message('Duration', name: 'duration', desc: '', args: []);
+  }
+
+  /// `30 Days`
+  String get thirtyDays {
+    return Intl.message('30 Days', name: 'thirtyDays', desc: '', args: []);
+  }
+
+  /// `Subtotal`
+  String get subtotalLabel {
+    return Intl.message('Subtotal', name: 'subtotalLabel', desc: '', args: []);
+  }
+
+  /// `VAT (5%)`
+  String get vatLabel {
+    return Intl.message('VAT (5%)', name: 'vatLabel', desc: '', args: []);
+  }
+
+  /// `Total`
+  String get totalLabel {
+    return Intl.message('Total', name: 'totalLabel', desc: '', args: []);
+  }
+
+  /// `Something went wrong`
+  String get somethingWentWrong {
+    return Intl.message(
+      'Something went wrong',
+      name: 'somethingWentWrong',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try Again`
+  String get tryAgain {
+    return Intl.message('Try Again', name: 'tryAgain', desc: '', args: []);
+  }
+
+  /// `No Internet Connection`
+  String get noInternetConnection {
+    return Intl.message(
+      'No Internet Connection',
+      name: 'noInternetConnection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please check your network and try again.`
+  String get checkNetworkDetail {
+    return Intl.message(
+      'Please check your network and try again.',
+      name: 'checkNetworkDetail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle Direction`
+  String get vehicleDirection {
+    return Intl.message(
+      'Vehicle Direction',
+      name: 'vehicleDirection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Parking Location`
+  String get selectParkingLocation {
+    return Intl.message(
+      'Select Parking Location',
+      name: 'selectParkingLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please navigate to select your parking slot of your choice.`
+  String get navigateSelectSlot {
+    return Intl.message(
+      'Please navigate to select your parking slot of your choice.',
+      name: 'navigateSelectSlot',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location Code : `
+  String get locationCodeLabel {
+    return Intl.message(
+      'Location Code : ',
+      name: 'locationCodeLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Slot Number : `
+  String get slotNumberLabel {
+    return Intl.message(
+      'Slot Number : ',
+      name: 'slotNumberLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location : `
+  String get locationLabel {
+    return Intl.message(
+      'Location : ',
+      name: 'locationLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location Type : `
+  String get locationTypeLabel {
+    return Intl.message(
+      'Location Type : ',
+      name: 'locationTypeLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Size : `
+  String get sizeLabel {
+    return Intl.message('Size : ', name: 'sizeLabel', desc: '', args: []);
+  }
+
+  /// `Confirm Location`
+  String get confirmLocation {
+    return Intl.message(
+      'Confirm Location',
+      name: 'confirmLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Available`
+  String get available {
+    return Intl.message('Available', name: 'available', desc: '', args: []);
+  }
+
+  /// `Booked`
+  String get booked {
+    return Intl.message('Booked', name: 'booked', desc: '', args: []);
+  }
+
+  /// `Selected`
+  String get selected {
+    return Intl.message('Selected', name: 'selected', desc: '', args: []);
+  }
+
+  /// `Jetski Parking`
+  String get jetskiParking {
+    return Intl.message(
+      'Jetski Parking',
+      name: 'jetskiParking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Food Truck Parking`
+  String get foodTruckParking {
+    return Intl.message(
+      'Food Truck Parking',
+      name: 'foodTruckParking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Boats Parking`
+  String get boatsParking {
+    return Intl.message(
+      'Boats Parking',
+      name: 'boatsParking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Caravan Parking`
+  String get caravanParking {
+    return Intl.message(
+      'Caravan Parking',
+      name: 'caravanParking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{prefix} Area`
+  String areaSuffix(String prefix) {
+    return Intl.message(
+      '$prefix Area',
+      name: 'areaSuffix',
+      desc: '',
+      args: [prefix],
+    );
+  }
+
+  /// `Open`
+  String get open {
+    return Intl.message('Open', name: 'open', desc: '', args: []);
+  }
+
+  /// `Standard`
+  String get standard {
+    return Intl.message('Standard', name: 'standard', desc: '', args: []);
+  }
+
+  /// `Location and slot confirmed successfully`
+  String get locationConfirmedSuccessfully {
+    return Intl.message(
+      'Location and slot confirmed successfully',
+      name: 'locationConfirmedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to confirm location`
+  String get failedToConfirmLocation {
+    return Intl.message(
+      'Failed to confirm location',
+      name: 'failedToConfirmLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error confirming location`
+  String get errorConfirmingLocation {
+    return Intl.message(
+      'Error confirming location',
+      name: 'errorConfirmingLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment`
+  String get payment {
+    return Intl.message('Payment', name: 'payment', desc: '', args: []);
+  }
+
+  /// `Payment Summary`
+  String get paymentSummary {
+    return Intl.message(
+      'Payment Summary',
+      name: 'paymentSummary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment Method`
+  String get paymentMethod {
+    return Intl.message(
+      'Payment Method',
+      name: 'paymentMethod',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Credit/Debit Card`
+  String get creditDebitCard {
+    return Intl.message(
+      'Credit/Debit Card',
+      name: 'creditDebitCard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apple Pay`
+  String get applePayLabel {
+    return Intl.message('Apple Pay', name: 'applePayLabel', desc: '', args: []);
+  }
+
+  /// `Google Pay`
+  String get googlePayLabel {
+    return Intl.message(
+      'Google Pay',
+      name: 'googlePayLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PayPal`
+  String get payPalLabel {
+    return Intl.message('PayPal', name: 'payPalLabel', desc: '', args: []);
+  }
+
+  /// `Nol Pay`
+  String get nolPayLabel {
+    return Intl.message('Nol Pay', name: 'nolPayLabel', desc: '', args: []);
+  }
+
+  /// `Cash on site`
+  String get cashOnSite {
+    return Intl.message('Cash on site', name: 'cashOnSite', desc: '', args: []);
+  }
+
+  /// `Save card for future payments`
+  String get saveCardForFuture {
+    return Intl.message(
+      'Save card for future payments',
+      name: 'saveCardForFuture',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pay {amount}`
+  String payAmount(String amount) {
+    return Intl.message(
+      'Pay $amount',
+      name: 'payAmount',
+      desc: '',
+      args: [amount],
+    );
+  }
+
+  /// `By proceeding, you agree to our Terms of Service\nand Privacy Policy`
+  String get agreeToTermsPrivacy {
+    return Intl.message(
+      'By proceeding, you agree to our Terms of Service\nand Privacy Policy',
+      name: 'agreeToTermsPrivacy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Booking History`
+  String get bookingHistory {
+    return Intl.message(
+      'Booking History',
+      name: 'bookingHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No booking history found`
+  String get noBookingHistoryFound {
+    return Intl.message(
+      'No booking history found',
+      name: 'noBookingHistoryFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get allTab {
+    return Intl.message('All', name: 'allTab', desc: '', args: []);
+  }
+
+  /// `Active`
+  String get activeTab {
+    return Intl.message('Active', name: 'activeTab', desc: '', args: []);
+  }
+
+  /// `Completed`
+  String get completedTab {
+    return Intl.message('Completed', name: 'completedTab', desc: '', args: []);
+  }
+
+  /// `No entries for {tab} tab`
+  String noEntriesForTab(String tab) {
+    return Intl.message(
+      'No entries for $tab tab',
+      name: 'noEntriesForTab',
+      desc: '',
+      args: [tab],
+    );
+  }
+
+  /// `View Details`
+  String get viewDetails {
+    return Intl.message(
+      'View Details',
+      name: 'viewDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Extend`
+  String get extend {
+    return Intl.message('Extend', name: 'extend', desc: '', args: []);
+  }
+
+  /// `Load More`
+  String get loadMore {
+    return Intl.message('Load More', name: 'loadMore', desc: '', args: []);
+  }
+
+  /// `month`
+  String get month {
+    return Intl.message('month', name: 'month', desc: '', args: []);
+  }
+
+  /// `Additional Service`
+  String get additionalService {
+    return Intl.message(
+      'Additional Service',
+      name: 'additionalService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Amount`
+  String get amountLabel {
+    return Intl.message('Amount', name: 'amountLabel', desc: '', args: []);
+  }
+
+  /// `Start Date`
+  String get startDateLabel {
+    return Intl.message(
+      'Start Date',
+      name: 'startDateLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `End Date`
+  String get endDateLabel {
+    return Intl.message('End Date', name: 'endDateLabel', desc: '', args: []);
+  }
+
+  /// `Membership Status`
+  String get membershipStatusLabel {
+    return Intl.message(
+      'Membership Status',
+      name: 'membershipStatusLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active`
+  String get activeStatus {
+    return Intl.message('Active', name: 'activeStatus', desc: '', args: []);
+  }
+
+  /// `Need help?`
+  String get needHelp {
+    return Intl.message('Need help?', name: 'needHelp', desc: '', args: []);
+  }
+
+  /// `Al NAWRAS`
+  String get alNawaras {
+    return Intl.message('Al NAWRAS', name: 'alNawaras', desc: '', args: []);
+  }
+
+  /// `We'll be back soon`
+  String get weWillBeBackSoon {
+    return Intl.message(
+      'We\'ll be back soon',
+      name: 'weWillBeBackSoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No notifications`
+  String get noNotifications {
+    return Intl.message(
+      'No notifications',
+      name: 'noNotifications',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

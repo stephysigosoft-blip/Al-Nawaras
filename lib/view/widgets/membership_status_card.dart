@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
 
 class MembershipStatusCard extends StatelessWidget {
   final double width;
@@ -40,7 +41,7 @@ class MembershipStatusCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "MemberShip Status",
+                S.of(context).membershipStatusLabel,
                 style: TextStyle(fontSize: 15, color: Colors.grey.shade500),
               ),
               Container(
@@ -49,13 +50,11 @@ class MembershipStatusCard extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(
-                    0.1,
-                  ), // ignore: deprecated_member_use
+                  color: Colors.green.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: const Text(
-                  'Active',
+                child: Text(
+                  S.of(context).activeStatus,
                   style: TextStyle(
                     color: Colors.green,
                     fontWeight: FontWeight.bold,
@@ -78,9 +77,9 @@ class MembershipStatusCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildStatBox('Vehicles', vehicles.toString(), width),
-              _buildStatBox('Bookings', bookings.toString(), width),
-              _buildStatBox('Services', services.toString(), width),
+              _buildStatBox(S.of(context).myVehicles, vehicles.toString(), width),
+              _buildStatBox(S.of(context).bookings, bookings.toString(), width),
+              _buildStatBox(S.of(context).services, services.toString(), width),
             ],
           ),
         ],

@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'dart:convert';
 import '../../controller/home_controller.dart';
 import '../../controller/profile_controller.dart';
+import '../notifications/notifications_view.dart';
 
 class ProfileHeader extends StatelessWidget {
   final double width;
@@ -62,7 +63,7 @@ class ProfileHeader extends StatelessWidget {
                         color: Colors.white,
                         size: 24,
                       ),
-                      onPressed: () {},
+                      onPressed: () => Get.to(() => const NotificationsView()),
                     ),
                   ],
                 ),

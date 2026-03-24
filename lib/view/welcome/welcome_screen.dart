@@ -30,9 +30,9 @@ class WelcomeScreen extends StatelessWidget {
                             children: [
                               // Top Row: Language switcher
                               Padding(
-                                padding: const EdgeInsets.only(
+                                padding: const EdgeInsetsDirectional.only(
                                   top: 20,
-                                  right: 20,
+                                  end: 20,
                                 ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -116,9 +116,9 @@ class WelcomeScreen extends StatelessWidget {
                               SizedBox(height: height * 0.001),
 
                               // Title
-                              const Text(
-                                'Al NAWRAS',
-                                style: TextStyle(
+                              Text(
+                                S.of(context).alNawaras,
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF001133), // Dark Navy Blue

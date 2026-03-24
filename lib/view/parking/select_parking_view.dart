@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../config/api_constants.dart';
+import '../../generated/l10n.dart';
 
 class _SlotRowConfig {
   final double top;
@@ -204,15 +205,32 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       if (locationResponse.statusCode == 200 && locationResponse.data != null) {
         if (locationResponse.data['status'] == true) {
           final data = locationResponse.data['data'];
-          if (data != null && data['slot_number'] != null) {
-            final returnedSlotNumber = data['slot_number'];
+          // Only proceed if we have a valid slot number, the booking is confirmed, and not expired
+          if (data != null &&
+              data['slot_number'] != null &&
+              data['slot_number'].toString().isNotEmpty &&
+              data['slot_number'].toString() != "false") {
+            final returnedSlotNumber = data['slot_number'].toString();
             await _fetchSlotDetails(returnedSlotNumber, headers, dio);
             return;
           }
         }
       }
+
+      // If we reach here in direction mode, it means no valid booking was found
+      if (mounted && widget.isDirectionMode) {
+        setState(() {
+          selectedSlotCode = "";
+          selectedSlotNumber = "N/A";
+        });
+      }
     } catch (e) {
       debugPrint('Error fetching parking details: $e');
+      if (mounted && widget.isDirectionMode) {
+        setState(() {
+          selectedSlotCode = "";
+        });
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -268,12 +286,10 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         final data = slotResponse.data['data'];
         if (mounted && data != null) {
           setState(() {
-            if (widget.isDirectionMode) {
-              final prefix = _getPrefixFromSlotNumber(slotNumber);
-              final num = _getNumberFromSlotNumber(slotNumber);
-              if (prefix.isNotEmpty && num.isNotEmpty) {
-                selectedSlotCode = "$prefix-$num";
-              }
+            final prefix = _getPrefixFromSlotNumber(slotNumber);
+            final num = _getNumberFromSlotNumber(slotNumber);
+            if (prefix.isNotEmpty && num.isNotEmpty) {
+              selectedSlotCode = "$prefix-$num";
             }
 
             selectedLocation =
@@ -321,27 +337,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       selectedLocation = _getFriendlyLocation(codeString.split('-').first);
       selectedLocationType = _getLocationType(codeString.split('-').first);
       selectedSlotSize = _getSlotSize(codeString.split('-').first);
-      isLoadingData = true;
     });
-
-    try {
-      final dio = Dio();
-      final storage = GetStorage();
-      final token = storage.read('token');
-      final headers = {
-        if (token != null) 'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      };
-      await _fetchSlotDetails(formattedSlot, headers, dio);
-    } catch (e) {
-      debugPrint('Error fetching slot details: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoadingData = false;
-        });
-      }
-    }
   }
 
   String _formatSlotCode(String prefix, int index) {
@@ -412,10 +408,22 @@ class _SelectParkingViewState extends State<SelectParkingView> {
 
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == true) {
+          // After confirmation, fetch slot details as requested
+          // check for both slot_assigned and slot_number in response
+          final Map<String, dynamic>? data = response.data['data'];
+          final String confirmedSlot =
+              (data != null && data['slot_assigned'] != null)
+              ? data['slot_assigned'].toString()
+              : (data != null && data['slot_number'] != null)
+              ? data['slot_number'].toString()
+              : requestBody['slot_number'].toString();
+
+          await _fetchSlotDetails(confirmedSlot, headers, dio);
+
           if (mounted) {
             _showCustomSnackBar(
               response.data['message'] ??
-                  'Location and slot confirmed successfully',
+                  S.of(context).locationConfirmedSuccessfully,
             );
             Navigator.pushAndRemoveUntil(
               context,
@@ -434,7 +442,8 @@ class _SelectParkingViewState extends State<SelectParkingView> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 content: Text(
-                  response.data['message'] ?? 'Failed to confirm location',
+                  response.data['message'] ??
+                      S.of(context).failedToConfirmLocation,
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
@@ -444,7 +453,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       }
     } catch (e) {
       debugPrint('Error confirming location: $e');
-      _showCustomSnackBar('Error confirming location', isError: true);
+      _showCustomSnackBar(S.of(context).errorConfirmingLocation, isError: true);
     } finally {
       if (mounted) {
         setState(() {
@@ -462,8 +471,8 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         backgroundColor: const Color(0xFFE30613),
         title: Text(
           widget.isDirectionMode
-              ? 'Vehicle Direction'
-              : 'Select Parking Location',
+              ? S.of(context).vehicleDirection
+              : S.of(context).selectParkingLocation,
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -530,6 +539,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
   }
 
   void _handleCanvasTap(Offset position) {
+    if (widget.isDirectionMode) return;
     final double px = position.dx;
     final double py = position.dy;
     final double skewFactor = -0.7;
@@ -558,21 +568,21 @@ class _SelectParkingViewState extends State<SelectParkingView> {
   String _getFriendlyLocation(String prefix) {
     switch (prefix) {
       case 'JTSP':
-        return "Jetski Parking";
+        return S.of(context).jetskiParking;
       case 'FTP':
-        return "Food Truck Parking";
+        return S.of(context).foodTruckParking;
       case 'BTP':
-        return "Boats Parking";
+        return S.of(context).boatsParking;
       case 'CTP':
-        return "Caravan Parking";
+        return S.of(context).caravanParking;
       default:
-        return "$prefix Area";
+        return S.of(context).areaSuffix(prefix);
     }
   }
 
   String _getLocationType(String prefix) {
-    if (prefix == 'BTP' || prefix == 'CTP') return "Shaded";
-    return "Open";
+    if (prefix == 'BTP' || prefix == 'CTP') return S.of(context).shaded;
+    return S.of(context).open;
   }
 
   String _getSlotSize(String prefix) {
@@ -586,7 +596,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       case 'CTP':
         return "5m x 16m";
       default:
-        return "Standard";
+        return S.of(context).standard;
     }
   }
 
@@ -595,9 +605,9 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       width: double.infinity,
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: const Text(
-        'Please navigate to select your parking slot of your choice.',
-        style: TextStyle(color: Colors.black87, fontSize: 12.5),
+      child: Text(
+        S.of(context).navigateSelectSlot,
+        style: const TextStyle(color: Colors.black87, fontSize: 12.5),
       ),
     );
   }
@@ -612,36 +622,43 @@ class _SelectParkingViewState extends State<SelectParkingView> {
           _buildLegendRow(),
           if (selectedSlotCode.isNotEmpty) ...[
             const SizedBox(height: 18),
-            _buildInfoRow('Location Code : ', selectedLocationCode),
-            _buildInfoRow('Slot Number : ', selectedSlotNumber),
-            _buildInfoRow('Location : ', selectedLocation),
-            _buildInfoRow('Location Type : ', selectedLocationType),
-            _buildInfoRow('Size : ', selectedSlotSize),
+            _buildInfoRow(
+              S.of(context).locationCodeLabel,
+              selectedLocationCode,
+            ),
+            _buildInfoRow(S.of(context).slotNumberLabel, selectedSlotNumber),
+            _buildInfoRow(S.of(context).locationLabel, selectedLocation),
+            _buildInfoRow(
+              S.of(context).locationTypeLabel,
+              selectedLocationType,
+            ),
+            _buildInfoRow(S.of(context).sizeLabel, selectedSlotSize),
           ],
 
           const SizedBox(height: 14),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE30613),
-                minimumSize: const Size(double.infinity, 44),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(22),
+          if (!widget.isDirectionMode)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE30613),
+                  minimumSize: const Size(double.infinity, 44),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  elevation: 0,
                 ),
-                elevation: 0,
-              ),
-              onPressed: selectedSlotCode.isEmpty ? null : _confirmLocation,
-              child: const Text(
-                'Confirm Location',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13.5,
+                onPressed: selectedSlotCode.isEmpty ? null : _confirmLocation,
+                child: Text(
+                  S.of(context).confirmLocation,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13.5,
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -651,10 +668,10 @@ class _SelectParkingViewState extends State<SelectParkingView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildLegendItem(const Color(0xFF2E2E2E), 'Available'),
-        _buildLegendItem(const Color(0xFFCDCDCD), 'Booked'),
-        _buildLegendItem(const Color(0xFFE30613), 'Selected'),
-        _buildLegendItem(const Color(0xFF7B846D), 'Shaded'),
+        _buildLegendItem(const Color(0xFF2E2E2E), S.of(context).available),
+        _buildLegendItem(const Color(0xFFCDCDCD), S.of(context).booked),
+        _buildLegendItem(const Color(0xFFE30613), S.of(context).selected),
+        _buildLegendItem(const Color(0xFF7B846D), S.of(context).shaded),
       ],
     );
   }

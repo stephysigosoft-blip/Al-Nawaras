@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../generated/l10n.dart';
 import '../chat/customer_support_view.dart';
 
 class DraggableHelpController extends GetxController {
@@ -83,9 +84,9 @@ class DraggableHelpButton extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Text(
-                    'Need help?',
-                    style: TextStyle(fontSize: 10, color: Colors.black38),
+                  child: Text(
+                    S.of(context).needHelp,
+                    style: const TextStyle(fontSize: 10, color: Colors.black38),
                   ),
                 ),
                 const SizedBox(height: 5),

@@ -13,6 +13,11 @@ class ChatController extends GetxController {
   var isSending = false.obs;
   var messages = <Map<String, dynamic>>[].obs;
 
+  var hasMoreMessages = true.obs;
+  var isFetchingMore = false.obs;
+  var offset = 0.obs;
+  final int limit = 20;
+
   @override
   void onInit() {
     super.onInit();
@@ -22,19 +27,30 @@ class ChatController extends GetxController {
   // ============================================================
   // 🔹 1. FETCH MESSAGES
   // ============================================================
-  Future<void> fetchMessages({int limit = 20, int offset = 0}) async {
-    try {
+  Future<void> fetchMessages({bool reset = true}) async {
+    if (reset) {
       isLoading(true);
+      offset(0);
+      hasMoreMessages(true);
+      messages.clear();
+    } else {
+      if (!hasMoreMessages.value || isFetchingMore.value) return;
+      isFetchingMore(true);
+    }
+    update();
+
+    try {
       final token = box.read('token');
 
       print('--- Fetching Messages ---');
       print('URL: ${ApiConstants.getMessages}');
+      print('Query: {limit: $limit, offset: ${offset.value}}');
 
       final response = await dio.get(
         ApiConstants.getMessages,
-        data: {
+        queryParameters: {
           "limit": limit,
-          "offset": offset,
+          "offset": offset.value,
         },
         options: Options(
           headers: {
@@ -48,11 +64,12 @@ class ChatController extends GetxController {
       print('Response Data: ${response.data}');
 
       final data = response.data;
-      if (data['status'] == true) {
+      if (data != null && data['status'] == true) {
         final rawData = data['data'];
-        final List fetchedMessages = (rawData != null && rawData['messages'] is List) 
-            ? rawData['messages'] 
-            : [];
+        final List fetchedMessages =
+            (rawData != null && rawData['messages'] is List)
+                ? rawData['messages']
+                : [];
 
         // Map API response to local structure
         final mapped = fetchedMessages.map((m) {
@@ -66,19 +83,32 @@ class ChatController extends GetxController {
           };
         }).toList();
 
-        messages.assignAll(mapped);
+        if (reset) {
+          messages.assignAll(mapped);
+        } else {
+          messages.addAll(mapped);
+        }
+
+        offset.value += mapped.length;
+        hasMoreMessages.value = mapped.length >= limit;
+      } else {
+        hasMoreMessages.value = false;
       }
     } on DioException catch (e) {
       print('DioException in fetchMessages: ${e.message}');
-      if (e.response != null) {
-        print('Response error data: ${e.response?.data}');
-      }
+      hasMoreMessages.value = false;
     } catch (e) {
       print('Exception in fetchMessages: $e');
+      hasMoreMessages.value = false;
     } finally {
       isLoading(false);
+      isFetchingMore(false);
       update();
     }
+  }
+
+  Future<void> loadMoreMessages() async {
+    await fetchMessages(reset: false);
   }
 
   // ============================================================
@@ -101,6 +131,11 @@ class ChatController extends GetxController {
 
       messageController.clear(); // Clear input right away
       update(); // Update UI optimistically
+
+      print('--- API REQUEST (send_message) ---');
+      print('URL: ${ApiConstants.sendMessage}');
+      print('Payload: {"message": "${text.trim()}"}');
+      print('Headers: {"Authorization": "Bearer $token"}');
 
       final response = await dio.post(
         ApiConstants.sendMessage,
