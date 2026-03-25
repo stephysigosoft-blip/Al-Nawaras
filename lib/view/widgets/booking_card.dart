@@ -10,6 +10,7 @@ class BookingCard extends StatelessWidget {
   final String amount;
   final bool isActive;
   final List<Widget> actions;
+  final VoidCallback? onTap;
 
   const BookingCard({
     super.key,
@@ -21,83 +22,89 @@ class BookingCard extends StatelessWidget {
     required this.amount,
     required this.isActive,
     required this.actions,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    return Container(
-      padding: EdgeInsets.all(width * 0.04),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Header Row
-          Row(
-            children: [
-              _buildIcon(width),
-              SizedBox(width: width * 0.03),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            title,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.black,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: EdgeInsets.all(width * 0.04),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // Header Row
+            Row(
+              children: [
+                _buildIcon(width),
+                SizedBox(width: width * 0.03),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              title,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                        ),
-                        _buildStatusBadge(),
-                      ],
-                    ),
-                    SizedBox(height: width * 0.01),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                          _buildStatusBadge(),
+                        ],
                       ),
-                    ),
-                  ],
+                      SizedBox(height: width * 0.01),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: width * 0.04),
-          const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
-          SizedBox(height: width * 0.04),
-          // Details Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _DetailItem(label: S.of(context).startDateLabel, value: startDate),
-              _DetailItem(label: S.of(context).endDateLabel, value: endDate),
-              _DetailItem(label: S.of(context).amountLabel, value: amount),
-            ],
-          ),
-          SizedBox(height: width * 0.04),
-          // Actions Row
-          Row(children: actions),
-        ],
+              ],
+            ),
+            SizedBox(height: width * 0.04),
+            const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
+            SizedBox(height: width * 0.04),
+            // Details Row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _DetailItem(
+                    label: S.of(context).startDateLabel, value: startDate),
+                _DetailItem(label: S.of(context).endDateLabel, value: endDate),
+                _DetailItem(label: S.of(context).amountLabel, value: amount),
+              ],
+            ),
+            SizedBox(height: width * 0.04),
+            // Actions Row
+            Row(children: actions),
+          ],
+        ),
       ),
     );
   }

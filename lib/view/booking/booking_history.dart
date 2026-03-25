@@ -7,6 +7,8 @@ import '../widgets/custom_no_data.dart';
 import '../../controller/home_controller.dart';
 import '../../generated/l10n.dart';
 import 'package:get/get.dart';
+import 'booking_details_view.dart';
+import '../book_parking/book_parking_screen.dart';
 
 class BookingHistoryView extends StatefulWidget {
   const BookingHistoryView({super.key});
@@ -171,7 +173,8 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
               endDate: item['endDate'] ?? '',
               amount: item['amount'] ?? 'AED 0.00',
               isActive: item['isActive'] == true,
-              actions: _buildActionButtons(item['status']?.toString() ?? ''),
+              actions: _buildActionButtons(item),
+              onTap: () => Get.to(() => BookingDetailsView(booking: item)),
             ),
             const SizedBox(height: 16),
           ],
@@ -182,14 +185,17 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
     ];
   }
 
-  List<Widget> _buildActionButtons(String status) {
-    if (status.toLowerCase() == 'active') {
+  List<Widget> _buildActionButtons(Map<String, dynamic> booking) {
+    final String status = booking['status']?.toString() ?? '';
+    if (status.toLowerCase().contains('active') ||
+        status.toLowerCase().contains('payment')) {
       return [
         Expanded(
           child: SizedBox(
             height: 36,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () =>
+                  Get.to(() => BookingDetailsView(booking: booking)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE30613),
                 foregroundColor: Colors.white,
@@ -210,7 +216,7 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
           child: SizedBox(
             height: 36,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: () => Get.to(() => const BookParkingScreen()),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Color(0xFFE30613)),
                 padding: EdgeInsets.zero,
@@ -235,7 +241,8 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
           child: SizedBox(
             height: 36,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: () =>
+                  Get.to(() => BookingDetailsView(booking: booking)),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.grey),
                 padding: EdgeInsets.zero,

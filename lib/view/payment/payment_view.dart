@@ -11,6 +11,7 @@ import '../widgets/custom_logos.dart';
 import '../widgets/draggable_help_button.dart';
 
 class PaymentView extends StatefulWidget {
+  final int? bookingId;
   final String? title;
   final String? subtitle;
   final String? amount;
@@ -21,6 +22,7 @@ class PaymentView extends StatefulWidget {
 
   const PaymentView({
     super.key,
+    this.bookingId,
     this.title,
     this.subtitle,
     this.amount,
@@ -249,7 +251,7 @@ class _PaymentViewState extends State<PaymentView> {
             height: 48,
             child: ElevatedButton(
               onPressed: () async {
-                // As per user request, call payment/confirm with fixed booking_id=1
+                // Call payment/confirm using the real booking_id (or fallback to 1)
                 try {
                   final dio = Dio();
                   final storage = GetStorage();
@@ -265,7 +267,7 @@ class _PaymentViewState extends State<PaymentView> {
                   double numericAmount = double.tryParse(priceStr) ?? 500.0;
 
                   final Map<String, dynamic> requestBody = {
-                    "booking_id": 1,
+                    "booking_id": widget.bookingId ?? 1,
                     "amount": numericAmount,
                     "payment_gateway": "stripe",
                     "payment_reference": "gateway_payment_reference"
@@ -292,12 +294,17 @@ class _PaymentViewState extends State<PaymentView> {
                     if (mounted) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => const PaymentSuccessView(),
+                          builder: (context) => PaymentSuccessView(
+                            bookingId: widget.bookingId,
+                            title: widget.title,
+                            subtitle: widget.subtitle,
+                            total: totalStr,
+                            details: widget.details,
+                          ),
                         ),
                       );
                     }
                   } else {
-                    // Fail gracefully or show message without changing UI?
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

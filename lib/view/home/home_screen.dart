@@ -53,179 +53,264 @@ class HomeScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: height * 0.08),
-                          _buildHeader(controller, context, height, width),
-                          SizedBox(height: height * 0.025),
-                          _buildMembershipCard(
-                            controller,
-                            context,
-                            height,
-                            width,
-                          ),
-                          SizedBox(height: height * 0.015),
+                          if (controller.isSectionVisible('header', [
+                            S.of(context).welcome,
+                            controller.userName,
+                          ]))
+                            _buildHeader(controller, context, height, width),
 
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildSquareButton(
-                                  S.of(context).bookParking,
-                                  const AssetImage(
-                                    "lib/assets/images/book parking.png",
+                          if (controller.isSectionVisible('membership', [
+                            controller.membershipStatus,
+                            controller.membershipTier,
+                            S.of(context).renew,
+                          ])) ...[
+                            SizedBox(height: height * 0.025),
+                            _buildMembershipCard(
+                              controller,
+                              context,
+                              height,
+                              width,
+                            ),
+                          ],
+
+                          if (controller.isSectionVisible('buttons', [
+                            S.of(context).bookParking,
+                            S.of(context).requestService,
+                          ])) ...[
+                            SizedBox(height: height * 0.015),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildSquareButton(
+                                    S.of(context).bookParking,
+                                    const AssetImage(
+                                      "lib/assets/images/book parking.png",
+                                    ),
+                                    controller.onBookParkingClick,
+                                    height,
+                                    width,
                                   ),
-                                  controller.onBookParkingClick,
-                                  height,
-                                  width,
                                 ),
-                              ),
-                              SizedBox(width: width * 0.04),
-                              Expanded(
-                                child: _buildSquareButton(
-                                  S.of(context).requestService,
-                                  const AssetImage(
-                                    "lib/assets/images/request service.png",
+                                SizedBox(width: width * 0.04),
+                                Expanded(
+                                  child: _buildSquareButton(
+                                    S.of(context).requestService,
+                                    const AssetImage(
+                                      "lib/assets/images/request service.png",
+                                    ),
+                                    controller.onRequestServiceClick,
+                                    height,
+                                    width,
                                   ),
-                                  controller.onRequestServiceClick,
-                                  height,
-                                  width,
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: height * 0.02),
+                              ],
+                            ),
+                          ],
 
-                          _buildPlanRow(controller, context, height, width),
+                          if (controller.isSectionVisible('plans', [
+                            S.of(context).membershipPlans,
+                            S.of(context).buy,
+                          ])) ...[
+                            SizedBox(height: height * 0.02),
+                            _buildPlanRow(controller, context, height, width),
+                          ],
 
-                          SizedBox(height: height * 0.02),
-                          _buildNavigateBanner(
-                            controller,
-                            context,
-                            height,
-                            width,
-                          ),
+                          if (controller.isSectionVisible('navigate', [
+                            S.of(context).navigateToYourParking,
+                            S.of(context).getDirections,
+                          ])) ...[
+                            SizedBox(height: height * 0.02),
+                            _buildNavigateBanner(
+                              controller,
+                              context,
+                              height,
+                              width,
+                            ),
+                          ],
 
                           SizedBox(height: height * 0.02),
                           _buildSearchBar(controller, context, height, width),
 
-                          SizedBox(height: height * 0.02),
-                          _buildSmartParkingBanner(
-                            controller,
-                            context,
-                            height,
-                            width,
-                          ),
+                          // Search Results for Locations from API
+                          if (controller.searchQuery.isNotEmpty &&
+                              controller.searchLocationsResults.isNotEmpty) ...[
+                            SizedBox(height: height * 0.02),
+                            _buildSectionHeader(
+                              "Search Results", // Fallback text as key is missing
+                              "",
+                              () {},
+                              height,
+                            ),
+                            SizedBox(height: height * 0.01),
+                            ...controller.searchLocationsResults.map((
+                              location,
+                            ) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: _buildActivityCard(
+                                  location['name'] ?? '',
+                                  "Location", // Fallback text as key is missing
+                                  Icons.location_on_outlined,
+                                  const Color(0xFFE30613),
+                                  height,
+                                  width,
+                                ),
+                              );
+                            }).toList(),
+                          ],
 
-                          SizedBox(height: height * 0.02),
-                          _buildOpportunityBanner(
-                            controller,
-                            context,
-                            height,
-                            width,
-                          ),
+                          if (controller.isSectionVisible('smartParking', [
+                            S.of(context).smartParking,
+                            S.of(context).forAllVehicleTypes,
+                            S.of(context).securedSlots,
+                            S.of(context).bookNow,
+                          ])) ...[
+                            SizedBox(height: height * 0.02),
+                            _buildSmartParkingBanner(
+                              controller,
+                              context,
+                              height,
+                              width,
+                            ),
+                          ],
 
-                          SizedBox(height: height * 0.02),
-                          _buildSectionHeader(
+                          if (controller.isSectionVisible('opportunity', [
+                            S.of(context).opportunity,
+                            S.of(context).checkRewards,
+                            'Rewards',
+                          ])) ...[
+                            SizedBox(height: height * 0.02),
+                            _buildOpportunityBanner(
+                              controller,
+                              context,
+                              height,
+                              width,
+                            ),
+                          ],
+
+                          if (controller.isSectionVisible('vehicles', [
                             S.of(context).myVehicles,
-                            controller.showAllVehicles
-                                ? S.of(context).viewAll
-                                : S
-                                      .of(context)
-                                      .viewAll, // Keep it 'View All' as user didn't request 'Show Less' but logic will toggle. Wait, user might want 'Show Less' text too.
-                            controller.onViewAllVehiclesClick,
-                            height,
-                          ),
-                          SizedBox(height: height * 0.02),
-                          if (controller.filteredVehicles.isEmpty)
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: height * 0.01,
-                              ),
-                              child: CustomNoData(message: S.of(context).noDataAvailable),
-                            )
-                          else
-                            ...((controller.searchQuery.isEmpty &&
-                                        !controller.showAllVehicles)
-                                    ? controller.filteredVehicles.take(2)
-                                    : controller.filteredVehicles)
-                                .map((vehicle) {
-                                  return Column(
-                                    children: [
-                                      _buildVehicleCard(
-                                        vehicle['title'],
-                                        S
-                                            .of(context)
-                                            .license(vehicle['license']),
-                                        vehicle['isParked'],
-                                        vehicle['isParked']
-                                            ? S
-                                                  .of(context)
-                                                  .parkedAtSpot(vehicle['spot'])
-                                            : S.of(context).awayFromParking,
-                                        vehicle['image'],
-                                        height,
-                                        width,
-                                      ),
-                                      SizedBox(height: height * 0.015),
-                                    ],
-                                  );
-                                })
-                                .toList(),
-                          SizedBox(height: height * 0.02),
-                          _buildRegisterButton(controller, context, height),
+                          ])) ...[
+                            SizedBox(height: height * 0.02),
+                            _buildSectionHeader(
+                              S.of(context).myVehicles,
+                              controller.searchQuery.isEmpty
+                                  ? (controller.showAllVehicles
+                                        ? S.of(context).viewAll
+                                        : S.of(context).viewAll)
+                                  : "",
+                              controller.onViewAllVehiclesClick,
+                              height,
+                            ),
+                            SizedBox(height: height * 0.02),
+                            if (controller.filteredVehicles.isEmpty)
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: height * 0.01,
+                                ),
+                                child: CustomNoData(
+                                  message: S.of(context).noDataAvailable,
+                                ),
+                              )
+                            else
+                              ...((controller.searchQuery.isEmpty &&
+                                          !controller.showAllVehicles)
+                                      ? controller.filteredVehicles.take(2)
+                                      : controller.filteredVehicles)
+                                  .map((vehicle) {
+                                    return Column(
+                                      children: [
+                                        _buildVehicleCard(
+                                          vehicle['title'],
+                                          S
+                                              .of(context)
+                                              .license(vehicle['license']),
+                                          vehicle['isParked'],
+                                          vehicle['isParked']
+                                              ? S
+                                                    .of(context)
+                                                    .parkedAtSpot(
+                                                      vehicle['spot'],
+                                                    )
+                                              : S.of(context).awayFromParking,
+                                          vehicle['image'],
+                                          height,
+                                          width,
+                                        ),
+                                        SizedBox(height: height * 0.015),
+                                      ],
+                                    );
+                                  })
+                                  .toList(),
+                            SizedBox(height: height * 0.02),
+                            _buildRegisterButton(controller, context, height),
+                          ],
 
-                          SizedBox(height: height * 0.035),
-                          _buildSectionHeader(
+                          if (controller.isSectionVisible('activity', [
                             S.of(context).recentActivity,
-                            S.of(context).viewAll,
-                            controller.onViewAllActivityClick,
-                            height,
-                          ),
-                          SizedBox(height: height * 0.02),
-                          if (controller.filteredActivities.isEmpty)
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: height * 0.01,
-                              ),
-                              child: CustomNoData(message: S.of(context).noDataAvailable),
-                            )
-                          else
-                            ...((controller.searchQuery.isEmpty &&
-                                        !controller.showAllActivities)
-                                    ? controller.filteredActivities.take(2)
-                                    : controller.filteredActivities)
-                                .map((activity) {
-                                  String title = "";
-                                  String subtitle = activity['subtitle'];
+                          ])) ...[
+                            SizedBox(height: height * 0.035),
+                            _buildSectionHeader(
+                              S.of(context).recentActivity,
+                              controller.searchQuery.isEmpty
+                                  ? S.of(context).viewAll
+                                  : "",
+                              controller.onViewAllActivityClick,
+                              height,
+                            ),
+                            SizedBox(height: height * 0.02),
+                            if (controller.filteredActivities.isEmpty)
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: height * 0.01,
+                                ),
+                                child: CustomNoData(
+                                  message: S.of(context).noDataAvailable,
+                                ),
+                              )
+                            else
+                              ...((controller.searchQuery.isEmpty &&
+                                          !controller.showAllActivities)
+                                      ? controller.filteredActivities.take(2)
+                                      : controller.filteredActivities)
+                                  .map((activity) {
+                                    String title = "";
+                                    String subtitle = activity['subtitle'];
 
-                                  if (activity['titleKey'] ==
-                                      'parkingRenewed') {
-                                    title = S.of(context).parkingRenewed;
-                                    subtitle = subtitle.replaceAll(
-                                      'monthlyPremium',
-                                      S.of(context).monthlyPremium,
-                                    );
-                                  } else if (activity['titleKey'] ==
-                                      'vehicleCheckIn') {
-                                    title = S.of(context).vehicleCheckIn;
-                                    subtitle = subtitle.replaceAll(
-                                      'parkedAtSpotA12',
-                                      S.of(context).parkedAtSpot('A12'),
-                                    );
-                                  }
+                                    if (activity['titleKey'] == 'parkingPayment') {
+                                      title = S.of(context).parkingPayment;
+                                    } else if (activity['titleKey'] ==
+                                        'parkingRenewed') {
+                                      title = S.of(context).parkingRenewed;
+                                      subtitle = subtitle.replaceAll(
+                                        'monthlyPremium',
+                                        S.of(context).monthlyPremium,
+                                      );
+                                    } else if (activity['titleKey'] ==
+                                        'vehicleCheckIn') {
+                                      title = S.of(context).vehicleCheckIn;
+                                      subtitle = subtitle.replaceAll(
+                                        'parkedAtSpotA12',
+                                        S.of(context).parkedAtSpot('A12'),
+                                      );
+                                    }
 
-                                  return Column(
-                                    children: [
-                                      _buildActivityCard(
-                                        title,
-                                        subtitle,
-                                        activity['icon'],
-                                        activity['color'],
-                                        height,
-                                        width,
-                                      ),
-                                      SizedBox(height: height * 0.01),
-                                    ],
-                                  );
-                                })
-                                .toList(),
+                                    return Column(
+                                      children: [
+                                        _buildActivityCard(
+                                          title,
+                                          subtitle,
+                                          activity['icon'],
+                                          activity['color'],
+                                          height,
+                                          width,
+                                        ),
+                                        SizedBox(height: height * 0.01),
+                                      ],
+                                    );
+                                  })
+                                  .toList(),
+                          ],
 
                           SizedBox(height: height * 0.05), // Bottom padding
                         ],
@@ -360,7 +445,8 @@ class HomeScreen extends StatelessWidget {
                     color: Color(0xFF001133),
                   ),
                 ),
-                if (controller.membershipValidUntil != null && controller.membershipValidUntil!.isNotEmpty) ...[
+                if (controller.membershipValidUntil != null &&
+                    controller.membershipValidUntil!.isNotEmpty) ...[
                   SizedBox(height: height * 0.005),
                   Text(
                     S.of(context).validUntil(controller.membershipValidUntil!),
@@ -626,6 +712,8 @@ class HomeScreen extends StatelessWidget {
       child: TextField(
         controller: controller.searchController,
         onChanged: controller.onSearchChanged,
+        onTap: () =>
+            controller.searchLocations(controller.searchController.text),
         style: const TextStyle(fontSize: 14),
         decoration: InputDecoration(
           hintText: S.of(context).search,

@@ -74,6 +74,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "bookNow": MessageLookupByLibrary.simpleMessage("Book Now!"),
     "bookParking": MessageLookupByLibrary.simpleMessage("Book Parking"),
     "booked": MessageLookupByLibrary.simpleMessage("Booked"),
+    "bookingDetails": MessageLookupByLibrary.simpleMessage("Booking Details"),
     "bookingHistory": MessageLookupByLibrary.simpleMessage("Booking History"),
     "bookings": MessageLookupByLibrary.simpleMessage("Bookings"),
     "buy": MessageLookupByLibrary.simpleMessage("Buy"),
@@ -249,6 +250,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "opportunity": MessageLookupByLibrary.simpleMessage("Opportunity!"),
     "orSignInWith": MessageLookupByLibrary.simpleMessage("Or sign in with"),
     "parkedAtSpot": m4,
+    "parkingPayment": MessageLookupByLibrary.simpleMessage("Parking Payment"),
     "parkingRenewed": MessageLookupByLibrary.simpleMessage("Parking Renewed"),
     "parkingType": MessageLookupByLibrary.simpleMessage("Parking Type"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
@@ -283,6 +285,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "redeem": MessageLookupByLibrary.simpleMessage("Redeem"),
     "redeemPoints": MessageLookupByLibrary.simpleMessage("Redeem Points"),
     "redeemYourRewards": MessageLookupByLibrary.simpleMessage("Redeem Points"),
+    "referenceLabel": MessageLookupByLibrary.simpleMessage("Reference"),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
     "registerNewVehicle": MessageLookupByLibrary.simpleMessage(
       "Register New Vehicle",
