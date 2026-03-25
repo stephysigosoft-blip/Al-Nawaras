@@ -277,7 +277,8 @@ class HomeScreen extends StatelessWidget {
                                     String title = "";
                                     String subtitle = activity['subtitle'];
 
-                                    if (activity['titleKey'] == 'parkingPayment') {
+                                    if (activity['titleKey'] ==
+                                        'parkingPayment') {
                                       title = S.of(context).parkingPayment;
                                     } else if (activity['titleKey'] ==
                                         'parkingRenewed') {
@@ -293,6 +294,11 @@ class HomeScreen extends StatelessWidget {
                                         'parkedAtSpotA12',
                                         S.of(context).parkedAtSpot('A12'),
                                       );
+                                    } else {
+                                      title = (activity['titleKey'] ?? "")
+                                          .toString();
+                                      if (title.isEmpty)
+                                        title = S.of(context).recentActivity;
                                     }
 
                                     return Column(

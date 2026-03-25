@@ -14,6 +14,11 @@ class MyVehiclesView extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
 
     return GetBuilder<HomeController>(
+      initState: (state) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Get.find<HomeController>().loadMoreVehicles(reset: true);
+        });
+      },
       builder: (controller) {
         return Scaffold(
           backgroundColor: const Color(0xFFF7F7F7),
@@ -22,53 +27,57 @@ class MyVehiclesView extends StatelessWidget {
             centerTitle: false,
             onBackPressed: () => Get.back(),
           ),
-          body: controller.filteredVehicles.isEmpty
-              ? CustomNoData(
-                  message: S.of(context).currentlyNoItemsFoundPleaseTryLater,
-                )
-              : NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scrollInfo) {
-                    if (scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent) {
-                      controller.loadMoreVehicles();
-                    }
-                    return true;
-                  },
-                  child: ListView.builder(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: width * 0.05,
-                      vertical: height * 0.02,
-                    ),
-                    itemCount:
-                        controller.filteredVehicles.length +
-                        (controller.isVehicleLoading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == controller.filteredVehicles.length) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(strokeWidth: 2),
+          body: RefreshIndicator(
+            onRefresh: () => controller.loadMoreVehicles(),
+            color: const Color(0xFFE30613),
+            child: controller.filteredVehicles.isEmpty
+                ? CustomNoData(
+                    message: S.of(context).currentlyNoItemsFoundPleaseTryLater,
+                  )
+                : NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent) {
+                        controller.loadMoreVehicles();
+                      }
+                      return true;
+                    },
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.05,
+                        vertical: height * 0.02,
+                      ),
+                      itemCount:
+                          controller.filteredVehicles.length +
+                          (controller.isVehicleLoading ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == controller.filteredVehicles.length) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        }
+                        final vehicle = controller.filteredVehicles[index];
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: height * 0.015),
+                          child: _buildVehicleCard(
+                            vehicle['title'],
+                            S.of(context).license(vehicle['license']),
+                            vehicle['isParked'],
+                            vehicle['isParked']
+                                ? S.of(context).parkedAtSpot(vehicle['spot'])
+                                : S.of(context).awayFromParking,
+                            vehicle['image'],
+                            height,
+                            width,
                           ),
                         );
-                      }
-                      final vehicle = controller.filteredVehicles[index];
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: height * 0.015),
-                        child: _buildVehicleCard(
-                          vehicle['title'],
-                          S.of(context).license(vehicle['license']),
-                          vehicle['isParked'],
-                          vehicle['isParked']
-                              ? S.of(context).parkedAtSpot(vehicle['spot'])
-                              : S.of(context).awayFromParking,
-                          vehicle['image'],
-                          height,
-                          width,
-                        ),
-                      );
-                    },
+                      },
+                    ),
                   ),
-                ),
+          ),
         );
       },
     );
@@ -107,12 +116,19 @@ class MyVehiclesView extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             padding: const EdgeInsets.all(8),
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.directions_car, color: Colors.black26),
-            ),
+            child: imagePath.startsWith('http')
+                ? Image.network(
+                    imagePath,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.directions_car, color: Colors.black26),
+                  )
+                : Image.asset(
+                    imagePath,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.directions_car, color: Colors.black26),
+                  ),
           ),
           SizedBox(width: width * 0.04),
           Expanded(

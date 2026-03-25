@@ -26,6 +26,7 @@ class ProfileController extends GetxController {
   final picker = ImagePicker();
   var selectedImage = Rx<File?>(null);
   String base64Image = "";
+  var isImageRemoved = false.obs;
 
   // 🔹 GET TOKEN
   String? get token => box.read('token');
@@ -93,14 +94,15 @@ class ProfileController extends GetxController {
     phoneController.text = profile.value?.mobile ?? "";
     selectedImage.value = null;
     base64Image = "";
+    isImageRemoved.value = false;
   }
 
   // ============================================================
   // 🔹 2. PICK IMAGE
   // ============================================================
-  Future<void> pickImage() async {
+  Future<void> pickImage(ImageSource source) async {
     final picked = await picker.pickImage(
-      source: ImageSource.gallery,
+      source: source,
       imageQuality: 40, // Compress to avoid massive base64 payloads
       maxWidth: 800,
     );
@@ -110,7 +112,15 @@ class ProfileController extends GetxController {
 
       List<int> bytes = await selectedImage.value!.readAsBytes();
       base64Image = base64Encode(bytes);
+      isImageRemoved.value = false;
     }
+  }
+
+  void removeImage() {
+    selectedImage.value = null;
+    isImageRemoved.value = true;
+    base64Image = "";
+    update();
   }
 
   // ============================================================
@@ -178,7 +188,12 @@ class ProfileController extends GetxController {
           "name": nameController.text,
           "email": emailController.text,
           "phone_number": phoneController.text,
+          if (base64Image.isNotEmpty) "profile_picture": base64Image,
           if (base64Image.isNotEmpty) "profile_image": base64Image,
+          if (isImageRemoved.value) "profile_picture": "",
+          if (isImageRemoved.value) "profile_image": "",
+          if (isImageRemoved.value) "remove_profile_picture": true,
+          if (isImageRemoved.value) "remove_profile_image": true,
         },
         options: Options(
           contentType: Headers.formUrlEncodedContentType,
@@ -210,6 +225,7 @@ class ProfileController extends GetxController {
         }
         if (Get.isRegistered<RewardsController>()) {
           Get.find<RewardsController>().fetchRewardsData();
+          Get.find<RewardsController>().fetchProfileData();
         }
 
         Future.delayed(const Duration(seconds: 1), () {

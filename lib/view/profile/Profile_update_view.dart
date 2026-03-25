@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
 import '../../controller/profile_controller.dart';
 import '../../generated/l10n.dart';
 
@@ -66,7 +67,7 @@ class ProfileUpdateView extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: padding),
                     child: Column(
                       children: [
-                        _buildProfileImagePicker(width),
+                        _buildProfileImagePicker(context, width),
                         SizedBox(height: height * 0.04),
                         _buildFormFields(context, width),
                         SizedBox(height: height * 0.05),
@@ -96,7 +97,7 @@ class ProfileUpdateView extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileImagePicker(double width) {
+  Widget _buildProfileImagePicker(BuildContext context, double width) {
     final controller = Get.find<ProfileController>();
     return Center(
       child: Stack(
@@ -106,6 +107,7 @@ class ProfileUpdateView extends StatelessWidget {
             child: Obx(() {
               final user = controller.profile.value;
               final selected = controller.selectedImage.value;
+              final removed = controller.isImageRemoved.value;
               final img = user?.profileImage;
 
               return CircleAvatar(
@@ -113,12 +115,12 @@ class ProfileUpdateView extends StatelessWidget {
                 backgroundColor: Colors.grey[200],
                 backgroundImage: selected != null
                     ? FileImage(selected) as ImageProvider
-                    : (img != null && img.isNotEmpty
+                    : (img != null && img.isNotEmpty && !removed
                         ? (img.startsWith('http')
                             ? NetworkImage(img)
                             : MemoryImage(base64Decode(img)) as ImageProvider)
                         : null),
-                child: selected == null && (img == null || img.isEmpty)
+                child: (selected == null && (img == null || img.isEmpty || removed))
                     ? Icon(
                         Icons.person,
                         color: Colors.blueGrey[800],
@@ -132,7 +134,7 @@ class ProfileUpdateView extends StatelessWidget {
             bottom: 4,
             end: 4,
             child: GestureDetector(
-              onTap: () => controller.pickImage(),
+              onTap: () => _showImageSourceDialog(context, controller),
               child: Container(
                 padding: const EdgeInsets.all(6),
                 decoration: const BoxDecoration(
@@ -148,6 +150,54 @@ class ProfileUpdateView extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showImageSourceDialog(BuildContext context, ProfileController controller) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined, color: Color(0xFFE30613)),
+                title: const Text("Take Photo"),
+                onTap: () {
+                  Navigator.pop(context);
+                  controller.pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.image_outlined, color: Color(0xFFE30613)),
+                title: const Text("Choose from Gallery"),
+                onTap: () {
+                  Navigator.pop(context);
+                  controller.pickImage(ImageSource.gallery);
+                },
+              ),
+              Obx(() => (controller.selectedImage.value != null ||
+                      (controller.profile.value?.profileImage != null &&
+                          controller.profile.value!.profileImage!.isNotEmpty &&
+                          !controller.isImageRemoved.value))
+                  ? ListTile(
+                      leading: const Icon(Icons.delete_outline, color: Color(0xFFE30613)),
+                      title: const Text("Remove Profile Picture"),
+                      onTap: () {
+                        Navigator.pop(context);
+                        controller.removeImage();
+                      },
+                    )
+                  : const SizedBox.shrink()),
+            ],
+          ),
+        ),
       ),
     );
   }
