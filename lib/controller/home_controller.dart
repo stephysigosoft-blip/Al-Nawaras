@@ -82,6 +82,7 @@ class HomeController extends GetxController {
     super.onInit();
     fetchSettings();
     fetchHomeData();
+    fetchParkingHistory();
   }
 
   Future<void> fetchSettings() async {

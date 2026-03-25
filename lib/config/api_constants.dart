@@ -14,6 +14,10 @@ class ApiConstants {
   static const String profile = '${baseUrl}profile';
   static const String updateprofile = '${baseUrl}profile/update';
 
+  // Support & Legal
+  static const String support = '${baseUrl}support';
+  static const String privacyPolicy = '${baseUrl}privacy_policy';
+
   // Chat
   static const String getMessages = '${baseUrl}messages';
   static const String sendMessage = '${baseUrl}messages/send';

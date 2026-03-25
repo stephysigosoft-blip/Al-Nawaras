@@ -4,9 +4,9 @@ import '../../generated/l10n.dart';
 class MembershipStatusCard extends StatelessWidget {
   final double width;
   final String status;
-  final int vehicles;
-  final int bookings;
-  final int services;
+  final List? vehicles;
+  final List? bookings;
+  final List? services;
 
   const MembershipStatusCard({
     super.key,
@@ -77,9 +77,9 @@ class MembershipStatusCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildStatBox(S.of(context).myVehicles, vehicles.toString(), width),
-              _buildStatBox(S.of(context).bookings, bookings.toString(), width),
-              _buildStatBox(S.of(context).services, services.toString(), width),
+              _buildStatBox(S.of(context).myVehicles, (vehicles?.length ?? 0).toString(), width),
+              _buildStatBox(S.of(context).bookings, (bookings?.length ?? 0).toString(), width),
+              _buildStatBox(S.of(context).services, (services?.length ?? 0).toString(), width),
             ],
           ),
         ],
