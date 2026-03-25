@@ -13,7 +13,8 @@ import '../view/profile/profile_view.dart';
 import '../view/booking/booking_history.dart';
 import '../view/parking/select_parking_view.dart';
 import '../view/home/home_screen.dart';
-import '../view/rewards/rewards_view.dart';
+import 'package:al_nawaras/view/rewards/rewards_view.dart';
+import '../../generated/l10n.dart';
 import '../view/home/my_vehicles_view.dart';
 import '../view/home/recent_activity_view.dart';
 import '../view/notifications/notifications_view.dart';
@@ -232,8 +233,23 @@ class HomeController extends GetxController {
 
           final membership = data['membership_details'];
           if (membership != null) {
-            membershipStatus = membership['status'] ?? 'No Active Plan';
-            membershipTier = membership['tier'] ?? 'Standard';
+            String status = membership['status']?.toString() ?? 'No Active Plan';
+            if (status.toLowerCase().contains('no active')) {
+              membershipStatus = S.of(Get.context!).noActivePlan;
+            } else {
+              membershipStatus = status;
+            }
+
+            String tier = membership['tier']?.toString() ?? 'Standard';
+            if (tier.toLowerCase().contains('silver')) {
+              membershipTier = S.of(Get.context!).silverTier;
+            } else if (tier.toLowerCase().contains('gold')) {
+              membershipTier = S.of(Get.context!).goldTier;
+            } else if (tier.toLowerCase().contains('standard')) {
+              membershipTier = S.of(Get.context!).standardTier;
+            } else {
+              membershipTier = tier;
+            }
             membershipValidUntil = membership['valid_until']?.toString();
           }
 
@@ -290,9 +306,9 @@ class HomeController extends GetxController {
 
                   String datePart;
                   if (activityDate == today) {
-                    datePart = "Today";
+                    datePart = S.of(Get.context!).today;
                   } else if (activityDate == yesterday) {
-                    datePart = "Yesterday";
+                    datePart = S.of(Get.context!).yesterday;
                   } else {
                     datePart = DateFormat('MMM dd').format(dt);
                   }
@@ -402,7 +418,7 @@ class HomeController extends GetxController {
               'status': state,
               'startDate': item['start_date'] ?? '',
               'endDate': item['end_date'] ?? '',
-              'amount': 'AED ${item['amount'] ?? '0'}',
+              'amount': '${S.of(Get.context!).currency} ${item['amount'] ?? '0'}',
               'isActive': state.toLowerCase().contains('active') ||
                   state.toLowerCase().contains('payment') ||
                   state.toLowerCase() == 'paid',

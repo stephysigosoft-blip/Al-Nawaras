@@ -136,7 +136,7 @@ class HomeScreen extends StatelessWidget {
                               controller.searchLocationsResults.isNotEmpty) ...[
                             SizedBox(height: height * 0.02),
                             _buildSectionHeader(
-                              "Search Results", // Fallback text as key is missing
+                              S.of(context).searchResults,
                               "",
                               () {},
                               height,
@@ -149,7 +149,7 @@ class HomeScreen extends StatelessWidget {
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: _buildActivityCard(
                                   location['name'] ?? '',
-                                  "Location", // Fallback text as key is missing
+                                  S.of(context).location,
                                   Icons.location_on_outlined,
                                   const Color(0xFFE30613),
                                   height,

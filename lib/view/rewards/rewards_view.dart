@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../controller/rewards_controller.dart';
 import '../widgets/custom_no_data.dart';
 import '../../generated/l10n.dart';
+import 'package:share_plus/share_plus.dart';
 
 class RewardsView extends StatelessWidget {
   const RewardsView({super.key});
@@ -35,7 +36,12 @@ class RewardsView extends StatelessWidget {
               backgroundColor: const Color(0xFF00B0FF),
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                icon: Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_forward_ios
+                      : Icons.arrow_back_ios,
+                  color: Colors.white,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -63,16 +69,29 @@ class RewardsView extends StatelessWidget {
                         RewardsHeader(
                           width: width,
                           height: height,
-                          userName: data['name'] ?? 'User',
-                          phoneNumber: data['phone_number'] ?? '',
-                          email: data['email'] ?? '',
+                          userName:
+                              controller.profileData?['name'] ??
+                              data['name'] ??
+                              'User',
+                          phoneNumber:
+                              controller.profileData?['mobile'] ??
+                              data['phone_number'] ??
+                              '',
+                          email:
+                              controller.profileData?['email'] ??
+                              data['email'] ??
+                              '',
+                          profilePicture:
+                              controller.profileData?['profile_picture'] ??
+                              controller.profileData?['profile_image'] ??
+                              data['profile_picture'],
                         ),
-                        Positioned(
+                        PositionedDirectional(
                           top:
                               height *
                               0.25, // Adjusted to match original overlap
-                          left: padding,
-                          right: padding,
+                          start: padding,
+                          end: padding,
                           child: RewardsCard(
                             width: width,
                             points: S
@@ -184,7 +203,7 @@ class RewardsView extends StatelessWidget {
             return RewardsActionItem(
               icon: _getEarnIcon(title),
               title: title,
-              points: '+${r['points'] ?? 0} pts',
+              points: '+${r['points'] ?? 0} ${S.of(Get.context!).pts}',
             );
           }).toList(),
         ),
@@ -221,7 +240,7 @@ class RewardsView extends StatelessWidget {
             padding: const EdgeInsetsDirectional.only(end: 12.0),
             child: _buildRedeemCard(
               r['title']?.toString().replaceAll(' ', '\n') ?? 'Reward',
-              '${r['points'] ?? 0} pts',
+              '${r['points'] ?? 0} ${S.of(Get.context!).pts}',
               width,
             ),
           );
@@ -322,7 +341,11 @@ class RewardsView extends StatelessWidget {
             width: width * 0.20,
             height: width * 0.09,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                Share.share(
+                  S.of(context).shareMessage,
+                );
+              },
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Color(0xFFE30613), width: 1),
                 shape: RoundedRectangleBorder(

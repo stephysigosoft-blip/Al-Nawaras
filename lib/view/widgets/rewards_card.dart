@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
 
 class RewardsCard extends StatelessWidget {
   final double width;
@@ -46,17 +47,17 @@ class RewardsCard extends StatelessWidget {
                 height: width * 0.22,
               ),
               SizedBox(width: width * 0.05),
-              _buildPointsInfo(),
+              _buildPointsInfo(context),
             ],
           ),
           SizedBox(height: width * 0.045),
-          _buildProgressIndicator(),
+          _buildProgressIndicator(context),
         ],
       ),
     );
   }
 
-  Widget _buildPointsInfo() {
+  Widget _buildPointsInfo(BuildContext context) {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,12 +89,12 @@ class RewardsCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressIndicator() {
+  Widget _buildProgressIndicator(BuildContext context) {
     return Row(
       children: [
-        const Text(
-          'To Gold Member',
-          style: TextStyle(
+        Text(
+          S.of(context).toGoldMember,
+          style: const TextStyle(
             color: Colors.black54,
             // fontWeight: FontWeight.bold,
             fontSize: 12.5,

@@ -58,7 +58,9 @@ class ForgotPasswordView extends StatelessWidget {
                       controller.newPasswordController,
                       'Enter New Password',
                       Icons.lock_outline,
-                      obscureText: true,
+                      obscureText: controller.obscureNewPassword,
+                      onSuffixIconPressed: controller.toggleNewPasswordVisibility,
+                      showSuffixIcon: true,
                     ),
                     SizedBox(height: height * 0.025),
                     _buildLabel('Confirm Password'),
@@ -66,7 +68,9 @@ class ForgotPasswordView extends StatelessWidget {
                       controller.confirmPasswordController,
                       'Confirm New Password',
                       Icons.lock_outline,
-                      obscureText: true,
+                      obscureText: controller.obscureConfirmPassword,
+                      onSuffixIconPressed: controller.toggleConfirmPasswordVisibility,
+                      showSuffixIcon: true,
                     ),
                     SizedBox(height: height * 0.05),
                     ElevatedButton(
@@ -236,6 +240,8 @@ class ForgotPasswordView extends StatelessWidget {
     IconData icon, {
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
+    bool showSuffixIcon = false,
+    VoidCallback? onSuffixIconPressed,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -256,6 +262,16 @@ class ForgotPasswordView extends StatelessWidget {
         style: const TextStyle(fontSize: 14),
         decoration: InputDecoration(
           prefixIcon: Icon(icon, size: 20, color: Colors.black45),
+          suffixIcon: showSuffixIcon
+              ? IconButton(
+                  icon: Icon(
+                    obscureText ? Icons.visibility_off : Icons.visibility,
+                    size: 20,
+                    color: Colors.black45,
+                  ),
+                  onPressed: onSuffixIconPressed,
+                )
+              : null,
           hintText: hint,
           hintStyle: const TextStyle(color: Colors.black38, fontSize: 13),
           filled: true,

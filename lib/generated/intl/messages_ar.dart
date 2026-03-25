@@ -69,9 +69,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "bookParking": MessageLookupByLibrary.simpleMessage("حجز موقف"),
     "booked": MessageLookupByLibrary.simpleMessage("محجوز"),
     "bookingHistory": MessageLookupByLibrary.simpleMessage("سجل الحجوزات"),
+    "bookingSuccessful": MessageLookupByLibrary.simpleMessage(
+      "نجحت عملية الحجز!",
+    ),
     "bookings": MessageLookupByLibrary.simpleMessage("الحجوزات"),
     "buy": MessageLookupByLibrary.simpleMessage("شراء"),
     "buyNow": MessageLookupByLibrary.simpleMessage("اشترِ الآن!"),
+    "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
     "caravanParking": MessageLookupByLibrary.simpleMessage("مواقف الكرفانات"),
     "cashOnSite": MessageLookupByLibrary.simpleMessage("نقداً في الموقع"),
     "checkNetworkDetail": MessageLookupByLibrary.simpleMessage(
@@ -97,6 +101,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "createPassword": MessageLookupByLibrary.simpleMessage("أنشئ كلمة مرور"),
     "credit": MessageLookupByLibrary.simpleMessage("إضافة"),
     "creditDebitCard": MessageLookupByLibrary.simpleMessage("بطاقة ائتمان/خصم"),
+    "currency": MessageLookupByLibrary.simpleMessage("د.إ"),
     "currentlyNoItemsFoundPleaseTryLater": MessageLookupByLibrary.simpleMessage(
       "لا توجد عناصر حالياً، يرجى المحاولة لاحقاً",
     ),
@@ -132,6 +137,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorConfirmingLocation": MessageLookupByLibrary.simpleMessage(
       "خطأ في تأكيد الموقع",
     ),
+    "errorServer": MessageLookupByLibrary.simpleMessage(
+      "خطأ في الاتصال بالخادم",
+    ),
     "extend": MessageLookupByLibrary.simpleMessage("تمديد"),
     "failedToConfirmLocation": MessageLookupByLibrary.simpleMessage(
       "فشل تأكيد الموقع",
@@ -152,6 +160,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "getHelpAccount": MessageLookupByLibrary.simpleMessage(
       "احصل على مساعدة بشأن حسابك",
     ),
+    "goldTier": MessageLookupByLibrary.simpleMessage("ذهبي"),
     "googlePayLabel": MessageLookupByLibrary.simpleMessage("جوجل باي"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("المساعدة والدعم"),
     "home": MessageLookupByLibrary.simpleMessage("الرئيسية"),
@@ -165,6 +174,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "license": m1,
     "loadMore": MessageLookupByLibrary.simpleMessage("تحميل المزيد"),
+    "location": MessageLookupByLibrary.simpleMessage("الموقع"),
     "locationCodeLabel": MessageLookupByLibrary.simpleMessage("رمز الموقع : "),
     "locationConfirmedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "تم تأكيد الموقع والموقف بنجاح",
@@ -172,6 +182,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "locationLabel": MessageLookupByLibrary.simpleMessage("الموقع : "),
     "locationTypeLabel": MessageLookupByLibrary.simpleMessage("نوع الموقع : "),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
+    "logout": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
+    "logoutConfirm": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+    ),
     "managePaymentOptions": MessageLookupByLibrary.simpleMessage(
       "إدارة خيارات الدفع",
     ),
@@ -202,6 +216,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "needHelp": MessageLookupByLibrary.simpleMessage("تحتاج مساعدة؟"),
     "next": MessageLookupByLibrary.simpleMessage("التالي"),
     "no": MessageLookupByLibrary.simpleMessage("لا"),
+    "noActivePlan": MessageLookupByLibrary.simpleMessage("لا توجد خطة نشطة"),
     "noBookingHistoryFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على سجل حجوزات",
     ),
@@ -250,7 +265,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تمت معالجة دفعتك\nبنجاح.",
     ),
     "paymentSuccessful": MessageLookupByLibrary.simpleMessage(
-      "تمت عملية الدفع بنجاح",
+      "نجحت عملية الدفع!",
     ),
     "paymentSummary": MessageLookupByLibrary.simpleMessage("ملخص الدفع"),
     "per": MessageLookupByLibrary.simpleMessage("لكل"),
@@ -269,6 +284,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "provideDetailsToRegister": MessageLookupByLibrary.simpleMessage(
       "يرجى تقديم التفاصيل الخاصة بك لإنشاء حساب",
     ),
+    "pts": MessageLookupByLibrary.simpleMessage("نقاط"),
     "recentActivity": MessageLookupByLibrary.simpleMessage("النشاط الأخير"),
     "redeem": MessageLookupByLibrary.simpleMessage("استبدال"),
     "redeemPoints": MessageLookupByLibrary.simpleMessage("استبدال النقاط"),
@@ -289,6 +305,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "saveChanges": MessageLookupByLibrary.simpleMessage("حفظ التغييرات"),
     "search": MessageLookupByLibrary.simpleMessage("بحث"),
+    "searchResults": MessageLookupByLibrary.simpleMessage("نتائج البحث"),
     "securedSlots": MessageLookupByLibrary.simpleMessage(
       "أكثر من 300 موقف مؤمن للكرفانات،\nوالقوارب، والجت سكي والمزيد.",
     ),
@@ -303,11 +320,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectVehicle": MessageLookupByLibrary.simpleMessage("اختر المركبة"),
     "selected": MessageLookupByLibrary.simpleMessage("محدد"),
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
+    "serviceName": MessageLookupByLibrary.simpleMessage("اسم الخدمة"),
     "services": MessageLookupByLibrary.simpleMessage("الخدمات"),
     "shaded": MessageLookupByLibrary.simpleMessage("مظلل"),
     "shadedParkingDetail": MessageLookupByLibrary.simpleMessage("مواقف مظللة"),
     "share": MessageLookupByLibrary.simpleMessage("مشاركة"),
     "shareEarn": MessageLookupByLibrary.simpleMessage("شارك واكسب"),
+    "shareMessage": MessageLookupByLibrary.simpleMessage(
+      "اطلع على تطبيق النورس للمواقف! أنا أستمتع بالمكافآت. قم بالتنزيل الآن وابدأ في كسب النقاط.",
+    ),
     "sharing": MessageLookupByLibrary.simpleMessage("مشاركة"),
     "signIn": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
     "signInToYourAccount": MessageLookupByLibrary.simpleMessage(
@@ -315,11 +336,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "signOut": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
     "signUp": MessageLookupByLibrary.simpleMessage("اشتراك"),
+    "silverTier": MessageLookupByLibrary.simpleMessage("فضي"),
     "sizeLabel": MessageLookupByLibrary.simpleMessage("الحجم : "),
     "slotNumberLabel": MessageLookupByLibrary.simpleMessage("رقم الموقف : "),
     "smartParking": MessageLookupByLibrary.simpleMessage("المواقف الذكية"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage("حدث خطأ ما"),
     "standard": MessageLookupByLibrary.simpleMessage("قياسي"),
+    "standardTier": MessageLookupByLibrary.simpleMessage("أساسي"),
     "startDate": MessageLookupByLibrary.simpleMessage("تاريخ البدء"),
     "startDateLabel": MessageLookupByLibrary.simpleMessage("تاريخ البدء"),
     "startTime": MessageLookupByLibrary.simpleMessage("وقت البدء"),
@@ -329,6 +352,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "thankYou": MessageLookupByLibrary.simpleMessage("شكراً لك!"),
     "thirtyDays": MessageLookupByLibrary.simpleMessage("30 يوماً"),
+    "toGoldMember": MessageLookupByLibrary.simpleMessage("إلى العضو الذهبي"),
+    "today": MessageLookupByLibrary.simpleMessage("اليوم"),
     "totalAmount": MessageLookupByLibrary.simpleMessage("المبلغ الإجمالي"),
     "totalLabel": MessageLookupByLibrary.simpleMessage("الإجمالي"),
     "totalPoints": MessageLookupByLibrary.simpleMessage("إجمالي النقاط"),
@@ -350,6 +375,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تسجيل دخول المركبة",
     ),
     "vehicleDirection": MessageLookupByLibrary.simpleMessage("اتجاه المركبة"),
+    "vehicleLabel": MessageLookupByLibrary.simpleMessage("المركبة"),
     "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
     "viewDetails": MessageLookupByLibrary.simpleMessage("عرض التفاصيل"),
     "viewPastBookings": MessageLookupByLibrary.simpleMessage(
@@ -363,5 +389,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeDescription": MessageLookupByLibrary.simpleMessage(
       "مواقف آمنة للكرفانات، والجت سكي، \nوشاحنات الطعام والقوارب والمزيد",
     ),
+    "yes": MessageLookupByLibrary.simpleMessage("نعم"),
+    "yesterday": MessageLookupByLibrary.simpleMessage("أمس"),
   };
 }

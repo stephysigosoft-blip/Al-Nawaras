@@ -76,9 +76,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "booked": MessageLookupByLibrary.simpleMessage("Booked"),
     "bookingDetails": MessageLookupByLibrary.simpleMessage("Booking Details"),
     "bookingHistory": MessageLookupByLibrary.simpleMessage("Booking History"),
+    "bookingSuccessful": MessageLookupByLibrary.simpleMessage(
+      "Booking Successful!",
+    ),
     "bookings": MessageLookupByLibrary.simpleMessage("Bookings"),
     "buy": MessageLookupByLibrary.simpleMessage("Buy"),
     "buyNow": MessageLookupByLibrary.simpleMessage("Buy Now!"),
+    "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "caravanParking": MessageLookupByLibrary.simpleMessage("Caravan Parking"),
     "cashOnSite": MessageLookupByLibrary.simpleMessage("Cash on site"),
     "checkNetworkDetail": MessageLookupByLibrary.simpleMessage(
@@ -104,6 +108,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "creditDebitCard": MessageLookupByLibrary.simpleMessage(
       "Credit/Debit Card",
     ),
+    "currency": MessageLookupByLibrary.simpleMessage("AED"),
     "currentlyNoItemsFoundPleaseTryLater": MessageLookupByLibrary.simpleMessage(
       "Currently no items Found, Please try later...",
     ),
@@ -141,6 +146,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorConfirmingLocation": MessageLookupByLibrary.simpleMessage(
       "Error confirming location",
     ),
+    "errorServer": MessageLookupByLibrary.simpleMessage(
+      "Error connecting to Server",
+    ),
     "extend": MessageLookupByLibrary.simpleMessage("Extend"),
     "failedToConfirmLocation": MessageLookupByLibrary.simpleMessage(
       "Failed to confirm location",
@@ -159,6 +167,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "getHelpAccount": MessageLookupByLibrary.simpleMessage(
       "Get Help with your account",
     ),
+    "goldTier": MessageLookupByLibrary.simpleMessage("Gold"),
     "googlePayLabel": MessageLookupByLibrary.simpleMessage("Google Pay"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("Help & Support"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
@@ -172,6 +181,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "license": m1,
     "loadMore": MessageLookupByLibrary.simpleMessage("Load More"),
+    "location": MessageLookupByLibrary.simpleMessage("Location"),
     "locationCodeLabel": MessageLookupByLibrary.simpleMessage(
       "Location Code : ",
     ),
@@ -183,6 +193,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Location Type : ",
     ),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
+    "logout": MessageLookupByLibrary.simpleMessage("Logout"),
+    "logoutConfirm": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to logout?",
+    ),
     "managePaymentOptions": MessageLookupByLibrary.simpleMessage(
       "Manage your payment options",
     ),
@@ -217,6 +231,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "needHelp": MessageLookupByLibrary.simpleMessage("Need help?"),
     "next": MessageLookupByLibrary.simpleMessage("Next"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
+    "noActivePlan": MessageLookupByLibrary.simpleMessage("No Active Plan"),
     "noBookingHistoryFound": MessageLookupByLibrary.simpleMessage(
       "No booking history found",
     ),
@@ -264,7 +279,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your payment has been processed\nsuccessfully.",
     ),
     "paymentSuccessful": MessageLookupByLibrary.simpleMessage(
-      "Payment Successful",
+      "Payment Successful!",
     ),
     "paymentSummary": MessageLookupByLibrary.simpleMessage("Payment Summary"),
     "per": MessageLookupByLibrary.simpleMessage("per"),
@@ -281,6 +296,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "provideDetailsToRegister": MessageLookupByLibrary.simpleMessage(
       "Please provide your details to create an account",
     ),
+    "pts": MessageLookupByLibrary.simpleMessage("pts"),
     "recentActivity": MessageLookupByLibrary.simpleMessage("Recent Activity"),
     "redeem": MessageLookupByLibrary.simpleMessage("Redeem"),
     "redeemPoints": MessageLookupByLibrary.simpleMessage("Redeem Points"),
@@ -302,6 +318,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "saveChanges": MessageLookupByLibrary.simpleMessage("Save Changes"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
+    "searchResults": MessageLookupByLibrary.simpleMessage("Search Results"),
     "securedSlots": MessageLookupByLibrary.simpleMessage(
       "300+ secured slots for caravans,\nboats, jet skis & more.",
     ),
@@ -316,6 +333,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectVehicle": MessageLookupByLibrary.simpleMessage("Select Vehicle"),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
+    "serviceName": MessageLookupByLibrary.simpleMessage("Service Name"),
     "services": MessageLookupByLibrary.simpleMessage("Services"),
     "shaded": MessageLookupByLibrary.simpleMessage("Shaded"),
     "shadedParkingDetail": MessageLookupByLibrary.simpleMessage(
@@ -323,6 +341,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "share": MessageLookupByLibrary.simpleMessage("Share"),
     "shareEarn": MessageLookupByLibrary.simpleMessage("Share & Earn"),
+    "shareMessage": MessageLookupByLibrary.simpleMessage(
+      "Check out Al Nawaras Parking App! I am enjoying the rewards. Download now and start earning points.",
+    ),
     "sharing": MessageLookupByLibrary.simpleMessage("Sharing"),
     "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
     "signInToYourAccount": MessageLookupByLibrary.simpleMessage(
@@ -330,6 +351,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "signOut": MessageLookupByLibrary.simpleMessage("Sign Out"),
     "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
+    "silverTier": MessageLookupByLibrary.simpleMessage("Silver"),
     "sizeLabel": MessageLookupByLibrary.simpleMessage("Size : "),
     "slotNumberLabel": MessageLookupByLibrary.simpleMessage("Slot Number : "),
     "smartParking": MessageLookupByLibrary.simpleMessage("Smart Parking"),
@@ -337,6 +359,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Something went wrong",
     ),
     "standard": MessageLookupByLibrary.simpleMessage("Standard"),
+    "standardTier": MessageLookupByLibrary.simpleMessage("Standard"),
     "startDate": MessageLookupByLibrary.simpleMessage("Start Date"),
     "startDateLabel": MessageLookupByLibrary.simpleMessage("Start Date"),
     "startTime": MessageLookupByLibrary.simpleMessage("Start Time"),
@@ -346,6 +369,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "thankYou": MessageLookupByLibrary.simpleMessage("Thank you!"),
     "thirtyDays": MessageLookupByLibrary.simpleMessage("30 Days"),
+    "toGoldMember": MessageLookupByLibrary.simpleMessage("To Gold Member"),
+    "today": MessageLookupByLibrary.simpleMessage("Today"),
     "totalAmount": MessageLookupByLibrary.simpleMessage("Total Amount"),
     "totalLabel": MessageLookupByLibrary.simpleMessage("Total"),
     "totalPoints": MessageLookupByLibrary.simpleMessage("Total Points"),
@@ -365,6 +390,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vehicleDirection": MessageLookupByLibrary.simpleMessage(
       "Vehicle Direction",
     ),
+    "vehicleLabel": MessageLookupByLibrary.simpleMessage("Vehicle"),
     "viewAll": MessageLookupByLibrary.simpleMessage("View All"),
     "viewDetails": MessageLookupByLibrary.simpleMessage("View Details"),
     "viewPastBookings": MessageLookupByLibrary.simpleMessage(
@@ -382,5 +408,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeDescription": MessageLookupByLibrary.simpleMessage(
       "Secure parking for caravans, jet skis, \nfood trucks, boats and more",
     ),
+    "yes": MessageLookupByLibrary.simpleMessage("Yes"),
+    "yesterday": MessageLookupByLibrary.simpleMessage("Yesterday"),
   };
 }

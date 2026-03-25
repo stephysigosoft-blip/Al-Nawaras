@@ -29,7 +29,9 @@ class ProfileView extends StatelessWidget {
     final padding = width * 0.06;
 
     final profileController = Get.put(ProfileController());
-    final additionalServicesController = Get.put(AdditionalServicesController());
+    final additionalServicesController = Get.put(
+      AdditionalServicesController(),
+    );
 
     return GetBuilder<HomeController>(
       init: Get.find<HomeController>(),
@@ -64,9 +66,15 @@ class ProfileView extends StatelessWidget {
                             end: padding,
                             child: MembershipStatusCard(
                               width: width,
-                              status: homeController.membershipStatus != "Loading..." 
-                                  ? homeController.membershipStatus 
-                                  : (profileController.profile.value?.membershipStatus ?? S.of(context).noStatus),
+                              status:
+                                  homeController.membershipStatus !=
+                                      "Loading..."
+                                  ? homeController.membershipStatus
+                                  : (profileController
+                                            .profile
+                                            .value
+                                            ?.membershipStatus ??
+                                        S.of(context).noStatus),
                               vehicles: homeController.allVehicles,
                               bookings: homeController.bookingHistory,
                               services: additionalServicesController.services,
@@ -190,21 +198,21 @@ class ProfileView extends StatelessWidget {
         onPressed: () {
           Get.dialog(
             AlertDialog(
-              title: const Text("Logout"),
-              content: const Text("Are you sure you want to logout?"),
+              title: Text(S.of(context).logout),
+              content: Text(S.of(context).logoutConfirm),
               actions: [
                 TextButton(
                   onPressed: () => Get.back(),
-                  child: const Text("Cancel"),
+                  child: Text(S.of(context).cancel),
                 ),
                 TextButton(
                   onPressed: () {
                     Get.back();
                     logoutController.logOut();
                   },
-                  child: const Text(
-                    "Yes",
-                    style: TextStyle(color: Color(0xFFE30613)),
+                  child: Text(
+                    S.of(context).yes,
+                    style: const TextStyle(color: Color(0xFFE30613)),
                   ),
                 ),
               ],

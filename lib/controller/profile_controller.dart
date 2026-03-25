@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 
 import '../config/api_constants.dart';
 import '../model/profile_model.dart';
+import 'home_controller.dart';
+import 'rewards_controller.dart';
 
 class ProfileController extends GetxController {
   final Dio dio = Dio();
@@ -201,6 +203,15 @@ class ProfileController extends GetxController {
         );
 
         await fetchProfile(); // refresh data
+
+        // Refresh other controllers if they exist
+        if (Get.isRegistered<HomeController>()) {
+          Get.find<HomeController>().fetchHomeData();
+        }
+        if (Get.isRegistered<RewardsController>()) {
+          Get.find<RewardsController>().fetchRewardsData();
+        }
+
         Future.delayed(const Duration(seconds: 1), () {
           Get.back();
         });

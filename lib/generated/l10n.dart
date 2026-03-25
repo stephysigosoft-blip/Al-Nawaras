@@ -1179,10 +1179,10 @@ class S {
     );
   }
 
-  /// `Payment Successful`
+  /// `Payment Successful!`
   String get paymentSuccessful {
     return Intl.message(
-      'Payment Successful',
+      'Payment Successful!',
       name: 'paymentSuccessful',
       desc: '',
       args: [],
@@ -1759,6 +1759,146 @@ class S {
     return Intl.message(
       'No notifications',
       name: 'noNotifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `To Gold Member`
+  String get toGoldMember {
+    return Intl.message(
+      'To Gold Member',
+      name: 'toGoldMember',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search Results`
+  String get searchResults {
+    return Intl.message(
+      'Search Results',
+      name: 'searchResults',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location`
+  String get location {
+    return Intl.message('Location', name: 'location', desc: '', args: []);
+  }
+
+  /// `Check out Al Nawaras Parking App! I am enjoying the rewards. Download now and start earning points.`
+  String get shareMessage {
+    return Intl.message(
+      'Check out Al Nawaras Parking App! I am enjoying the rewards. Download now and start earning points.',
+      name: 'shareMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get logout {
+    return Intl.message('Logout', name: 'logout', desc: '', args: []);
+  }
+
+  /// `Are you sure you want to logout?`
+  String get logoutConfirm {
+    return Intl.message(
+      'Are you sure you want to logout?',
+      name: 'logoutConfirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message('Yes', name: 'yes', desc: '', args: []);
+  }
+
+  /// `pts`
+  String get pts {
+    return Intl.message('pts', name: 'pts', desc: '', args: []);
+  }
+
+  /// `Today`
+  String get today {
+    return Intl.message('Today', name: 'today', desc: '', args: []);
+  }
+
+  /// `Yesterday`
+  String get yesterday {
+    return Intl.message('Yesterday', name: 'yesterday', desc: '', args: []);
+  }
+
+  /// `Standard`
+  String get standardTier {
+    return Intl.message('Standard', name: 'standardTier', desc: '', args: []);
+  }
+
+  /// `Silver`
+  String get silverTier {
+    return Intl.message('Silver', name: 'silverTier', desc: '', args: []);
+  }
+
+  /// `Gold`
+  String get goldTier {
+    return Intl.message('Gold', name: 'goldTier', desc: '', args: []);
+  }
+
+  /// `No Active Plan`
+  String get noActivePlan {
+    return Intl.message(
+      'No Active Plan',
+      name: 'noActivePlan',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service Name`
+  String get serviceName {
+    return Intl.message(
+      'Service Name',
+      name: 'serviceName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle`
+  String get vehicleLabel {
+    return Intl.message('Vehicle', name: 'vehicleLabel', desc: '', args: []);
+  }
+
+  /// `Booking Successful!`
+  String get bookingSuccessful {
+    return Intl.message(
+      'Booking Successful!',
+      name: 'bookingSuccessful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AED`
+  String get currency {
+    return Intl.message('AED', name: 'currency', desc: '', args: []);
+  }
+
+  /// `Error connecting to Server`
+  String get errorServer {
+    return Intl.message(
+      'Error connecting to Server',
+      name: 'errorServer',
       desc: '',
       args: [],
     );

@@ -54,7 +54,13 @@ class _PaymentViewState extends State<PaymentView> {
         backgroundColor: const Color(0xFFE30613),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+          icon: Icon(
+            Directionality.of(context) == TextDirection.rtl
+                ? Icons.arrow_forward_ios
+                : Icons.arrow_back_ios,
+            color: Colors.white,
+            size: 20,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -225,8 +231,8 @@ class _PaymentViewState extends State<PaymentView> {
 
   Widget _buildStickyFooter(BuildContext context, double width, double height) {
     String totalStr = widget.total ?? (widget.subtotal == null
-        ? "AED 1,575.00"
-        : _calculateTotal(widget.subtotal!, widget.vat ?? "AED 0.00"));
+        ? "${S.of(context).currency} 1,575.00"
+        : _calculateTotal(context, widget.subtotal!, widget.vat ?? "${S.of(context).currency} 0.00"));
 
     return Container(
       width: double.infinity,
@@ -318,8 +324,8 @@ class _PaymentViewState extends State<PaymentView> {
                   debugPrint('Error confirming payment: $e');
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Error connecting to Server'),
+                      SnackBar(
+                        content: Text(S.of(context).errorServer),
                         backgroundColor: Color(0xFFE30613),
                       ),
                     );
@@ -353,11 +359,11 @@ class _PaymentViewState extends State<PaymentView> {
     );
   }
 
-  String _calculateTotal(String subtotal, String vat) {
+  String _calculateTotal(BuildContext context, String subtotal, String vat) {
     try {
       final sub = double.parse(subtotal.replaceAll(RegExp(r'[^0-9.]'), ''));
       final v = double.parse(vat.replaceAll(RegExp(r'[^0-9.]'), ''));
-      return 'AED ${(sub + v).toStringAsFixed(2)}';
+      return '${S.of(context).currency} ${(sub + v).toStringAsFixed(2)}';
     } catch (e) {
       return subtotal;
     }

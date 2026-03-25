@@ -31,10 +31,10 @@ class _PaymentSuccessViewState extends State<PaymentSuccessView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'Booking Successful!',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              S.of(context).bookingSuccessful,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             backgroundColor: Color(0xFF4CAF50),
             duration: Duration(seconds: 3),
@@ -59,7 +59,7 @@ class _PaymentSuccessViewState extends State<PaymentSuccessView> {
     final displayTitle = widget.title ?? S.of(context).monthlyMembership;
     final displaySubtitle =
         widget.subtitle ?? S.of(context).shadedParkingDetail;
-    final displayTotal = widget.total ?? 'AED 0.00';
+    final displayTotal = widget.total ?? '${S.of(context).currency} 0.00';
     final displayDetails =
         widget.details ??
         [

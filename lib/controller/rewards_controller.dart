@@ -7,11 +7,13 @@ import '../config/api_constants.dart';
 class RewardsController extends GetxController {
   bool isLoading = false;
   Map<String, dynamic>? rewardsData;
+  Map<String, dynamic>? profileData;
 
   @override
   void onInit() {
     super.onInit();
     fetchRewardsData();
+    fetchProfileData();
   }
 
   Future<void> fetchRewardsData() async {
@@ -51,6 +53,41 @@ class RewardsController extends GetxController {
     } finally {
       isLoading = false;
       update();
+    }
+  }
+
+  Future<void> fetchProfileData() async {
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      debugPrint('\n--- API REQUEST (profile_for_rewards) ---');
+      debugPrint('URL: ${ApiConstants.profile}');
+      debugPrint('Headers: $headers');
+
+      final response = await dio.get(
+        ApiConstants.profile,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (profile_for_rewards) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          profileData = response.data['data'];
+          update();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching profile for rewards: $e');
     }
   }
 
