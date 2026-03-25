@@ -1,11 +1,52 @@
 import 'package:flutter/material.dart';
 import '../../generated/l10n.dart';
-import '../widgets/draggable_help_button.dart';
 import 'package:get/get.dart';
-import '../booking/booking_history.dart';
+import '../home/home_screen.dart';
 
-class PaymentSuccessView extends StatelessWidget {
-  const PaymentSuccessView({super.key});
+class PaymentSuccessView extends StatefulWidget {
+  final int? bookingId;
+  final String? title;
+  final String? subtitle;
+  final String? total;
+  final List<Map<String, String>>? details;
+
+  const PaymentSuccessView({
+    super.key,
+    this.bookingId,
+    this.title,
+    this.subtitle,
+    this.total,
+    this.details,
+  });
+
+  @override
+  State<PaymentSuccessView> createState() => _PaymentSuccessViewState();
+}
+
+class _PaymentSuccessViewState extends State<PaymentSuccessView> {
+  @override
+  void initState() {
+    super.initState();
+    // Show snackbar after the frame is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Booking Successful!',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: Color(0xFF4CAF50),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    });
+  }
+
+  void _navigateToHome() {
+    Get.offAll(() => const HomeScreen());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +55,19 @@ class PaymentSuccessView extends StatelessWidget {
     final width = mediaQuery.size.width;
     final height = mediaQuery.size.height;
     final padding = width * 0.05;
+
+    final displayTitle = widget.title ?? S.of(context).monthlyMembership;
+    final displaySubtitle =
+        widget.subtitle ?? S.of(context).shadedParkingDetail;
+    final displayTotal = widget.total ?? 'AED 0.00';
+    final displayDetails =
+        widget.details ??
+        [
+          {'label': S.of(context).vehicle, 'value': 'N/A'},
+          {'label': S.of(context).duration, 'value': 'N/A'},
+          {'label': S.of(context).startDateLabel, 'value': 'N/A'},
+          {'label': S.of(context).endDateLabel, 'value': 'N/A'},
+        ];
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -24,9 +78,7 @@ class PaymentSuccessView extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.black, size: 28),
-            onPressed: () {
-              Get.offAll(() => const BookingHistoryView());
-            },
+            onPressed: _navigateToHome,
           ),
           SizedBox(width: padding),
         ],
@@ -39,12 +91,12 @@ class PaymentSuccessView extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(height: height * 0.02),
-                  // Success Animation / Icon Placeholder
+                  // Success Icon
                   Container(
                     height: height * 0.12,
                     width: height * 0.12,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFE8F5E9),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE8F5E9),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -102,17 +154,27 @@ class PaymentSuccessView extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        _buildSummaryItem(S.of(context).monthlyMembership, S.of(context).shadedParkingDetail, isHeader: true),
+                        _buildSummaryItem(
+                          context,
+                          displayTitle,
+                          displaySubtitle,
+                          isHeader: true,
+                        ),
                         const Divider(height: 30, thickness: 1),
-                        _buildSummaryItem(S.of(context).vehicle, 'Airstream Caravel'),
-                        _buildSummaryItem(S.of(context).duration, S.of(context).thirtyDays),
-                        _buildSummaryItem(S.of(context).startDateLabel, '15 May 2023'),
-                        _buildSummaryItem(S.of(context).endDateLabel, '15 Jun 2023'),
+                        ...displayDetails.map(
+                          (d) => _buildSummaryItem(
+                            context,
+                            d['label'] ?? '',
+                            d['value'] ?? '',
+                          ),
+                        ),
                         const Divider(height: 30, thickness: 1),
-                        _buildSummaryItem(S.of(context).subtotalLabel, 'AED 1,500.00'),
-                        _buildSummaryItem(S.of(context).vatLabel, 'AED 75.00'),
-                        const Divider(height: 30, thickness: 1),
-                        _buildSummaryItem(S.of(context).totalLabel, 'AED 1,575.00', isBold: true),
+                        _buildSummaryItem(
+                          context,
+                          S.of(context).totalLabel,
+                          displayTotal,
+                          isBold: true,
+                        ),
                       ],
                     ),
                   ),
@@ -131,9 +193,7 @@ class PaymentSuccessView extends StatelessWidget {
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Get.offAll(() => const BookingHistoryView());
-                      },
+                      onPressed: _navigateToHome,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFE30613),
                         shape: RoundedRectangleBorder(
@@ -154,43 +214,58 @@ class PaymentSuccessView extends StatelessWidget {
                   SizedBox(height: height * 0.03),
                   Text(
                     S.of(context).needAssistanceCall,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                   SizedBox(height: height * 0.04),
                 ],
               ),
             ),
           ),
-          const DraggableHelpButton(),
+          // const DraggableHelpButton(),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryItem(String label, String value,
-      {bool isHeader = false, bool isBold = false}) {
+  Widget _buildSummaryItem(
+    BuildContext context,
+    String label,
+    String value, {
+    bool isHeader = false,
+    bool isBold = false,
+  }) {
+    final width = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isHeader ? 16 : 14,
-              fontWeight: isHeader || isBold ? FontWeight.bold : FontWeight.normal,
-              color: isHeader ? Colors.black : Colors.grey[600],
+          SizedBox(
+            width: width * 0.35,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: isHeader ? 16 : 14,
+                fontWeight: isHeader || isBold
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+                color: isHeader ? Colors.black : Colors.grey[600],
+              ),
             ),
           ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: isHeader ? 16 : 14,
-              fontWeight: isHeader || isBold ? FontWeight.bold : FontWeight.w600,
-              color: isHeader ? const Color(0xFFE30613) : Colors.black,
+          SizedBox(
+            width: width * 0.4,
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontSize: isHeader ? 16 : 14,
+                fontWeight: isHeader || isBold
+                    ? FontWeight.bold
+                    : FontWeight.w600,
+                color: isHeader ? const Color(0xFFE30613) : Colors.black,
+              ),
             ),
           ),
         ],

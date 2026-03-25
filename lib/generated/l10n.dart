@@ -654,6 +654,16 @@ class S {
     );
   }
 
+  /// `Parking Payment`
+  String get parkingPayment {
+    return Intl.message(
+      'Parking Payment',
+      name: 'parkingPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `License: {number}`
   String license(String number) {
     return Intl.message(
@@ -1622,6 +1632,26 @@ class S {
   /// `Completed`
   String get completedTab {
     return Intl.message('Completed', name: 'completedTab', desc: '', args: []);
+  }
+
+  /// `Booking Details`
+  String get bookingDetails {
+    return Intl.message(
+      'Booking Details',
+      name: 'bookingDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reference`
+  String get referenceLabel {
+    return Intl.message(
+      'Reference',
+      name: 'referenceLabel',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `No entries for {tab} tab`

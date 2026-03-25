@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:intl/intl.dart';
 import 'package:al_nawaras/view/book_parking/book_parking_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
@@ -57,6 +57,22 @@ class HomeController extends GetxController {
   final int limit = 10;
 
   bool hasMoreHistory = true;
+  bool isSectionVisible(String sectionName, List<String> terms) {
+    if (searchQuery.isEmpty) return true;
+
+    // Check if any of the provided terms match the search query
+    bool match = terms.any((term) => term.toLowerCase().contains(searchQuery));
+    if (match) return true;
+
+    // Also check if any of the list items match (if it's a list section)
+    if (sectionName == 'vehicles' && filteredVehicles.isNotEmpty) return true;
+    if (sectionName == 'activity' && filteredActivities.isNotEmpty) return true;
+    if (sectionName == 'locations' && searchLocationsResults.isNotEmpty)
+      return true;
+
+    return false;
+  }
+
   bool isHistoryLoadingMore = false;
 
   List<Map<String, dynamic>> bookingHistory = [];
@@ -247,15 +263,57 @@ class HomeController extends GetxController {
           final activities = data['recent_activities'] as List?;
           if (activities != null) {
             allActivities = activities.map((a) {
+              final String state = a['state']?.toString().toLowerCase() ?? '';
+              final double amount = (a['amount'] as num?)?.toDouble() ?? 0.0;
+              final String startStr = a['booking_start']?.toString() ?? '';
+
+              // Inferred type: if payment-related, use 'renew' style (blue)
+              final bool isPayment =
+                  amount > 0 || state.contains('payment') || state == 'paid';
+              final String type = isPayment ? 'renew' : 'checkin';
+
+              // Decide on titleKey: prioritize API preference if it existed,
+              // then fall back to inferred types
+              final String titleKey =
+                  a['title_key'] ??
+                  (isPayment ? 'parkingPayment' : 'vehicleCheckIn');
+
+              // Format Subtitle: Today/Yesterday/Date + hh:mm a + Extra Info
+              String displaySub = startStr;
+              try {
+                if (startStr.isNotEmpty) {
+                  final dt = DateTime.parse(startStr);
+                  final now = DateTime.now();
+                  final today = DateTime(now.year, now.month, now.day);
+                  final yesterday = today.subtract(const Duration(days: 1));
+                  final activityDate = DateTime(dt.year, dt.month, dt.day);
+
+                  String datePart;
+                  if (activityDate == today) {
+                    datePart = "Today";
+                  } else if (activityDate == yesterday) {
+                    datePart = "Yesterday";
+                  } else {
+                    datePart = DateFormat('MMM dd').format(dt);
+                  }
+
+                  displaySub = "$datePart, ${DateFormat('hh:mm a').format(dt)}";
+                }
+              } catch (_) {}
+
+              if (amount > 0) {
+                // Formatting for payment: "Today, 10:30 AM AED 150"
+                displaySub += ' AED $amount';
+              } else if (a['location'] != null && a['location'] != "false") {
+                // Formatting for check-in: "Yesterday, 2:15 PM-Spot A12"
+                displaySub += '-Spot ${a['location']}';
+              }
+
               return {
-                'titleKey':
-                    a['title_key'] ??
-                    (a['type'] == 'renew'
-                        ? 'parkingRenewed'
-                        : 'vehicleCheckIn'),
-                'subtitle': a['subtitle'] ?? '',
-                'icon': _getActivityIcon(a['type']),
-                'color': _getActivityColor(a['type']),
+                'titleKey': titleKey,
+                'subtitle': displaySub,
+                'icon': _getActivityIcon(type),
+                'color': _getActivityColor(type),
               };
             }).toList();
             activityOffset = allActivities.length;
@@ -278,8 +336,9 @@ class HomeController extends GetxController {
   }
 
   IconData _getActivityIcon(String? type) {
-    if (type == 'renew') return Icons.history;
-    if (type == 'checkin') return Icons.check_circle_outline;
+    if (type == 'renew' || type == 'checkin') {
+      return Icons.check_circle_outline;
+    }
     return Icons.notifications_none;
   }
 
@@ -311,7 +370,8 @@ class HomeController extends GetxController {
         'Accept': 'application/json',
       };
 
-      debugPrint('\n--- API REQUEST (parking_history) ---');
+      debugPrint('\n--- API REQUEST (parking/history) ---');
+      debugPrint('ENTRY: fetchParkingHistory(reset: $reset)');
       debugPrint('URL: ${ApiConstants.parkingHistory}');
       debugPrint('Query: {offset: $historyOffset, limit: $limit}');
       debugPrint('Headers: $headers');
@@ -322,32 +382,49 @@ class HomeController extends GetxController {
         options: Options(headers: headers),
       );
 
-      debugPrint('--- API RESPONSE (parking_history) ---');
+      debugPrint('--- API RESPONSE (parking/history) ---');
       debugPrint('Status Code: ${response.statusCode}');
-      // debugPrint('Response Body: ${response.data}');
+      debugPrint('Response Body: ${response.data}');
 
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == true) {
           final historyData = response.data['data']['history'] as List? ?? [];
           final newItems = historyData.map((item) {
+            final String state = item['state']?.toString() ?? 'N/A';
             return {
               'id': item['id'],
-              'title': item['membership_plan'] ?? 'Parking',
+              'reference': item['reference'] ?? '',
+              'title': item['membership_type']?.toString() ??
+                  item['reference'] ??
+                  'Parking',
               'subtitle':
-                  '${item['vehicle_name'] ?? 'Vehicle'} • Spot ${item['slot_number'] ?? 'N/A'}',
-              'status': item['status'] ?? 'Active',
+                  '${item['vehicle'] ?? ''} • ${item['vehicle_type'] ?? ''} • Spot ${item['slot'] ?? item['location'] ?? 'N/A'}',
+              'status': state,
               'startDate': item['start_date'] ?? '',
               'endDate': item['end_date'] ?? '',
-              'amount': 'AED ${item['price'] ?? '0'}',
-              'isActive':
-                  (item['status']?.toString().toLowerCase() == 'active'),
+              'amount': 'AED ${item['amount'] ?? '0'}',
+              'isActive': state.toLowerCase().contains('active') ||
+                  state.toLowerCase().contains('payment') ||
+                  state.toLowerCase() == 'paid',
               'monthYear': item['month_year'] ?? 'Recent',
+              'extra_amount': item['extra_amount'] ?? 0.0,
+              'location': item['location'] ?? '',
+              'vehicle_type': item['vehicle_type'] ?? '',
+              'vehicle': item['vehicle'] ?? '',
             };
           }).toList();
 
-          bookingHistory.addAll(newItems);
-          historyOffset += newItems.length;
-          hasMoreHistory = newItems.length >= limit;
+          // Avoid duplicates by checking ID
+          for (var newItem in newItems) {
+            bool exists = bookingHistory
+                .any((element) => element['id'] == newItem['id']);
+            if (!exists) {
+              bookingHistory.add(newItem);
+            }
+          }
+
+          historyOffset += historyData.length;
+          hasMoreHistory = historyData.length >= limit;
         } else {
           hasMoreHistory = false;
         }
@@ -523,25 +600,102 @@ class HomeController extends GetxController {
     update();
   }
 
+  List<Map<String, dynamic>> searchLocationsResults = [];
+
   void onSearchChanged(String value) {
     searchQuery = value.toLowerCase();
+
     if (searchQuery.isEmpty) {
       filteredVehicles = List.from(allVehicles);
       filteredActivities = List.from(allActivities);
+      searchLocationsResults = []; // Clear search results when query is empty
     } else {
+      // Search in vehicles
       filteredVehicles = allVehicles.where((v) {
-        return v['title'].toString().toLowerCase().contains(searchQuery) ||
-            v['license'].toString().toLowerCase().contains(searchQuery);
+        return v.values.any(
+          (val) =>
+              val != null && val.toString().toLowerCase().contains(searchQuery),
+        );
       }).toList();
 
+      // Search in activities
       filteredActivities = allActivities.where((a) {
-        // Here I'm checking against the keys/subtitles roughly
-        return a['titleKey'].toString().toLowerCase().contains(searchQuery) ||
-            a['subtitle'].toString().toLowerCase().contains(searchQuery);
+        return a.values.any(
+          (val) =>
+              val != null && val.toString().toLowerCase().contains(searchQuery),
+        );
       }).toList();
+
+      // Additionally, search in userName and membership if they are properties of the controller
+      // For example, if you have `String userName;` and `String membershipType;`
+      // if (userName?.toLowerCase().contains(searchQuery) == true ||
+      //     membershipType?.toLowerCase().contains(searchQuery) == true) {
+      //   // Handle how you want to display this match, e.g., add a special item to a list
+      // }
     }
+
+    // Call the search API as requested
+    searchLocations(value);
+
     update();
   }
+
+  Future<void> searchLocations(
+    String query, {
+    int limit = 10,
+    int offset = 0,
+  }) async {
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      final queryParameters = {
+        'query': query,
+        'limit': limit,
+        'offset': offset,
+      };
+
+      debugPrint('\n--- API REQUEST (search) ---');
+      debugPrint('URL: ${ApiConstants.search}');
+      debugPrint('Parameters: $queryParameters');
+
+      final response = await dio.get(
+        ApiConstants.search,
+        queryParameters: queryParameters,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (search) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          final data = response.data['data'];
+          final locations = data['locations'] as List? ?? [];
+          searchLocationsResults = locations
+              .map((l) => Map<String, dynamic>.from(l))
+              .toList();
+
+          debugPrint(
+            'Search results found: ${searchLocationsResults.length} locations',
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error during search API call: $e');
+    } finally {
+      update(); // Ensure UI reflects arrival of API results
+    }
+  }
+
+  // Helper to determine if a section should be visible based on search results
 
   void onNotificationClick() {
     Get.to(() => const NotificationsView());

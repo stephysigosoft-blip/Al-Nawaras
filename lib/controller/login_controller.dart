@@ -13,7 +13,7 @@ import '../view/login/forgot_password_view.dart';
 class LoginController extends GetxController {
   final emailOrMobileController = TextEditingController();
   final passwordController = TextEditingController();
-  final GoogleSignIn _googleSignIn = GoogleSignIn(); 
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final box = GetStorage();
   final Dio dio = Dio();
@@ -129,7 +129,9 @@ class LoginController extends GetxController {
             backgroundColor: Colors.green,
             colorText: Colors.white,
             snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 2), // Gives user time to see success
+            duration: const Duration(
+              seconds: 2,
+            ), // Gives user time to see success
           );
 
           // Delay slightly so the snackbar gets registered before replacing the route
@@ -196,14 +198,14 @@ class LoginController extends GetxController {
 
   Future<void> googleLogin() async {
     try {
-      isLoading= true;
+      isLoading = true;
       update();
 
       // 🔹 Step 1: Google Sign-In
       final user = await _googleSignIn.signIn();
 
       if (user == null) {
-        isLoading= false;
+        isLoading = false;
         update();
         return; // user cancelled login
       }
@@ -277,7 +279,8 @@ class LoginController extends GetxController {
 
       if (result.status == LoginStatus.success) {
         final AccessToken accessToken = result.accessToken!;
-        if (kDebugMode) print("Facebook Access Token: ${accessToken.tokenString}");
+        if (kDebugMode)
+          print("Facebook Access Token: ${accessToken.tokenString}");
 
         // 🔹 Step 2: Call API
         final response = await dio.post(

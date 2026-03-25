@@ -86,6 +86,7 @@ class NotificationsView extends StatelessWidget {
                               return _buildNotificationTile(
                                 context,
                                 notification,
+                                controller,
                               );
                             },
                           ),
@@ -99,8 +100,15 @@ class NotificationsView extends StatelessWidget {
   Widget _buildNotificationTile(
     BuildContext context,
     Map<String, dynamic> notification,
+    NotificationsController controller,
   ) {
-    return Container(
+    return InkWell(
+      onTap: () {
+        if (notification['id'] != null) {
+          controller.markAsRead(int.parse(notification['id'].toString()));
+        }
+      },
+      child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -170,7 +178,7 @@ class NotificationsView extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ),);
   }
 
   String _formatDate(String? dateStr) {

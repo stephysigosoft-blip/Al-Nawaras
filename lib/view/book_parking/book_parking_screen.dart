@@ -4,6 +4,7 @@ import '../../controller/book_parking_controller.dart';
 import '../../generated/l10n.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/draggable_help_button.dart';
+import '../widgets/custom_no_data.dart';
 
 class BookParkingScreen extends StatelessWidget {
   const BookParkingScreen({super.key});
@@ -146,9 +147,22 @@ class BookParkingScreen extends StatelessWidget {
         return controller.vehiclesList.map((vehicle) {
           return PopupMenuItem<Map<String, dynamic>>(
             value: vehicle,
-            child: Text(
-              '${vehicle['vehicle_type_name']} (${vehicle['license_number']})',
-              style: const TextStyle(fontSize: 13),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  vehicle['vehicle_type_name'] ?? '',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  vehicle['license_number'] ?? '',
+                  style: const TextStyle(fontSize: 11, color: Colors.black45),
+                ),
+              ],
             ),
           );
         }).toList();
@@ -182,8 +196,9 @@ class BookParkingScreen extends StatelessWidget {
                       color: Color(0xFF001133),
                     ),
                   ),
+                  const SizedBox(height: 5),
                   Text(
-                    '${S.of(context).license}: ${v['license_number'] ?? 'N/A'}',
+                    S.of(context).license(v['license_number'] ?? 'N/A'),
                     style: const TextStyle(fontSize: 12, color: Colors.black45),
                   ),
                 ],
@@ -202,35 +217,65 @@ class BookParkingScreen extends StatelessWidget {
     double width,
     double height,
   ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildParkingTypeItem(
-          context,
-          'Unshaded',
-          S.of(context).unshaded,
-          const AssetImage("lib/assets/images/unshaded.png"),
-          controller,
-          width,
+    if (controller.isLoadingParkingTypes) {
+      return Container(
+        height: 100,
+        alignment: Alignment.center,
+        child: const CircularProgressIndicator(color: Color(0xFFE30613)),
+      );
+    }
+
+    if (controller.dynamicParkingTypes.isEmpty) {
+      return Container(
+        height: 100,
+        alignment: Alignment.center,
+        child: Text(
+          S.of(context).noDataAvailable,
+          style: const TextStyle(color: Colors.black45),
         ),
-        _buildParkingTypeItem(
-          context,
-          'Shaded',
-          S.of(context).shaded,
-          const AssetImage("lib/assets/images/shaded.png"),
-          controller,
-          width,
+      );
+    }
+
+    final types = controller.dynamicParkingTypes;
+    final rowItems = <Widget>[];
+
+    for (int i = 0; i < types.length; i += 3) {
+      final rowChildren = <Widget>[];
+      for (int j = 0; j < 3; j++) {
+        if (i + j < types.length) {
+          final pt = types[i + j];
+          final typeKey = pt['name']?.toString() ?? 'Parking Plan';
+          final image = controller.getParkingTypeImage(typeKey);
+          rowChildren.add(
+            _buildParkingTypeItem(
+              context,
+              typeKey,
+              typeKey, // Use API name as display title
+              image,
+              controller,
+              height,
+              width,
+            ),
+          );
+        } else {
+          // Invisible placeholder to keep spaceBetween identical
+          rowChildren.add(SizedBox(width: width * 0.28));
+        }
+      }
+      rowItems.add(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: rowChildren,
         ),
-        _buildParkingTypeItem(
-          context,
-          'Air Conditioned',
-          S.of(context).airConditioned,
-          const AssetImage("lib/assets/images/air conditioned.png"),
-          controller,
-          width,
-        ),
-      ],
-    );
+      );
+
+      if (i + 3 < types.length) {
+        rowItems.add(SizedBox(height: height * 0.015));
+      }
+    }
+
+    return Column(children: rowItems);
   }
 
   Widget _buildParkingTypeItem(
@@ -239,6 +284,7 @@ class BookParkingScreen extends StatelessWidget {
     String title,
     AssetImage image,
     BookParkingController controller,
+    double height,
     double width,
   ) {
     final isSelected = controller.selectedParkingType == typeKey;
@@ -246,7 +292,7 @@ class BookParkingScreen extends StatelessWidget {
       onTap: () => controller.setParkingType(typeKey),
       child: Container(
         width: width * 0.28,
-        height: 100,
+        height: height * 0.17, // using identical media query constraint
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -292,11 +338,22 @@ class BookParkingScreen extends StatelessWidget {
             ),
             Image(image: image, height: 40, width: 40),
             const SizedBox(height: 8),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 11, color: Colors.black),
-              textAlign: TextAlign.center,
+            Expanded(
+              child: Center(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.black,
+                    height: 1.2,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
+            const SizedBox(height: 4),
           ],
         ),
       ),
@@ -309,6 +366,35 @@ class BookParkingScreen extends StatelessWidget {
     double width,
     double height,
   ) {
+    if (controller.isLoadingMemberships) {
+      return Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Center(
+          child: CircularProgressIndicator(color: Color(0xFFE30613)),
+        ),
+      );
+    }
+
+    if (controller.membershipPackages.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(
+          child: Text(
+            S.of(context).noDataAvailable,
+            style: const TextStyle(color: Colors.black45),
+          ),
+        ),
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -464,6 +550,19 @@ class BookParkingScreen extends StatelessWidget {
     double width,
     double height,
   ) {
+    if (controller.isLoadingServices) {
+      return const SizedBox(
+        height: 100,
+        child: Center(
+          child: CircularProgressIndicator(color: Color(0xFFE30613)),
+        ),
+      );
+    }
+
+    if (controller.addonServices.isEmpty) {
+      return const CustomNoData(message: 'No services available');
+    }
+
     return Column(
       children: List.generate(controller.addonServices.length, (index) {
         final addon = controller.addonServices[index];
@@ -482,12 +581,24 @@ class BookParkingScreen extends StatelessWidget {
                   () => controller.toggleAddon(index),
                 ),
                 const SizedBox(width: 12),
-                Image.asset(
-                  addon['icon'],
-                  height: 40,
-                  width: 40,
-                  fit: BoxFit.contain,
-                ),
+                (addon['icon'] is String && addon['icon'].isNotEmpty)
+                    ? Image.asset(
+                        addon['icon'],
+                        height: 40,
+                        width: 40,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                              Icons.miscellaneous_services,
+                              size: 40,
+                              color: Color(0xFF00B2FF),
+                            ),
+                      )
+                    : const Icon(
+                        Icons.miscellaneous_services,
+                        size: 40,
+                        color: Color(0xFF00B2FF),
+                      ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -497,7 +608,7 @@ class BookParkingScreen extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: addon['title'] + ' ',
+                              text: (addon['title'] ?? '') + ' ',
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -516,7 +627,7 @@ class BookParkingScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        addon['subtitle'],
+                        addon['subtitle'] ?? '',
                         style: const TextStyle(
                           fontSize: 10,
                           color: Colors.black54,
@@ -563,7 +674,7 @@ class BookParkingScreen extends StatelessWidget {
                 ),
                 SizedBox(height: height * 0.01),
                 Text(
-                  'AED 700.00',
+                  controller.calculatedTotal,
                   style: TextStyle(
                     fontSize: 16,
                     // fontWeight: FontWeight.bold,

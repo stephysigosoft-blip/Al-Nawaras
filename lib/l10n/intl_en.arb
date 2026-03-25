@@ -156,6 +156,8 @@
   "@parkingRenewed": {},
   "vehicleCheckIn": "Vehicle Check-in",
   "@vehicleCheckIn": {},
+  "parkingPayment": "Parking Payment",
+  "@parkingPayment": {},
   "license": "License: {number}",
   "@license": {
     "placeholders": {
@@ -428,6 +430,10 @@
   "@activeTab": {},
   "completedTab": "Completed",
   "@completedTab": {},
+  "bookingDetails": "Booking Details",
+  "@bookingDetails": {},
+  "referenceLabel": "Reference",
+  "@referenceLabel": {},
   "noEntriesForTab": "No entries for {tab} tab",
   "@noEntriesForTab": {
     "placeholders": {

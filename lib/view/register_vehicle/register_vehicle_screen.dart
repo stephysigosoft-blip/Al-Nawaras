@@ -212,58 +212,66 @@ class RegisterVehicleScreen extends StatelessWidget {
     double height,
     double width,
   ) {
-    return Column(
-      children: [
+    if (controller.isLoadingTypes) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: CircularProgressIndicator(color: Color(0xFFE30613)),
+        ),
+      );
+    }
+
+    if (controller.vehicleTypes.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Text(
+            'No vehicle types available',
+            style: TextStyle(color: Colors.black45),
+          ),
+        ),
+      );
+    }
+
+    final types = controller.vehicleTypes;
+    final rowItems = <Widget>[];
+
+    for (int i = 0; i < types.length; i += 3) {
+      final rowChildren = <Widget>[];
+      for (int j = 0; j < 3; j++) {
+        if (i + j < types.length) {
+          final vt = types[i + j];
+          final name = vt['name']?.toString() ?? 'Vehicle';
+          final imagePath = controller.getVehicleImage(name);
+          rowChildren.add(
+            _buildTypeItem(name, imagePath, controller, height, width),
+          );
+        } else {
+          // Add invisible placeholder of same width to preserve spaceBetween alignment
+          rowChildren.add(SizedBox(width: width * 0.28));
+        }
+      }
+      rowItems.add(
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildTypeItem(
-              'Caravan',
-              'lib/assets/images/caravan.png',
-              controller,
-              width,
-            ),
-            _buildTypeItem(
-              'Jet Ski',
-              'lib/assets/images/jet ski.png',
-              controller,
-              width,
-            ),
-            _buildTypeItem(
-              'Trolly',
-              'lib/assets/images/Trolly.png',
-              controller,
-              width,
-            ),
-          ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: rowChildren,
         ),
-        SizedBox(height: height * 0.015),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildTypeItem(
-              'Food Truck',
-              'lib/assets/images/food truck.png',
-              controller,
-              width,
-            ),
-            SizedBox(width: width * 0.04),
-            _buildTypeItem(
-              'Boat',
-              'lib/assets/images/Boat.png',
-              controller,
-              width,
-            ),
-          ],
-        ),
-      ],
-    );
+      );
+
+      if (i + 3 < types.length) {
+        rowItems.add(SizedBox(height: height * 0.015));
+      }
+    }
+
+    return Column(children: rowItems);
   }
 
   Widget _buildTypeItem(
     String title,
     String imagePath,
     RegisterVehicleController controller,
+    double height,
     double width,
   ) {
     final isSelected = controller.selectedVehicleType == title;
@@ -271,6 +279,7 @@ class RegisterVehicleScreen extends StatelessWidget {
       onTap: () => controller.setVehicleType(title),
       child: Container(
         width: width * 0.28,
+        height: height * 0.19, // Ensuring identical height across all cards
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -296,12 +305,22 @@ class RegisterVehicleScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: isSelected ? const Color(0xFFE30613) : Colors.black87,
+            Expanded(
+              child: Center(
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    height: 1.2,
+                    color: isSelected
+                        ? const Color(0xFFE30613)
+                        : Colors.black87,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 8),

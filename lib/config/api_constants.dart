@@ -33,6 +33,8 @@ class ApiConstants {
   static const String locationDetails = '${baseUrl}parking/location_details';
   static const String slotDetails = '${baseUrl}parking/slot_details';
   static const String confirmLocation = '${baseUrl}parking/confirm_location';
+  static const String parkingBook = '${baseUrl}parking/book';
+  static const String parkingTypes = '${baseUrl}parking/types';
 
   // Memberships
   static const String memberships = '${baseUrl}memberships';
@@ -63,4 +65,6 @@ class ApiConstants {
 
   // Notifications
   static const String notifications = '${baseUrl}notifications';
+  static const String readNotification = '${baseUrl}notifications/read';
+  static const String search = '${baseUrl}search';
 }

@@ -21,13 +21,16 @@ class RegisterVehicleController extends GetxController {
   XFile? vehiclePhoto;
   XFile? registrationDoc;
 
-  String selectedVehicleType = 'Caravan';
+  String selectedVehicleType = '';
   bool isLoading = false;
+  bool isLoadingTypes = false;
+  List<Map<String, dynamic>> vehicleTypes = [];
 
   @override
   void onInit() {
     super.onInit();
     _loadDraft();
+    fetchVehicleTypes();
   }
 
   void _loadDraft() {
@@ -43,10 +46,71 @@ class RegisterVehicleController extends GetxController {
       widthController.text = draft['width'] ?? '';
       heightController.text = draft['height'] ?? '';
       commentsController.text = draft['comments'] ?? '';
-      selectedVehicleType = draft['vehicle_type'] ?? 'Caravan';
+      selectedVehicleType = draft['vehicle_type'] ?? '';
       update();
     }
   }
+
+  Future<void> fetchVehicleTypes() async {
+    isLoadingTypes = true;
+    update();
+
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      debugPrint('\n--- API REQUEST (vehicle_types) ---');
+      debugPrint('URL: ${ApiConstants.vehicleTypes}');
+
+      final response = await dio.get(
+        ApiConstants.vehicleTypes,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (vehicle_types) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
+
+      if (response.statusCode == 200 &&
+          response.data != null &&
+          response.data['status'] == true) {
+        final List<dynamic> typesData = response.data['data'] ?? [];
+        vehicleTypes = typesData.map((e) => e as Map<String, dynamic>).toList();
+
+        if (vehicleTypes.isNotEmpty && selectedVehicleType.isEmpty) {
+          selectedVehicleType = vehicleTypes.first['name'] ?? '';
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching vehicle types: $e');
+    } finally {
+      isLoadingTypes = false;
+      update();
+    }
+  }
+
+  String getVehicleImage(String typeName) {
+    final lower = typeName.toLowerCase();
+    if (lower.contains('caravan')) {
+      return 'lib/assets/images/caravan.png';
+    } else if (lower.contains('jet ski') || lower.contains('jetski')) {
+      return 'lib/assets/images/jet ski.png';
+    } else if (lower.contains('truck')) {
+      return 'lib/assets/images/food truck.png';
+    } else if (lower.contains('boat')) {
+      return 'lib/assets/images/Boat.png';
+    } else if (lower.contains('trolly')) {
+      return 'lib/assets/images/Trolly.png';
+    }
+    return 'lib/assets/images/caravan.png'; // Default fallback
+  }
+
 
   void setVehicleType(String type) {
     selectedVehicleType = type;
@@ -189,21 +253,22 @@ class RegisterVehicleController extends GetxController {
   }
 
   int _getVehicleTypeId(String type) {
-    switch (type) {
-      case 'JETSKI':
-      case 'Jet Ski':
-        return 9;
-      case 'Food Truck':
-        return 10;
-      case 'Boat':
-        return 12;
-      case 'Caravan':
-        return 14;
-      case 'Trolly':
-        return 16; // Assuming next ID or similar
-      default:
-        return 10;
+    // Dynamic lookup from fetched API data
+    final match = vehicleTypes.firstWhere(
+      (vt) => vt['name'] == type,
+      orElse: () => {},
+    );
+    if (match.isNotEmpty && match.containsKey('id')) {
+      return match['id'] as int;
     }
+    
+    // Fallback if not found
+    final lower = type.toLowerCase();
+    if (lower.contains('jetski') || lower.contains('jet ski')) return 9;
+    if (lower.contains('truck')) return 10;
+    if (lower.contains('boat')) return 12;
+    if (lower.contains('caravan')) return 14;
+    return 14;
   }
 
   Future<void> onUploadPhotoClick() async {

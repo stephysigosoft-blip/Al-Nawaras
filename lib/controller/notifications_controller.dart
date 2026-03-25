@@ -91,4 +91,52 @@ class NotificationsController extends GetxController {
     if (isLoadingMore || !hasMore) return;
     await fetchNotifications();
   }
+
+  Future<void> markAsRead(int notificationId) async {
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      final data = {"notification_id": notificationId};
+
+      debugPrint('\n--- API REQUEST (read_notification) ---');
+      debugPrint('URL: ${ApiConstants.readNotification}');
+      debugPrint('Body: $data');
+
+      final response = await dio.post(
+        ApiConstants.readNotification,
+        data: data,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (read_notification) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          // Successfully marked as read
+          // Update local state if needed (e.g., decrement unreadCount)
+          if (unreadCount > 0) {
+            unreadCount--;
+            update();
+          }
+          
+          // We could also find the notification in the list and mark it as read locally
+          // but the current notification object doesn't seem to have a read status field
+          // that we are using to style the UI. 
+          // Since the user said "Strictly note that not change any single part of UI", 
+          // I will just make the call and update the count.
+        }
+      }
+    } catch (e) {
+      debugPrint('Error marking notification as read: $e');
+    }
+  }
 }
