@@ -7,7 +7,7 @@ import '../config/api_constants.dart';
 import '../generated/l10n.dart';
 
 class AdditionalServicesController extends GetxController {
-  List<Map<String, dynamic>> services = [];
+  var services = <Map<String, dynamic>>[].obs;
   bool isLoading = false;
 
   @override
@@ -48,7 +48,7 @@ class AdditionalServicesController extends GetxController {
           final List<dynamic> servicesData =
               response.data['data']['services'] ?? [];
 
-          services = servicesData.map((s) {
+          services.value = servicesData.map((s) {
             String title = s['service_name'] ?? 'Service';
             return {
               'id': s['id']?.toString() ?? '',
@@ -63,8 +63,6 @@ class AdditionalServicesController extends GetxController {
     } catch (e) {
       debugPrint('Error fetching services: $e');
     } finally {
-      isLoading =
-          true; // Temporary keep true if data is empty as per user response? No, false.
       isLoading = false;
       update();
     }
@@ -75,13 +73,16 @@ class AdditionalServicesController extends GetxController {
     if (lowerTitle.contains('battery')) return 'lib/assets/images/battery.png';
     if (lowerTitle.contains('oil')) return 'lib/assets/images/oil charge.png';
     if (lowerTitle.contains('tire')) return 'lib/assets/images/tire change.png';
-    if (lowerTitle.contains('cleaning'))
+    if (lowerTitle.contains('cleaning')) {
       return 'lib/assets/images/cleaning.png';
-    if (lowerTitle.contains('towing')) return 'lib/assets/images/Trolly.png';
-    if (lowerTitle.contains('vehicle pickup'))
+    }
+    if (lowerTitle.contains('towing')) return 'lib/assets/images/trolly.png';
+    if (lowerTitle.contains('vehicle pickup')) {
       return 'lib/assets/images/vehicle pickup.png';
-    if (lowerTitle.contains('customer pickup'))
+    }
+    if (lowerTitle.contains('customer pickup')) {
       return 'lib/assets/images/customer pickup.png';
+    }
     return 'lib/assets/images/battery.png'; // Default
   }
 

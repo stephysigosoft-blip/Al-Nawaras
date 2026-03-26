@@ -17,6 +17,7 @@ class ApiConstants {
   // Support & Legal
   static const String support = '${baseUrl}support';
   static const String privacyPolicy = '${baseUrl}privacy_policy';
+  static const String about = '${baseUrl}about';
 
   // Chat
   static const String getMessages = '${baseUrl}messages';

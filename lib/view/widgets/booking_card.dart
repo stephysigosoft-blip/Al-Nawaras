@@ -92,12 +92,25 @@ class BookingCard extends StatelessWidget {
             SizedBox(height: width * 0.04),
             // Details Row
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _DetailItem(
-                    label: S.of(context).startDateLabel, value: startDate),
-                _DetailItem(label: S.of(context).endDateLabel, value: endDate),
-                _DetailItem(label: S.of(context).amountLabel, value: amount),
+                Expanded(
+                  flex: 4,
+                  child: _DetailItem(
+                      label: S.of(context).startDateLabel, value: startDate),
+                ),
+                SizedBox(width: width * 0.02),
+                Expanded(
+                  flex: 4,
+                  child: _DetailItem(
+                      label: S.of(context).endDateLabel, value: endDate),
+                ),
+                SizedBox(width: width * 0.02),
+                Expanded(
+                  flex: 3,
+                  child: _DetailItem(
+                      label: S.of(context).amountLabel, value: amount),
+                ),
               ],
             ),
             SizedBox(height: width * 0.04),
