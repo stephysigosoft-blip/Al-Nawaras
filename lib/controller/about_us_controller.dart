@@ -16,7 +16,9 @@ class AboutUsController extends GetxController {
     try {
       isLoading(true);
       Get.dialog(
-        const Center(child: CircularProgressIndicator(color: Color(0xFFE30613))),
+        const Center(
+          child: CircularProgressIndicator(color: Color(0xFFE30613)),
+        ),
         barrierDismissible: false,
       );
 
@@ -30,10 +32,7 @@ class AboutUsController extends GetxController {
       final response = await dio.get(
         ApiConstants.about,
         options: Options(
-          headers: {
-            "Authorization": "Bearer $token",
-            "Accept": "*/*",
-          },
+          headers: {"Authorization": "Bearer $token", "Accept": "*/*"},
         ),
       );
 
@@ -49,7 +48,7 @@ class AboutUsController extends GetxController {
       if (data != null && data['status'] == true) {
         final contentData = data['data'];
         final String link = contentData['about_us'] ?? "";
-        
+
         if (link.isNotEmpty) {
           final Uri url = Uri.parse(link);
           try {
@@ -64,7 +63,10 @@ class AboutUsController extends GetxController {
           Get.snackbar("Error", "Link is empty");
         }
       } else {
-        Get.snackbar("Error", data['message'] ?? "Failed to fetch About Us link");
+        Get.snackbar(
+          "Error",
+          data['message'] ?? "Failed to fetch About Us link",
+        );
       }
     } on DioException catch (e) {
       if (Get.isDialogOpen ?? false) {
