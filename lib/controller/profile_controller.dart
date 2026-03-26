@@ -60,6 +60,8 @@ class ProfileController extends GetxController {
         options: dio_lib.Options(headers: {"Authorization": "Bearer $token"}),
       );
 
+      if (isClosed) return; // Guard against disposal during async call
+
       if (kDebugMode) {
         print('--- API RESPONSE (profile) ---');
         print('Status Code: ${response.statusCode}');
@@ -98,10 +100,12 @@ class ProfileController extends GetxController {
         }
 
         // Prefill fields
-        nameController.text = profile.value?.name ?? "";
-        emailController.text = profile.value?.email ?? "";
-        phoneController.text = profile.value?.mobile ?? "";
-        isImageRemoved.value = false; // Reset removal flag after fetch
+        if (!isClosed) {
+          nameController.text = profile.value?.name ?? "";
+          emailController.text = profile.value?.email ?? "";
+          phoneController.text = profile.value?.mobile ?? "";
+          isImageRemoved.value = false; // Reset removal flag after fetch
+        }
       }
     } on dio_lib.DioException catch (e) {
       Get.snackbar("Error", e.response?.data['message'] ?? "Fetch failed");
@@ -254,6 +258,8 @@ class ProfileController extends GetxController {
         ),
       );
 
+      if (isClosed) return; // Guard against disposal during async call
+
       if (kDebugMode) {
         print('--- API RESPONSE (update_profile) ---');
         print('Status Code: ${response.statusCode}');
@@ -274,6 +280,8 @@ class ProfileController extends GetxController {
         );
 
         await fetchProfile(); // refresh data
+        
+        if (isClosed) return; // Guard check after another await
         
         // Reset local selection so the UI doesn't keep showing the picked file
         selectedImage.value = null;
