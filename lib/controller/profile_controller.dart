@@ -16,6 +16,7 @@ class ProfileController extends GetxController {
 
   var isLoading = false.obs;
   var profile = Rxn<ProfileModel>();
+  var profileImageBytes = Rxn<Uint8List>();
 
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -67,6 +68,19 @@ class ProfileController extends GetxController {
 
       if (data['status'] == true) {
         profile.value = ProfileModel.fromJson(data['data']);
+        
+        // Optimistically decode base64 image once to prevent UI jank
+        final img = profile.value?.profileImage;
+        if (img != null && img.isNotEmpty && !img.startsWith('http')) {
+          try {
+            profileImageBytes.value = base64Decode(img);
+          } catch (e) {
+            debugPrint('Error decoding profile image: $e');
+            profileImageBytes.value = null;
+          }
+        } else {
+          profileImageBytes.value = null;
+        }
 
         // Prefill fields
         nameController.text = profile.value?.name ?? "";

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'dart:convert';
 import '../../controller/home_controller.dart';
 import '../../controller/profile_controller.dart';
 import '../notifications/notifications_view.dart';
@@ -101,7 +100,9 @@ class ProfileHeader extends StatelessWidget {
               backgroundImage: img != null && img.isNotEmpty
                   ? (img.startsWith('http')
                       ? NetworkImage(img)
-                      : MemoryImage(base64Decode(img)) as ImageProvider)
+                      : (controller.profileImageBytes.value != null
+                          ? MemoryImage(controller.profileImageBytes.value!)
+                          : null))
                   : null,
               child: img == null || img.isEmpty
                   ? Icon(

@@ -779,6 +779,26 @@ class S {
     );
   }
 
+   //  privacy policy
+  String get privacyPolicy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  //  privacy policy subtitle
+  String get privacyPolicySubtitle {
+    return Intl.message(
+      'Learn how we handle your data',
+      name: 'privacyPolicySubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `About Al-Nawaras`
   String get aboutAlNawaras {
     return Intl.message(

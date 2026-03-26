@@ -1,6 +1,6 @@
 import 'package:al_nawaras/controller/profile_controller.dart';
 import 'package:al_nawaras/view/booking/booking_history.dart';
-import 'package:al_nawaras/view/payment/payment_view.dart';
+import 'package:al_nawaras/controller/about_us_controller.dart';
 import 'package:al_nawaras/view/privacy_policy/privacy_policy.dart';
 import 'package:al_nawaras/view/security/security_view.dart';
 import 'package:al_nawaras/view/help_support/help_support_view.dart';
@@ -29,7 +29,9 @@ class ProfileView extends StatelessWidget {
     final padding = width * 0.06;
 
     final profileController = Get.put(ProfileController());
-    final additionalServicesController = Get.put(AdditionalServicesController());
+    final additionalServicesController = Get.put(
+      AdditionalServicesController(),
+    );
 
     return GetBuilder<HomeController>(
       init: Get.find<HomeController>(),
@@ -64,9 +66,15 @@ class ProfileView extends StatelessWidget {
                             end: padding,
                             child: MembershipStatusCard(
                               width: width,
-                              status: homeController.membershipStatus != "Loading..." 
-                                  ? homeController.membershipStatus 
-                                  : (profileController.profile.value?.membershipStatus ?? S.of(context).noStatus),
+                              status:
+                                  homeController.membershipStatus !=
+                                      "Loading..."
+                                  ? homeController.membershipStatus
+                                  : (profileController
+                                            .profile
+                                            .value
+                                            ?.membershipStatus ??
+                                        S.of(context).noStatus),
                               vehicles: homeController.allVehicles,
                               bookings: homeController.bookingHistory,
                               services: additionalServicesController.services,
@@ -131,17 +139,17 @@ class ProfileView extends StatelessWidget {
             width: width,
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            Get.to(() => const PaymentView());
-          },
-          child: ProfileMenuItem(
-            icon: Icons.credit_card_outlined,
-            title: S.of(context).paymentMethods,
-            subtitle: S.of(context).managePaymentOptions,
-            width: width,
-          ),
-        ),
+        // GestureDetector(
+        //   onTap: () {
+        //     Get.to(() => const PaymentView());
+        //   },
+        //   child: ProfileMenuItem(
+        //     icon: Icons.credit_card_outlined,
+        //     title: S.of(context).paymentMethods,
+        //     subtitle: S.of(context).managePaymentOptions,
+        //     width: width,
+        //   ),
+        // ),
         GestureDetector(
           onTap: () {
             Get.off(() => BookingHistoryView());
@@ -168,6 +176,18 @@ class ProfileView extends StatelessWidget {
         GestureDetector(
           onTap: () {
             Get.to(() => const PrivacyPolicyView());
+          },
+          child: ProfileMenuItem(
+            icon: Icons.privacy_tip_outlined,
+            title: S.of(context).privacyPolicy,
+            subtitle: S.of(context).privacyPolicySubtitle,
+            width: width,
+            circleBorderWidth: 2.0,
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            Get.put(AboutUsController()).openAboutUsLink();
           },
           child: ProfileMenuItem(
             icon: Icons.error_outline,
