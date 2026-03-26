@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import '../../controller/profile_controller.dart';
 import '../../generated/l10n.dart';
@@ -105,34 +104,17 @@ class ProfileUpdateView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(4),
             child: Obx(() {
-              final user = controller.profile.value;
               final selected = controller.selectedImage.value;
               final removed = controller.isImageRemoved.value;
-              final img = user?.profileImage;
-
-              const transparentPlaceholder =
-                  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
 
               return CircleAvatar(
                 radius: width * 0.14,
                 backgroundColor: Colors.white,
                 backgroundImage: selected != null
                     ? FileImage(selected) as ImageProvider
-                    : (img != null &&
-                              img.isNotEmpty &&
-                              img != transparentPlaceholder &&
-                              !removed
-                          ? (img.startsWith('http')
-                                ? NetworkImage(img)
-                                : MemoryImage(base64Decode(img))
-                                      as ImageProvider)
-                          : null),
+                    : (removed ? null : controller.profileImageProvider.value),
                 child:
-                    (selected == null &&
-                        (img == null ||
-                            img.isEmpty ||
-                            img == transparentPlaceholder ||
-                            removed))
+                    (selected == null && (removed || controller.profileImageProvider.value == null))
                     ? Icon(
                         Icons.person,
                         color: Colors.blueGrey[800],

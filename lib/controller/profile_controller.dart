@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio_lib;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,12 +13,13 @@ import 'home_controller.dart';
 import 'rewards_controller.dart';
 
 class ProfileController extends GetxController {
-  final Dio dio = Dio();
+  final dio_lib.Dio dio = dio_lib.Dio();
   final box = GetStorage();
 
   var isLoading = false.obs;
-  var profile = Rxn<ProfileModel>();
-  var profileImageBytes = Rxn<Uint8List>();
+  final Rx<ProfileModel?> profile = Rx<ProfileModel?>(null);
+  final Rx<Uint8List?> profileImageBytes = Rx<Uint8List?>(null);
+  final Rx<ImageProvider?> profileImageProvider = Rx<ImageProvider?>(null); // Added for blinking fix
 
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -57,7 +58,7 @@ class ProfileController extends GetxController {
 
       final response = await dio.get(
         ApiConstants.profile, // /api/profile
-        options: Options(headers: {"Authorization": "Bearer $token"}),
+        options: dio_lib.Options(headers: {"Authorization": "Bearer $token"}),
       );
 
       if (kDebugMode) {
@@ -70,7 +71,13 @@ class ProfileController extends GetxController {
       final data = response.data;
 
       if (data['status'] == true) {
-        profile.value = ProfileModel.fromJson(data['data']);
+        final profileData = data['data'];
+        profile.value = ProfileModel.fromJson(profileData);
+        
+        // Ensure partner_id is always persisted for subsequent updates
+        if (profileData['partner_id'] != null) {
+          box.write('partner_id', profileData['partner_id']);
+        }
         
         // Optimistically decode base64 image once to prevent UI jank
         final img = profile.value?.profileImage;
@@ -81,25 +88,32 @@ class ProfileController extends GetxController {
             img.isNotEmpty &&
             img != transparentPlaceholder &&
             !img.startsWith('http')) {
-          try {
-            profileImageBytes.value = base64Decode(img);
-          } catch (e) {
-            debugPrint('Error decoding profile image: $e');
+            if (img != profile.value?.profileImage || profileImageBytes.value == null) {
+              try {
+                profileImageBytes.value = base64Decode(img);
+                profileImageProvider.value = MemoryImage(profileImageBytes.value!);
+              } catch (e) {
+                debugPrint('Error decoding profile image: $e');
+                profileImageBytes.value = null;
+                profileImageProvider.value = null;
+              }
+            }
+          } else if (img != null && img.startsWith('http')) {
+            if (img != profile.value?.profileImage || profileImageProvider.value == null) {
+              profileImageProvider.value = NetworkImage(img);
+            }
+          } else {
             profileImageBytes.value = null;
+            profileImageProvider.value = null;
           }
-        } else {
-          profileImageBytes.value = null;
-        }
 
         // Prefill fields
         nameController.text = profile.value?.name ?? "";
         emailController.text = profile.value?.email ?? "";
         phoneController.text = profile.value?.mobile ?? "";
         isImageRemoved.value = false; // Reset removal flag after fetch
-      } else {
-        Get.snackbar("Error", data['message']);
       }
-    } on DioException catch (e) {
+    } on dio_lib.DioException catch (e) {
       Get.snackbar("Error", e.response?.data['message'] ?? "Fetch failed");
     } finally {
       isLoading(false);
@@ -204,31 +218,58 @@ class ProfileController extends GetxController {
     try {
       isLoading(true);
 
+      // Use FormData (multipart/form-data) for better reliability with Base64 payloads.
+      // This prevents character corruption (like '+') that can occur with x-www-form-urlencoded.
+      final pId = box.read('partner_id');
+      if (kDebugMode) {
+        print('\n--- API REQUEST (update_profile) ---');
+        print('URL: ${ApiConstants.updateprofile}');
+        print('Partner ID: $pId');
+        print('Name: ${nameController.text}');
+        print('Email: ${emailController.text}');
+        print('Phone: ${phoneController.text}');
+        print('Base64 Length: ${base64Image.length}');
+        if (base64Image.isNotEmpty) {
+          print('Base64 Start: ${base64Image.substring(0, 30)}...');
+        }
+        print('----------------------------------\n');
+      }
+
+      final formData = dio_lib.FormData.fromMap({
+        "partner_id": pId,
+        "name": nameController.text,
+        "email": emailController.text,
+        "phone_number": phoneController.text,
+        
+        if (base64Image.isNotEmpty) "profile_picture": base64Image,
+        if (base64Image.isNotEmpty) "profile_image": base64Image, 
+        if (base64Image.isNotEmpty) "image_1920": base64Image, // Common Odoo high-res field
+        if (base64Image.isNotEmpty) "image": base64Image,      // Basic Odoo binary field
+        
+        // Visual Deletion fallback
+        if (isImageRemoved.value) "profile_picture": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        if (isImageRemoved.value) "profile_image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        if (isImageRemoved.value) "image_1920": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        if (isImageRemoved.value) "image": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+      });
+
       final response = await dio.post(
-        ApiConstants.updateprofile, // /api/profile/update
-        data: {
-          "partner_id": box.read('partner_id'),
-          "name": nameController.text,
-          "email": emailController.text,
-          "phone_number": phoneController.text,
-          "mobile": phoneController.text,
-          
-          if (base64Image.isNotEmpty) "profile_picture": base64Image,
-          
-          // Visual Deletion: Overwrite with 1x1 transparent PNG to clear image.
-          // This bypasses server-side limitations where unsetting values is ignored.
-          if (isImageRemoved.value)
-            "profile_picture":
-                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
-        },
-        options: Options(
-          contentType: Headers.formUrlEncodedContentType,
+        ApiConstants.updateprofile,
+        data: formData,
+        options: dio_lib.Options(
           headers: {
             "Authorization": "Bearer $token",
             "Accept": "application/json",
           },
         ),
       );
+
+      if (kDebugMode) {
+        print('--- API RESPONSE (update_profile) ---');
+        print('Status Code: ${response.statusCode}');
+        print('Response Body: ${response.data}');
+        print('-----------------------------------\n');
+      }
 
       final data = response.data;
 
@@ -243,11 +284,20 @@ class ProfileController extends GetxController {
         );
 
         await fetchProfile(); // refresh data
-
-        // Refresh other controllers if they exist
+        
+        // Reset local selection so the UI doesn't keep showing the picked file
+        selectedImage.value = null;
+        base64Image = "";
+        // Directly sync fresh profile data to HomeController to avoid redundant network calls and "blinking"
         if (Get.isRegistered<HomeController>()) {
-          Get.find<HomeController>().fetchHomeData();
+          final homeCtrl = Get.find<HomeController>();
+          homeCtrl.profilePicture = profile.value?.profileImage;
+          homeCtrl.profilePictureBytes = profileImageBytes.value;
+          homeCtrl.profileImageProvider = profileImageProvider.value; // Sync the stable provider!
+          homeCtrl.userName = profile.value?.name ?? homeCtrl.userName;
+          homeCtrl.update();
         }
+
         if (Get.isRegistered<RewardsController>()) {
           Get.find<RewardsController>().fetchRewardsData();
           Get.find<RewardsController>().fetchProfileData();
@@ -266,7 +316,7 @@ class ProfileController extends GetxController {
           duration: const Duration(seconds: 1),
         );
       }
-    } on DioException catch (e) {
+    } on dio_lib.DioException catch (e) {
       String errMsg = "Update failed";
       if (e.response != null && e.response!.data is Map) {
         errMsg = e.response!.data['message'] ?? "Update failed";

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:al_nawaras/view/book_parking/book_parking_screen.dart';
 import 'package:dio/dio.dart';
@@ -39,6 +40,8 @@ class HomeController extends GetxController {
   String? membershipValidUntil;
   bool claimReward = false;
   String? profilePicture;
+  Uint8List? profilePictureBytes; 
+  ImageProvider? profileImageProvider; // The ONLY object the UI should use to avoid blinking
 
   List<Map<String, dynamic>> allVehicles = [];
   List<Map<String, dynamic>> allActivities = [];
@@ -58,6 +61,7 @@ class HomeController extends GetxController {
   final int limit = 10;
 
   bool hasMoreHistory = true;
+  bool _isHomeLoading = false;
   bool isSectionVisible(String sectionName, List<String> terms) {
     if (searchQuery.isEmpty) return true;
 
@@ -188,6 +192,8 @@ class HomeController extends GetxController {
   }
 
   Future<void> fetchHomeData() async {
+    if (_isHomeLoading) return;
+    _isHomeLoading = true;
     try {
       // Check maintenance status every time home data is fetched/refreshed
       fetchSettings();
@@ -229,7 +235,29 @@ class HomeController extends GetxController {
           final data = response.data['data'];
 
           userName = data['user_name'] ?? 'Guest';
-          profilePicture = data['profile_picture'];
+          final newPic = data['profile_picture']?.toString();
+          
+          if (newPic != profilePicture || profileImageProvider == null) {
+            profilePicture = newPic;
+            if (profilePicture != null && 
+                profilePicture!.isNotEmpty && 
+                profilePicture != "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==") {
+              try {
+                if (profilePicture!.startsWith('http')) {
+                  profileImageProvider = NetworkImage(profilePicture!);
+                } else {
+                  profilePictureBytes = base64Decode(profilePicture!);
+                  profileImageProvider = MemoryImage(profilePictureBytes!);
+                }
+              } catch (e) {
+                profilePictureBytes = null;
+                profileImageProvider = null;
+              }
+            } else {
+              profilePictureBytes = null;
+              profileImageProvider = null;
+            }
+          }
 
           final membership = data['membership_details'];
           if (membership != null) {
@@ -347,6 +375,8 @@ class HomeController extends GetxController {
       if (e is DioException && e.response?.statusCode == 401) {
         logOut();
       }
+    } finally {
+      _isHomeLoading = false;
     }
   }
 

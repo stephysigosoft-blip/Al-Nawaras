@@ -237,7 +237,7 @@ class LoginController extends GetxController {
       if (response.statusCode == 200 && data["status"] == true) {
         // 🔹 Step 4: Save Token
         box.write("token", data["data"]["token"]);
-        print("SAVED TOKEN: ${box.read("token")}");
+        box.write("partner_id", data["data"]["partner_id"]);
         box.write("name", data["data"]["name"]);
         box.write("email", data["data"]["email"]);
 
@@ -297,6 +297,7 @@ class LoginController extends GetxController {
         if (response.statusCode == 200 && data["status"] == true) {
           // 🔹 Step 3: Save Token
           box.write("token", data["data"]["token"]);
+          box.write("partner_id", data["data"]["partner_id"]);
           box.write("name", data["data"]["name"]);
           box.write("email", data["data"]["email"]);
 
