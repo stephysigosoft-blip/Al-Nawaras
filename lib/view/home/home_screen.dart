@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:convert';
 import '../../controller/home_controller.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/draggable_help_button.dart';
@@ -395,8 +396,9 @@ class HomeScreen extends StatelessWidget {
                           img !=
                               "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
                       ? DecorationImage(
-                          image: controller.profileImageProvider ??
-                                const AssetImage('lib/assets/images/Airstream.png'),
+                          image: img.startsWith('http')
+                              ? NetworkImage(img)
+                              : MemoryImage(base64Decode(img)) as ImageProvider,
                           fit: BoxFit.cover,
                         )
                       : null,

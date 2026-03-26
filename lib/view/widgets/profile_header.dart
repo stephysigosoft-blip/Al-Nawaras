@@ -101,7 +101,18 @@ class ProfileHeader extends StatelessWidget {
               child: CircleAvatar(
                 radius: width * 0.11, // Dynamic size
                 backgroundColor: Colors.white,
-                backgroundImage: controller.profileImageProvider.value,
+                backgroundImage:
+                    img != null &&
+                        img.isNotEmpty &&
+                        img != transparentPlaceholder
+                    ? (img.startsWith('http')
+                          ? NetworkImage(img)
+                          : (controller.profileImageBytes.value != null
+                                ? MemoryImage(
+                                    controller.profileImageBytes.value!,
+                                  )
+                                : null))
+                    : null,
                 child:
                     img == null || img.isEmpty || img == transparentPlaceholder
                     ? Icon(

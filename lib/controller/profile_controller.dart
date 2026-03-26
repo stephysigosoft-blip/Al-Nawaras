@@ -17,9 +17,8 @@ class ProfileController extends GetxController {
   final box = GetStorage();
 
   var isLoading = false.obs;
-  final Rx<ProfileModel?> profile = Rx<ProfileModel?>(null);
-  final Rx<Uint8List?> profileImageBytes = Rx<Uint8List?>(null);
-  final Rx<ImageProvider?> profileImageProvider = Rx<ImageProvider?>(null); // Added for blinking fix
+  var profile = Rxn<ProfileModel>();
+  var profileImageBytes = Rxn<Uint8List>();
 
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -88,24 +87,15 @@ class ProfileController extends GetxController {
             img.isNotEmpty &&
             img != transparentPlaceholder &&
             !img.startsWith('http')) {
-            if (img != profile.value?.profileImage || profileImageBytes.value == null) {
-              try {
-                profileImageBytes.value = base64Decode(img);
-                profileImageProvider.value = MemoryImage(profileImageBytes.value!);
-              } catch (e) {
-                debugPrint('Error decoding profile image: $e');
-                profileImageBytes.value = null;
-                profileImageProvider.value = null;
-              }
-            }
-          } else if (img != null && img.startsWith('http')) {
-            if (img != profile.value?.profileImage || profileImageProvider.value == null) {
-              profileImageProvider.value = NetworkImage(img);
-            }
-          } else {
+          try {
+            profileImageBytes.value = base64Decode(img);
+          } catch (e) {
+            debugPrint('Error decoding profile image: $e');
             profileImageBytes.value = null;
-            profileImageProvider.value = null;
           }
+        } else {
+          profileImageBytes.value = null;
+        }
 
         // Prefill fields
         nameController.text = profile.value?.name ?? "";
@@ -292,8 +282,6 @@ class ProfileController extends GetxController {
         if (Get.isRegistered<HomeController>()) {
           final homeCtrl = Get.find<HomeController>();
           homeCtrl.profilePicture = profile.value?.profileImage;
-          homeCtrl.profilePictureBytes = profileImageBytes.value;
-          homeCtrl.profileImageProvider = profileImageProvider.value; // Sync the stable provider!
           homeCtrl.userName = profile.value?.name ?? homeCtrl.userName;
           homeCtrl.update();
         }
