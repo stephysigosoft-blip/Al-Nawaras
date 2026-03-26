@@ -210,21 +210,21 @@ class ProfileView extends StatelessWidget {
         onPressed: () {
           Get.dialog(
             AlertDialog(
-              title: const Text("Logout"),
-              content: const Text("Are you sure you want to logout?"),
+              title: Text(S.of(context).logout),
+              content: Text(S.of(context).logoutConfirm),
               actions: [
                 TextButton(
                   onPressed: () => Get.back(),
-                  child: const Text("Cancel"),
+                  child: Text(S.of(context).cancel),
                 ),
                 TextButton(
                   onPressed: () {
                     Get.back();
                     logoutController.logOut();
                   },
-                  child: const Text(
-                    "Yes",
-                    style: TextStyle(color: Color(0xFFE30613)),
+                  child: Text(
+                    S.of(context).yes,
+                    style: const TextStyle(color: Color(0xFFE30613)),
                   ),
                 ),
               ],

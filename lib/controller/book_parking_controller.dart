@@ -38,7 +38,7 @@ class BookParkingController extends GetxController {
 
   Future<void> fetchVehicles() async {
     isLoadingVehicles = true;
-    update();
+    if (!isClosed) update();
 
     try {
       final dio = Dio();
@@ -77,13 +77,13 @@ class BookParkingController extends GetxController {
       debugPrint('Error fetching vehicles: $e');
     } finally {
       isLoadingVehicles = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
   void setSelectedVehicle(Map<String, dynamic> vehicle) {
     selectedVehicleData = vehicle;
-    update();
+    if (!isClosed) update();
   }
 
   String getVehicleImage(String? typeName) {
@@ -96,7 +96,7 @@ class BookParkingController extends GetxController {
 
   Future<void> fetchParkingTypes() async {
     isLoadingParkingTypes = true;
-    update();
+    if (!isClosed) update();
 
     try {
       final dio = Dio();
@@ -144,7 +144,7 @@ class BookParkingController extends GetxController {
       debugPrint('Error fetching parking types: $e');
     } finally {
       isLoadingParkingTypes = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
@@ -180,7 +180,7 @@ class BookParkingController extends GetxController {
 
   Future<void> fetchMemberships() async {
     isLoadingMemberships = true;
-    update();
+    if (!isClosed) update();
 
     try {
       final dio = Dio();
@@ -231,7 +231,7 @@ class BookParkingController extends GetxController {
       debugPrint('Error fetching memberships for book parking: $e');
     } finally {
       isLoadingMemberships = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
@@ -240,7 +240,7 @@ class BookParkingController extends GetxController {
 
   Future<void> fetchServices() async {
     isLoadingServices = true;
-    update();
+    if (!isClosed) update();
 
     try {
       final dio = Dio();
@@ -299,7 +299,7 @@ class BookParkingController extends GetxController {
       debugPrint('Error fetching services for book parking: $e');
     } finally {
       isLoadingServices = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
@@ -331,20 +331,123 @@ class BookParkingController extends GetxController {
 
   final TextEditingController dateController = TextEditingController();
   final TextEditingController timeController = TextEditingController();
+  final TextEditingController endDateController = TextEditingController();
+  final TextEditingController endTimeController = TextEditingController();
+
+  TimeOfDay? selectedStartTime;
+  TimeOfDay? selectedEndTime;
+
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFE30613),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      dateController.text = "${picked.day}/${picked.month}/${picked.year}";
+      if (!isClosed) update();
+    }
+  }
+
+  Future<void> selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFE30613),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      selectedStartTime = picked;
+      if (!isClosed) timeController.text = picked.format(context);
+      if (!isClosed) update();
+    }
+  }
+
+  Future<void> selectEndDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFE30613),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      endDateController.text = "${picked.day}/${picked.month}/${picked.year}";
+      if (!isClosed) update();
+    }
+  }
+
+  Future<void> selectEndTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFFE30613),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      selectedEndTime = picked;
+      if (!isClosed) endTimeController.text = picked.format(context);
+      if (!isClosed) update();
+    }
+  }
 
   void setParkingType(String type) {
     selectedParkingType = type;
-    update();
+    if (!isClosed) update();
   }
 
   void setMembership(String membership) {
     selectedMembership = membership;
-    update();
+    if (!isClosed) update();
   }
 
   void toggleAddon(int index) {
     addonServices[index]['isSelected'] = !addonServices[index]['isSelected'];
-    update();
+    if (!isClosed) update();
   }
 
   /// Returns the total price as a formatted string based on:
@@ -384,7 +487,7 @@ class BookParkingController extends GetxController {
 
   Future<void> onNextClick() async {
     isBooking = true;
-    update();
+    if (!isClosed) update();
 
     int? bookingId;
     double? bookingTotal;
@@ -399,12 +502,18 @@ class BookParkingController extends GetxController {
         'Accept': 'application/json',
       };
 
-      // Build ISO 8601 date strings for start/end (use user-entered or sensible defaults)
-      final now = DateTime.now().toUtc();
-      final startDate = dateController.text.isNotEmpty
-          ? _parseDate(dateController.text, now)
-          : now;
-      final endDate = startDate.add(const Duration(hours: 2));
+      // Build ISO 8601 date strings for start/end
+      final now = DateTime.now();
+      final startDate = _combineDateAndTime(
+        dateController.text,
+        selectedStartTime,
+        now,
+      );
+      final endDate = _combineDateAndTime(
+        endDateController.text,
+        selectedEndTime,
+        startDate.add(const Duration(hours: 2)),
+      );
 
       final vehicleId = selectedVehicleData?['id'];
       final parkingTypeId = parkingTypeIdMap[selectedParkingType] ?? 1;
@@ -446,7 +555,7 @@ class BookParkingController extends GetxController {
       // Don't block navigation — still proceed to payment
     } finally {
       isBooking = false;
-      update();
+      if (!isClosed) update();
     }
 
     // Step 2: Fetch payment/summary and navigate to PaymentView
@@ -503,11 +612,15 @@ class BookParkingController extends GetxController {
               },
               {
                 'label': 'Start Date',
-                'value': data['start_date']?.toString() ?? 'N/A',
+                'value':
+                    data['start_date']?.toString() ??
+                    "${dateController.text} ${timeController.text}",
               },
               {
                 'label': 'End Date',
-                'value': data['end_date']?.toString() ?? 'N/A',
+                'value':
+                    data['end_date']?.toString() ??
+                    "${endDateController.text} ${endTimeController.text}",
               },
               {
                 'label': 'Duration',
@@ -525,16 +638,23 @@ class BookParkingController extends GetxController {
     }
   }
 
-  /// Parses a dd/mm/yyyy string into a DateTime, falling back to [fallback].
-  DateTime _parseDate(String text, DateTime fallback) {
+  /// Combines a date string (dd/mm/yyyy) and a TimeOfDay into a DateTime object.
+  DateTime _combineDateAndTime(
+    String dateStr,
+    TimeOfDay? time,
+    DateTime fallback,
+  ) {
     try {
-      final parts = text.split('/');
+      final parts = dateStr.split('/');
       if (parts.length == 3) {
-        return DateTime.utc(
-          int.parse(parts[2]),
-          int.parse(parts[1]),
-          int.parse(parts[0]),
-        );
+        final year = int.parse(parts[2]);
+        final month = int.parse(parts[1]);
+        final day = int.parse(parts[0]);
+
+        final hour = time?.hour ?? 0;
+        final minute = time?.minute ?? 0;
+
+        return DateTime(year, month, day, hour, minute);
       }
     } catch (_) {}
     return fallback;
@@ -557,6 +677,14 @@ class BookParkingController extends GetxController {
           },
           {'label': 'Membership', 'value': selectedMembership},
           {'label': 'Type', 'value': selectedParkingType},
+          {
+            'label': 'Start Date',
+            'value': "${dateController.text} ${timeController.text}",
+          },
+          {
+            'label': 'End Date',
+            'value': "${endDateController.text} ${endTimeController.text}",
+          },
         ],
       ),
     );
@@ -564,8 +692,7 @@ class BookParkingController extends GetxController {
 
   @override
   void onClose() {
-    dateController.dispose();
-    timeController.dispose();
+    // Rely on GetX lifecycle for cleanup to avoid "used after disposed" errors
     super.onClose();
   }
 }

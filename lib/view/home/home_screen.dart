@@ -136,7 +136,7 @@ class HomeScreen extends StatelessWidget {
                               controller.searchLocationsResults.isNotEmpty) ...[
                             SizedBox(height: height * 0.02),
                             _buildSectionHeader(
-                              "Search Results", // Fallback text as key is missing
+                              S.of(context).searchResults,
                               "",
                               () {},
                               height,
@@ -149,7 +149,7 @@ class HomeScreen extends StatelessWidget {
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: _buildActivityCard(
                                   location['name'] ?? '',
-                                  "Location", // Fallback text as key is missing
+                                  S.of(context).location,
                                   Icons.location_on_outlined,
                                   const Color(0xFFE30613),
                                   height,
@@ -277,7 +277,8 @@ class HomeScreen extends StatelessWidget {
                                     String title = "";
                                     String subtitle = activity['subtitle'];
 
-                                    if (activity['titleKey'] == 'parkingPayment') {
+                                    if (activity['titleKey'] ==
+                                        'parkingPayment') {
                                       title = S.of(context).parkingPayment;
                                     } else if (activity['titleKey'] ==
                                         'parkingRenewed') {
@@ -293,6 +294,11 @@ class HomeScreen extends StatelessWidget {
                                         'parkedAtSpotA12',
                                         S.of(context).parkedAtSpot('A12'),
                                       );
+                                    } else {
+                                      title = (activity['titleKey'] ?? "")
+                                          .toString();
+                                      if (title.isEmpty)
+                                        title = S.of(context).recentActivity;
                                     }
 
                                     return Column(

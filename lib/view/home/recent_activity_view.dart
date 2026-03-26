@@ -14,6 +14,11 @@ class RecentActivityView extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
 
     return GetBuilder<HomeController>(
+      initState: (state) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Get.find<HomeController>().loadMoreActivities(reset: true);
+        });
+      },
       builder: (controller) {
         return Scaffold(
           backgroundColor: const Color(0xFFF7F7F7),
@@ -22,67 +27,77 @@ class RecentActivityView extends StatelessWidget {
             centerTitle: false,
             onBackPressed: () => Get.back(),
           ),
-          body: controller.filteredActivities.isEmpty
-              ? CustomNoData(
-                  message: S.of(context).currentlyNoItemsFoundPleaseTryLater,
-                )
-              : NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scrollInfo) {
-                    if (scrollInfo.metrics.pixels ==
-                        scrollInfo.metrics.maxScrollExtent) {
-                      controller.loadMoreActivities();
-                    }
-                    return true;
-                  },
-                  child: ListView.builder(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: width * 0.05,
-                      vertical: height * 0.02,
-                    ),
-                    itemCount:
-                        controller.filteredActivities.length +
-                        (controller.isActivityLoading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == controller.filteredActivities.length) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(strokeWidth: 2),
+          body: RefreshIndicator(
+            onRefresh: () => controller.loadMoreActivities(),
+            color: const Color(0xFFE30613),
+            child: controller.filteredActivities.isEmpty
+                ? CustomNoData(
+                    message: S.of(context).currentlyNoItemsFoundPleaseTryLater,
+                  )
+                : NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent) {
+                        controller.loadMoreActivities();
+                      }
+                      return true;
+                    },
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.05,
+                        vertical: height * 0.02,
+                      ),
+                      itemCount:
+                          controller.filteredActivities.length +
+                          (controller.isActivityLoading ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == controller.filteredActivities.length) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        }
+                        final activity = controller.filteredActivities[index];
+                        String title = "";
+                        String subtitle = activity['subtitle'];
+
+                        if (activity['titleKey'] == 'parkingPayment') {
+                          title = S.of(context).parkingPayment;
+                        } else if (activity['titleKey'] == 'parkingRenewed') {
+                          title = S.of(context).parkingRenewed;
+                          subtitle = subtitle.replaceAll(
+                            'monthlyPremium',
+                            S.of(context).monthlyPremium,
+                          );
+                        } else if (activity['titleKey'] == 'vehicleCheckIn') {
+                          title = S.of(context).vehicleCheckIn;
+                          subtitle = subtitle.replaceAll(
+                            'parkedAtSpotA12',
+                            S.of(context).parkedAtSpot('A12'),
+                          );
+                        } else {
+                          title = (activity['titleKey'] ?? "").toString();
+                          if (title.isEmpty)
+                            title = S.of(context).recentActivity;
+                        }
+
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: height * 0.01),
+                          child: _buildActivityCard(
+                            title,
+                            subtitle,
+                            activity['icon'],
+                            activity['color'],
+                            height,
+                            width,
                           ),
                         );
-                      }
-                      final activity = controller.filteredActivities[index];
-                      String title = "";
-                      String subtitle = activity['subtitle'];
-
-                      if (activity['titleKey'] == 'parkingRenewed') {
-                        title = S.of(context).parkingRenewed;
-                        subtitle = subtitle.replaceAll(
-                          'monthlyPremium',
-                          S.of(context).monthlyPremium,
-                        );
-                      } else if (activity['titleKey'] == 'vehicleCheckIn') {
-                        title = S.of(context).vehicleCheckIn;
-                        subtitle = subtitle.replaceAll(
-                          'parkedAtSpotA12',
-                          S.of(context).parkedAtSpot('A12'),
-                        );
-                      }
-
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: height * 0.01),
-                        child: _buildActivityCard(
-                          title,
-                          subtitle,
-                          activity['icon'],
-                          activity['color'],
-                          height,
-                          width,
-                        ),
-                      );
-                    },
+                      },
+                    ),
                   ),
-                ),
+          ),
         );
       },
     );

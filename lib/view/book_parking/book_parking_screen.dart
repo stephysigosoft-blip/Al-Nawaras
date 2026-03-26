@@ -499,7 +499,51 @@ class BookParkingScreen extends StatelessWidget {
                     style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
                   const SizedBox(height: 8),
-                  _buildDateField('dd/mm/yyyy', controller.dateController),
+                  _buildDateField(
+                    'dd/mm/yyyy',
+                    controller.dateController,
+                    () => controller.selectDate(context),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   Text(
+                    S.of(context).startTime,
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildDateField(
+                    '--- -- --',
+                    controller.timeController,
+                    () => controller.selectTime(context),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: height * 0.02),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'End Date', // hardcoded for now, will fix l10n
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildDateField(
+                    'dd/mm/yyyy',
+                    controller.endDateController,
+                    () => controller.selectEndDate(context),
+                  ),
                 ],
               ),
             ),
@@ -509,11 +553,15 @@ class BookParkingScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    S.of(context).startTime,
+                    'End Time', // hardcoded for now, will fix l10n
                     style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
                   const SizedBox(height: 8),
-                  _buildDateField('--- -- --', controller.timeController),
+                  _buildDateField(
+                    '--- -- --',
+                    controller.endTimeController,
+                    () => controller.selectEndTime(context),
+                  ),
                 ],
               ),
             ),
@@ -523,22 +571,30 @@ class BookParkingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDateField(String hint, TextEditingController controller) {
-    return Container(
-      height: 45,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
-      ),
-      child: TextField(
-        controller: controller,
-        readOnly: true,
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: const TextStyle(color: Colors.black26, fontSize: 13),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+  Widget _buildDateField(
+    String hint,
+    TextEditingController controller,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 45,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
+        ),
+        child: TextField(
+          controller: controller,
+          enabled: false, // Prevents keyboard and ensures onTap works
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: const TextStyle(color: Colors.black26, fontSize: 13),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+          ),
+          style: const TextStyle(fontSize: 13, color: Colors.black87),
         ),
       ),
     );

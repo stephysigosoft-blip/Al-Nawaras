@@ -13,7 +13,8 @@ import '../view/profile/profile_view.dart';
 import '../view/booking/booking_history.dart';
 import '../view/parking/select_parking_view.dart';
 import '../view/home/home_screen.dart';
-import '../view/rewards/rewards_view.dart';
+import 'package:al_nawaras/view/rewards/rewards_view.dart';
+import '../../generated/l10n.dart';
 import '../view/home/my_vehicles_view.dart';
 import '../view/home/recent_activity_view.dart';
 import '../view/notifications/notifications_view.dart';
@@ -232,8 +233,24 @@ class HomeController extends GetxController {
 
           final membership = data['membership_details'];
           if (membership != null) {
-            membershipStatus = membership['status'] ?? 'No Active Plan';
-            membershipTier = membership['tier'] ?? 'Standard';
+            String status =
+                membership['status']?.toString() ?? 'No Active Plan';
+            if (status.toLowerCase().contains('no active')) {
+              membershipStatus = S.of(Get.context!).noActivePlan;
+            } else {
+              membershipStatus = status;
+            }
+
+            String tier = membership['tier']?.toString() ?? 'Standard';
+            if (tier.toLowerCase().contains('silver')) {
+              membershipTier = S.of(Get.context!).silverTier;
+            } else if (tier.toLowerCase().contains('gold')) {
+              membershipTier = S.of(Get.context!).goldTier;
+            } else if (tier.toLowerCase().contains('standard')) {
+              membershipTier = S.of(Get.context!).standardTier;
+            } else {
+              membershipTier = tier;
+            }
             membershipValidUntil = membership['valid_until']?.toString();
           }
 
@@ -290,9 +307,9 @@ class HomeController extends GetxController {
 
                   String datePart;
                   if (activityDate == today) {
-                    datePart = "Today";
+                    datePart = S.of(Get.context!).today;
                   } else if (activityDate == yesterday) {
-                    datePart = "Yesterday";
+                    datePart = S.of(Get.context!).yesterday;
                   } else {
                     datePart = DateFormat('MMM dd').format(dt);
                   }
@@ -394,7 +411,8 @@ class HomeController extends GetxController {
             return {
               'id': item['id'],
               'reference': item['reference'] ?? '',
-              'title': item['membership_type']?.toString() ??
+              'title':
+                  item['membership_type']?.toString() ??
                   item['reference'] ??
                   'Parking',
               'subtitle':
@@ -402,8 +420,10 @@ class HomeController extends GetxController {
               'status': state,
               'startDate': item['start_date'] ?? '',
               'endDate': item['end_date'] ?? '',
-              'amount': 'AED ${item['amount'] ?? '0'}',
-              'isActive': state.toLowerCase().contains('active') ||
+              'amount':
+                  '${S.of(Get.context!).currency} ${item['amount'] ?? '0'}',
+              'isActive':
+                  state.toLowerCase().contains('active') ||
                   state.toLowerCase().contains('payment') ||
                   state.toLowerCase() == 'paid',
               'monthYear': item['month_year'] ?? 'Recent',
@@ -416,8 +436,9 @@ class HomeController extends GetxController {
 
           // Avoid duplicates by checking ID
           for (var newItem in newItems) {
-            bool exists = bookingHistory
-                .any((element) => element['id'] == newItem['id']);
+            bool exists = bookingHistory.any(
+              (element) => element['id'] == newItem['id'],
+            );
             if (!exists) {
               bookingHistory.add(newItem);
             }
@@ -443,8 +464,13 @@ class HomeController extends GetxController {
     await fetchParkingHistory(reset: false);
   }
 
-  Future<void> loadMoreVehicles() async {
-    if (isVehicleLoading || !hasMoreVehicles) return;
+  Future<void> loadMoreVehicles({bool reset = false}) async {
+    if (isVehicleLoading) return;
+    if (reset) {
+      vehicleOffset = 0;
+      hasMoreVehicles = true;
+    }
+    if (!hasMoreVehicles) return;
     isVehicleLoading = true;
     update();
 
@@ -475,6 +501,7 @@ class HomeController extends GetxController {
 
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == true) {
+          if (reset) allVehicles.clear();
           final List vData = response.data['data']['vehicles'] ?? [];
           final newVehicles = vData.map((v) {
             String? imageVal = v['vehicle_image']?.toString();
@@ -492,7 +519,13 @@ class HomeController extends GetxController {
             };
           }).toList();
 
-          allVehicles.addAll(newVehicles);
+          // avoid duplicates by checking license
+          for (var nv in newVehicles) {
+            bool exists = allVehicles.any((v) => v['license'] == nv['license']);
+            if (!exists) {
+              allVehicles.add(nv);
+            }
+          }
           vehicleOffset += newVehicles.length;
           hasMoreVehicles = newVehicles.length >= limit;
 
@@ -507,8 +540,13 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<void> loadMoreActivities() async {
-    if (isActivityLoading || !hasMoreActivities) return;
+  Future<void> loadMoreActivities({bool reset = false}) async {
+    if (isActivityLoading) return;
+    if (reset) {
+      activityOffset = 0;
+      hasMoreActivities = true;
+    }
+    if (!hasMoreActivities) return;
     isActivityLoading = true;
     update();
 
@@ -550,10 +588,11 @@ class HomeController extends GetxController {
 
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == true) {
+          if (reset) allActivities.clear();
           final activities =
               response.data['data']['recent_activities'] as List?;
           if (activities != null && activities.isNotEmpty) {
-            final newActivities = activities.map((a) {
+            final newActivities = activities.map<Map<String, dynamic>>((a) {
               return {
                 'titleKey':
                     a['title_key'] ??
@@ -566,7 +605,17 @@ class HomeController extends GetxController {
               };
             }).toList();
 
-            allActivities.addAll(newActivities);
+            // avoid duplicates
+            for (var na in newActivities) {
+              bool exists = allActivities.any(
+                (a) =>
+                    a['subtitle'].toString() == na['subtitle'].toString() &&
+                    a['titleKey'].toString() == na['titleKey'].toString(),
+              );
+              if (!exists) {
+                allActivities.add(na);
+              }
+            }
             activityOffset += newActivities.length;
             hasMoreActivities = newActivities.length >= limit;
 

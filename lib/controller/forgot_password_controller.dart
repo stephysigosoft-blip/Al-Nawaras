@@ -21,6 +21,18 @@ class ForgotPasswordController extends GetxController {
 
   bool isOtpSent = false;
   bool isLoading = false;
+  bool obscureNewPassword = true;
+  bool obscureConfirmPassword = true;
+
+  void toggleNewPasswordVisibility() {
+    obscureNewPassword = !obscureNewPassword;
+    if (!isClosed) update();
+  }
+
+  void toggleConfirmPasswordVisibility() {
+    obscureConfirmPassword = !obscureConfirmPassword;
+    if (!isClosed) update();
+  }
 
   // Returns the concatenated OTP string from all 6 digit fields
   String get otpValue => otpDigitControllers.map((c) => c.text).join();
@@ -82,7 +94,7 @@ class ForgotPasswordController extends GetxController {
   Future<void> _callSendOtpApi() async {
     if (isLoading) return;
     isLoading = true;
-    update();
+    if (!isClosed) update();
 
     try {
       if (kDebugMode) {
@@ -113,7 +125,7 @@ class ForgotPasswordController extends GetxController {
             print('OTP sent: $message');
           }
           isOtpSent = true;
-          update();
+          if (!isClosed) update();
           Get.snackbar(
             'Success',
             message,
@@ -167,7 +179,7 @@ class ForgotPasswordController extends GetxController {
       );
     } finally {
       isLoading = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
@@ -188,7 +200,7 @@ class ForgotPasswordController extends GetxController {
   Future<void> _callVerifyOtpApi() async {
     if (isLoading) return;
     isLoading = true;
-    update();
+    if (!isClosed) update();
 
     final requestBody = {
       "username": userOrMobileController.text.trim(),
@@ -281,21 +293,13 @@ class ForgotPasswordController extends GetxController {
       );
     } finally {
       isLoading = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
   @override
   void onClose() {
-    userOrMobileController.dispose();
-    newPasswordController.dispose();
-    confirmPasswordController.dispose();
-    for (final c in otpDigitControllers) {
-      c.dispose();
-    }
-    for (final f in otpFocusNodes) {
-      f.dispose();
-    }
+    // Rely on GetX lifecycle for cleanup to avoid "used after disposed" errors
     super.onClose();
   }
 }

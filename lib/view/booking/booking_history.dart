@@ -42,8 +42,10 @@ class _BookingHistoryViewState extends State<BookingHistoryView> {
             backgroundColor: const Color(0xFFE30613),
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios,
+              icon: Icon(
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.arrow_forward_ios
+                    : Icons.arrow_back_ios,
                 color: Colors.white,
                 size: 20,
               ),

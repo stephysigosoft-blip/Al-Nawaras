@@ -42,6 +42,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
 
   List<String> bookedSlots = [];
   List<String> shadedSlots = [];
+  Map<String, dynamic>? lookupVehicle;
 
   final double canvasWidth = 2800.0;
   final double canvasHeight = 900.0;
@@ -93,6 +94,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.isDirectionMode) {
+        _lookupVehicle();
         _fetchDynamicParkingDetails();
       } else {
         _fetchVehicleTypes();
@@ -163,6 +165,53 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       }
     } catch (e) {
       debugPrint('Error fetching vehicle types: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingData = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _lookupVehicle() async {
+    try {
+      setState(() {
+        isLoadingData = true;
+      });
+
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      debugPrint('\n--- API REQUEST (lookup) ---');
+      debugPrint('URL: ${ApiConstants.lookup}');
+      debugPrint('Headers: $headers');
+
+      final response = await dio.get(
+        ApiConstants.lookup,
+        options: Options(headers: headers),
+      );
+
+      debugPrint('--- API RESPONSE (lookup) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.data}');
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          if (mounted) {
+            setState(() {
+              lookupVehicle = response.data['data'];
+            });
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error looking up vehicle: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -620,6 +669,13 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildLegendRow(),
+          if (widget.isDirectionMode && lookupVehicle != null) ...[
+            const SizedBox(height: 18),
+            _buildInfoRow(
+              '${S.of(context).vehicle} : ',
+              "${lookupVehicle!['license_number'] ?? ''} • ${lookupVehicle!['vehicle_type_name'] ?? ''}",
+            ),
+          ],
           if (selectedSlotCode.isNotEmpty) ...[
             const SizedBox(height: 18),
             _buildInfoRow(

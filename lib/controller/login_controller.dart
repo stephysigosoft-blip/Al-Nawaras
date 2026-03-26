@@ -24,7 +24,7 @@ class LoginController extends GetxController {
 
   void togglePasswordVisibility() {
     isPasswordObscured = !isPasswordObscured;
-    update();
+    if (!isClosed) update();
   }
 
   @override
@@ -47,7 +47,7 @@ class LoginController extends GetxController {
 
   void toggleRememberMe() {
     isRememberMe = !isRememberMe;
-    update();
+    if (!isClosed) update();
   }
 
   Future<void> signIn() async {
@@ -78,7 +78,7 @@ class LoginController extends GetxController {
 
     if (isLoading) return;
     isLoading = true;
-    update();
+    if (!isClosed) update();
 
     try {
       if (kDebugMode) {
@@ -186,7 +186,7 @@ class LoginController extends GetxController {
       );
     } finally {
       isLoading = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
@@ -199,14 +199,14 @@ class LoginController extends GetxController {
   Future<void> googleLogin() async {
     try {
       isLoading = true;
-      update();
+      if (!isClosed) update();
 
       // 🔹 Step 1: Google Sign-In
       final user = await _googleSignIn.signIn();
 
       if (user == null) {
         isLoading = false;
-        update();
+        if (!isClosed) update();
         return; // user cancelled login
       }
 
@@ -265,14 +265,14 @@ class LoginController extends GetxController {
       Get.snackbar("Error", e.toString());
     } finally {
       isLoading = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
   Future<void> signInWithFacebook() async {
     try {
       isLoading = true;
-      update();
+      if (!isClosed) update();
 
       // 🔹 Step 1: Facebook Login
       final LoginResult result = await FacebookAuth.instance.login();
@@ -329,7 +329,7 @@ class LoginController extends GetxController {
       Get.snackbar("Error", e.toString());
     } finally {
       isLoading = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
@@ -346,8 +346,7 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
-    emailOrMobileController.dispose();
-    passwordController.dispose();
+    // Rely on GetX lifecycle for cleanup to avoid "used after disposed" errors
     super.onClose();
   }
 }

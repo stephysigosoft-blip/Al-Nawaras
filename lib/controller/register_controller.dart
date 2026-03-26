@@ -23,17 +23,17 @@ class RegisterController extends GetxController {
 
   void togglePasswordVisibility() {
     isPasswordObscured = !isPasswordObscured;
-    update();
+    if (!isClosed) update();
   }
 
   void toggleConfirmPasswordVisibility() {
     isConfirmPasswordObscured = !isConfirmPasswordObscured;
-    update();
+    if (!isClosed) update();
   }
 
   void toggleTerms() {
     isTermsAccepted = !isTermsAccepted;
-    update();
+    if (!isClosed) update();
   }
 
   void createAccount() {
@@ -133,7 +133,7 @@ class RegisterController extends GetxController {
   Future<void> _checkUserExists() async {
     if (isLoading) return;
     isLoading = true;
-    update();
+    if (!isClosed) update();
 
     try {
       if (kDebugMode) {
@@ -169,13 +169,13 @@ class RegisterController extends GetxController {
             snackPosition: SnackPosition.BOTTOM,
           );
           isLoading = false;
-          update();
+          if (!isClosed) update();
           return;
         }
 
         // User does not exist — proceed with registration
         isLoading = false;
-        update();
+        if (!isClosed) update();
         await _callRegisterApi();
       }
     } on DioException catch (e) {
@@ -199,7 +199,7 @@ class RegisterController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
       );
       isLoading = false;
-      update();
+      if (!isClosed) update();
     } catch (e) {
       if (kDebugMode) {
         print('Exception caught (check_user): $e');
@@ -212,14 +212,14 @@ class RegisterController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
       );
       isLoading = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
   Future<void> _callRegisterApi() async {
     if (isLoading) return;
     isLoading = true;
-    update();
+    if (!isClosed) update();
 
     final requestBody = {
       "full_name": fullNameController.text.trim(),
@@ -308,7 +308,7 @@ class RegisterController extends GetxController {
       );
     } finally {
       isLoading = false;
-      update();
+      if (!isClosed) update();
     }
   }
 
@@ -321,13 +321,7 @@ class RegisterController extends GetxController {
 
   @override
   void onClose() {
-    fullNameController.dispose();
-    emailController.dispose();
-    mobileController.dispose();
-    emiratesIdController.dispose();
-    drivingLicenseController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
+    // Rely on GetX lifecycle for cleanup to avoid "used after disposed" errors
     super.onClose();
   }
 }

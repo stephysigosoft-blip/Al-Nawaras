@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../generated/l10n.dart';
@@ -9,6 +10,7 @@ class RewardsHeader extends StatelessWidget {
   final String userName;
   final String phoneNumber;
   final String email;
+  final String? profilePicture;
 
   const RewardsHeader({
     super.key,
@@ -17,6 +19,7 @@ class RewardsHeader extends StatelessWidget {
     required this.userName,
     required this.phoneNumber,
     required this.email,
+    this.profilePicture,
   });
 
   @override
@@ -41,8 +44,10 @@ class RewardsHeader extends StatelessWidget {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
+                      icon: Icon(
+                        Directionality.of(context) == TextDirection.rtl
+                            ? Icons.arrow_forward_ios
+                            : Icons.arrow_back_ios,
                         color: Colors.white,
                         size: 20,
                       ),
@@ -91,11 +96,53 @@ class RewardsHeader extends StatelessWidget {
             child: CircleAvatar(
               radius: width * 0.09,
               backgroundColor: Colors.transparent,
-              child: Icon(
-                Icons.person,
-                color: Colors.blueGrey[800],
-                size: width * 0.12,
-              ),
+              child:
+                  (profilePicture != null &&
+                      profilePicture!.isNotEmpty &&
+                      profilePicture != "null" &&
+                      profilePicture != "false")
+                  ? ClipOval(
+                      child: (profilePicture!.startsWith('http'))
+                          ? Image.network(
+                              profilePicture!,
+                              width: width * 0.18,
+                              height: width * 0.18,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                    Icons.person,
+                                    color: Colors.blueGrey[800],
+                                    size: width * 0.12,
+                                  ),
+                            )
+                          : _isBase64(profilePicture!)
+                          ? Image.memory(
+                              base64Decode(
+                                profilePicture!.contains(',')
+                                    ? profilePicture!.split(',').last
+                                    : profilePicture!,
+                              ),
+                              width: width * 0.18,
+                              height: width * 0.18,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Icon(
+                                    Icons.person,
+                                    color: Colors.blueGrey[800],
+                                    size: width * 0.12,
+                                  ),
+                            )
+                          : Icon(
+                              Icons.person,
+                              color: Colors.blueGrey[800],
+                              size: width * 0.12,
+                            ),
+                    )
+                  : Icon(
+                      Icons.person,
+                      color: Colors.blueGrey[800],
+                      size: width * 0.12,
+                    ),
             ),
           ),
           const SizedBox(width: 16),
@@ -127,5 +174,15 @@ class RewardsHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  bool _isBase64(String str) {
+    if (str.length < 50) return false;
+    try {
+      base64Decode(str.contains(',') ? str.split(',').last : str);
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 }

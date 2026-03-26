@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../config/api_constants.dart';
+import '../generated/l10n.dart';
 
 class AdditionalServicesController extends GetxController {
   var services = <Map<String, dynamic>>[].obs;
@@ -54,7 +55,7 @@ class AdditionalServicesController extends GetxController {
               'title': title,
               'image': _getServiceImage(title),
               'description': s['description'] ?? 'No description available.',
-              'price': 'AED ${s['price'] ?? '0'}',
+              'price': '${S.of(Get.context!).currency} ${s['price'] ?? '0'}',
             };
           }).toList();
         }
@@ -120,31 +121,31 @@ class AdditionalServicesController extends GetxController {
         Get.to(
           () => PaymentView(
             title: service['title'],
-            subtitle: 'Additional Service',
+            subtitle: S.of(Get.context!).additionalService,
             amount: '$currency ${data['total']}',
             subtotal: '$currency ${data['subtotal']}',
             vat: '$currency ${data['vat']}',
             total: '$currency ${data['total']}',
             details: [
-              {'label': 'Service Name', 'value': service['title']},
+              {'label': S.of(Get.context!).serviceName, 'value': service['title']},
               {
-                'label': 'Membership Type',
+                'label': S.of(Get.context!).membershipPackage,
                 'value': data['membership_type']?.toString() ?? 'N/A',
               },
               {
-                'label': 'Vehicle',
+                'label': S.of(Get.context!).vehicleLabel,
                 'value': data['vehicle']?.toString() ?? 'N/A',
               },
               {
-                'label': 'Start Date',
+                'label': S.of(Get.context!).startDateLabel,
                 'value': data['start_date']?.toString() ?? 'N/A',
               },
               {
-                'label': 'End Date',
+                'label': S.of(Get.context!).endDateLabel,
                 'value': data['end_date']?.toString() ?? 'N/A',
               },
               {
-                'label': 'Duration',
+                'label': S.of(Get.context!).duration,
                 'value': data['duration']?.toString() ?? 'N/A',
               },
             ],
@@ -163,12 +164,12 @@ class AdditionalServicesController extends GetxController {
     Get.to(
       () => PaymentView(
         title: service['title'],
-        subtitle: 'Additional Service',
+        subtitle: S.of(Get.context!).additionalService,
         amount: service['price'],
         subtotal: service['price']!,
-        vat: 'AED 0.00',
+        vat: '${S.of(Get.context!).currency} 0.00',
         details: [
-          {'label': 'Service', 'value': service['title']!},
+          {'label': S.of(Get.context!).serviceName, 'value': service['title']!},
         ],
       ),
     );
