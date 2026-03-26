@@ -16,6 +16,7 @@ import '../../controller/logout_controller.dart';
 import '../../controller/additional_services_controller.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import 'Profile_update_view.dart';
+import '../../controller/welcome_controller.dart';
 
 class ProfileView extends StatelessWidget {
   final Function(int)? onTabChanged;
@@ -181,6 +182,49 @@ class ProfileView extends StatelessWidget {
             icon: Icons.privacy_tip_outlined,
             title: S.of(context).privacyPolicy,
             subtitle: S.of(context).privacyPolicySubtitle,
+            width: width,
+            circleBorderWidth: 2.0,
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            final wc = Get.put(WelcomeController());
+            final currentLang = wc.getCurrentLocale();
+            Get.dialog(
+              AlertDialog(
+                title: Text(S.of(context).language),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    RadioListTile<String>(
+                      title: Text(S.of(context).english),
+                      value: 'en',
+                      groupValue: currentLang,
+                      activeColor: const Color(0xFFE30613),
+                      onChanged: (val) {
+                        wc.changeLanguage('en');
+                        Get.back();
+                      },
+                    ),
+                    RadioListTile<String>(
+                      title: Text(S.of(context).arabic),
+                      value: 'ar',
+                      groupValue: currentLang,
+                      activeColor: const Color(0xFFE30613),
+                      onChanged: (val) {
+                        wc.changeLanguage('ar');
+                        Get.back();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          child: ProfileMenuItem(
+            icon: Icons.language,
+            title: S.of(context).language,
+            subtitle: S.of(context).languageSubtitle,
             width: width,
             circleBorderWidth: 2.0,
           ),

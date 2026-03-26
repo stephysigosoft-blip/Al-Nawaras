@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../config/api_constants.dart';
-import '../view/login/login_screen.dart';
+import '../view/welcome/welcome_screen.dart';
 
 class LogoutController extends GetxController {
   final Dio dio = Dio();
@@ -22,10 +22,7 @@ class LogoutController extends GetxController {
       final response = await dio.post(
         ApiConstants.logout,
         options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': '*/*',
-          },
+          headers: {'Authorization': 'Bearer $token', 'Accept': '*/*'},
         ),
       );
 
@@ -41,7 +38,7 @@ class LogoutController extends GetxController {
     } finally {
       final storage = GetStorage();
       await storage.erase();
-      Get.offAll(() => const LoginScreen());
+      Get.offAll(() => const WelcomeScreen());
     }
   }
 }
