@@ -523,8 +523,8 @@ class BookParkingController extends GetxController {
         "vehicle_id": vehicleId,
         "parking_type_id": parkingTypeId,
         "membership_package_id": membershipPackageId,
-        "booking_start_date": startDate.toIso8601String(),
-        "booking_end_date": endDate.toIso8601String(),
+        "booking_start_date": startDate.toUtc().toIso8601String(),
+        "booking_end_date": endDate.toUtc().toIso8601String(),
       };
 
       debugPrint('\n--- API REQUEST (parking/book) ---');
@@ -612,15 +612,11 @@ class BookParkingController extends GetxController {
               },
               {
                 'label': 'Start Date',
-                'value':
-                    data['start_date']?.toString() ??
-                    "${dateController.text} ${timeController.text}",
+                'value': "${dateController.text} ${timeController.text}",
               },
               {
                 'label': 'End Date',
-                'value':
-                    data['end_date']?.toString() ??
-                    "${endDateController.text} ${endTimeController.text}",
+                'value': "${endDateController.text} ${endTimeController.text}",
               },
               {
                 'label': 'Duration',
