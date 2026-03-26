@@ -390,8 +390,11 @@ class HomeScreen extends StatelessWidget {
                 width: height * 0.045,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFFFFC107), // Yellow background
-                  image: img != null && img.isNotEmpty
+                  color: Colors.white, // White background
+                  image: img != null &&
+                          img.isNotEmpty &&
+                          img !=
+                              "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
                       ? DecorationImage(
                           image: img.startsWith('http')
                               ? NetworkImage(img)
@@ -400,7 +403,10 @@ class HomeScreen extends StatelessWidget {
                         )
                       : null,
                 ),
-                child: img == null || img.isEmpty
+                child: img == null ||
+                        img.isEmpty ||
+                        img ==
+                            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
                     ? const Icon(Icons.person, color: Colors.black54)
                     : null,
               ),

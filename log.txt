@@ -1,0 +1,5 @@
+4c7d719 Merge branch 'main' of https://github.com/stephysigosoft-blip/Al-Nawaras and resolve conflicts
+59b02cd Remove temporary status file
+0a98632 Fix crashes, optimize base64 decoding, add about us controller and update additional services
+ca23586 Delete android/app/google-services.json
+19e9ea0 commit after book parking bug fix on 25/03/2026

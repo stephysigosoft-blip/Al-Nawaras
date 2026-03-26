@@ -20,7 +20,7 @@ class ProfileHeader extends StatelessWidget {
           height: height * 0.28,
           width: double.infinity,
           decoration: const BoxDecoration(
-            color: Color(0xFFE30613), // Primary red color
+            color: Color.fromARGB(234, 227, 6, 6), // Primary red color
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30),
@@ -79,69 +79,78 @@ class ProfileHeader extends StatelessWidget {
   Widget _buildUserInfo(double width) {
     final controller = Get.find<ProfileController>();
     return Obx(() {
-    final user = controller.profile.value;
-    final box = GetStorage();
+      final user = controller.profile.value;
+      final box = GetStorage();
 
-    final name = user?.name ?? box.read('name') ?? 'User';
-    final mobile = user?.mobile ?? box.read('mobile') ?? 'N/A';
-    final email = user?.email ?? box.read('email') ?? 'N/A';
-    final img = user?.profileImage;
+      final name = user?.name ?? box.read('name') ?? 'User';
+      final mobile = user?.mobile ?? box.read('mobile') ?? 'N/A';
+      final email = user?.email ?? box.read('email') ?? 'N/A';
+      final img = user?.profileImage;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: width * 0.04),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(4),
-           
-            child: CircleAvatar(
-              radius: width * 0.11, // Dynamic size
-              backgroundColor: Colors.transparent,
-              backgroundImage: img != null && img.isNotEmpty
-                  ? (img.startsWith('http')
-                      ? NetworkImage(img)
-                      : (controller.profileImageBytes.value != null
-                          ? MemoryImage(controller.profileImageBytes.value!)
-                          : null))
-                  : null,
-              child: img == null || img.isEmpty
-                  ? Icon(
-                      Icons.person,
-                      color: Colors.blueGrey[800],
-                      size: width * 0.12,
-                    )
-                  : null,
+      const transparentPlaceholder =
+          "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: width * 0.04),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(4),
+
+              child: CircleAvatar(
+                radius: width * 0.11, // Dynamic size
+                backgroundColor: Colors.white,
+                backgroundImage:
+                    img != null &&
+                        img.isNotEmpty &&
+                        img != transparentPlaceholder
+                    ? (img.startsWith('http')
+                          ? NetworkImage(img)
+                          : (controller.profileImageBytes.value != null
+                                ? MemoryImage(
+                                    controller.profileImageBytes.value!,
+                                  )
+                                : null))
+                    : null,
+                child:
+                    img == null || img.isEmpty || img == transparentPlaceholder
+                    ? Icon(
+                        Icons.person,
+                        color: Colors.blueGrey[800],
+                        size: width * 0.12,
+                      )
+                    : null,
+              ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  mobile,
-                  style: const TextStyle(color: Colors.white70, fontSize: 14),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  email,
-                  style: const TextStyle(color: Colors.white70, fontSize: 12),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    mobile,
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    email,
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
     });
   }
 }

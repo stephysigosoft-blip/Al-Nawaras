@@ -74,7 +74,13 @@ class ProfileController extends GetxController {
         
         // Optimistically decode base64 image once to prevent UI jank
         final img = profile.value?.profileImage;
-        if (img != null && img.isNotEmpty && !img.startsWith('http')) {
+        const transparentPlaceholder =
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+
+        if (img != null &&
+            img.isNotEmpty &&
+            img != transparentPlaceholder &&
+            !img.startsWith('http')) {
           try {
             profileImageBytes.value = base64Decode(img);
           } catch (e) {
@@ -89,6 +95,7 @@ class ProfileController extends GetxController {
         nameController.text = profile.value?.name ?? "";
         emailController.text = profile.value?.email ?? "";
         phoneController.text = profile.value?.mobile ?? "";
+        isImageRemoved.value = false; // Reset removal flag after fetch
       } else {
         Get.snackbar("Error", data['message']);
       }
@@ -109,6 +116,7 @@ class ProfileController extends GetxController {
     selectedImage.value = null;
     base64Image = "";
     isImageRemoved.value = false;
+    base64Image = "";
   }
 
   // ============================================================
@@ -199,25 +207,28 @@ class ProfileController extends GetxController {
       final response = await dio.post(
         ApiConstants.updateprofile, // /api/profile/update
         data: {
+          "partner_id": box.read('partner_id'),
           "name": nameController.text,
           "email": emailController.text,
           "phone_number": phoneController.text,
+          "mobile": phoneController.text,
+          
           if (base64Image.isNotEmpty) "profile_picture": base64Image,
-          if (base64Image.isNotEmpty) "profile_image": base64Image,
-          if (isImageRemoved.value) "profile_picture": "",
-          if (isImageRemoved.value) "profile_image": "",
-          if (isImageRemoved.value) "remove_profile_picture": true,
-          if (isImageRemoved.value) "remove_profile_image": true,
+          
+          // Visual Deletion: Overwrite with 1x1 transparent PNG to clear image.
+          // This bypasses server-side limitations where unsetting values is ignored.
+          if (isImageRemoved.value)
+            "profile_picture":
+                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
         },
         options: Options(
           contentType: Headers.formUrlEncodedContentType,
-          headers: {"Authorization": "Bearer $token"},
+          headers: {
+            "Authorization": "Bearer $token",
+            "Accept": "application/json",
+          },
         ),
       );
-
-      print('--- Update Profile Response ---');
-      print('Status Code: ${response.statusCode}');
-      print('Response Data: ${response.data}');
 
       final data = response.data;
 

@@ -59,7 +59,7 @@ class ProfileUpdateView extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 // Form Container
                 Transform.translate(
                   offset: Offset(0, -height * 0.05),
@@ -79,7 +79,7 @@ class ProfileUpdateView extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Loading Overlay
           Obx(() {
             if (controller.isLoading.value) {
@@ -110,17 +110,29 @@ class ProfileUpdateView extends StatelessWidget {
               final removed = controller.isImageRemoved.value;
               final img = user?.profileImage;
 
+              const transparentPlaceholder =
+                  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+
               return CircleAvatar(
                 radius: width * 0.14,
-                backgroundColor: Colors.grey[200],
+                backgroundColor: Colors.white,
                 backgroundImage: selected != null
                     ? FileImage(selected) as ImageProvider
-                    : (img != null && img.isNotEmpty && !removed
-                        ? (img.startsWith('http')
-                            ? NetworkImage(img)
-                            : MemoryImage(base64Decode(img)) as ImageProvider)
-                        : null),
-                child: (selected == null && (img == null || img.isEmpty || removed))
+                    : (img != null &&
+                              img.isNotEmpty &&
+                              img != transparentPlaceholder &&
+                              !removed
+                          ? (img.startsWith('http')
+                                ? NetworkImage(img)
+                                : MemoryImage(base64Decode(img))
+                                      as ImageProvider)
+                          : null),
+                child:
+                    (selected == null &&
+                        (img == null ||
+                            img.isEmpty ||
+                            img == transparentPlaceholder ||
+                            removed))
                     ? Icon(
                         Icons.person,
                         color: Colors.blueGrey[800],
@@ -141,11 +153,7 @@ class ProfileUpdateView extends StatelessWidget {
                   color: Color(0xFFE30613),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.camera_alt,
-                  color: Colors.white,
-                  size: 18,
-                ),
+                child: const Icon(Icons.edit, color: Colors.white, size: 18),
               ),
             ),
           ),
@@ -154,49 +162,129 @@ class ProfileUpdateView extends StatelessWidget {
     );
   }
 
-  void _showImageSourceDialog(BuildContext context, ProfileController controller) {
+  void _showImageSourceDialog(
+    BuildContext context,
+    ProfileController controller,
+  ) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.camera_alt_outlined, color: Color(0xFFE30613)),
-                title: const Text("Take Photo"),
-                onTap: () {
-                  Navigator.pop(context);
-                  controller.pickImage(ImageSource.camera);
-                },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            const SizedBox(height: 12),
+            Container(
+              height: 4,
+              width: 40,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
               ),
-              ListTile(
-                leading: const Icon(Icons.image_outlined, color: Color(0xFFE30613)),
-                title: const Text("Choose from Gallery"),
-                onTap: () {
-                  Navigator.pop(context);
-                  controller.pickImage(ImageSource.gallery);
-                },
+            ),
+            const SizedBox(height: 8),
+
+            // Header Row
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.black87),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  const Expanded(
+                    child: Text(
+                      "Profile picture",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Obx(() {
+                    final hasImage =
+                        controller.selectedImage.value != null ||
+                        (controller.profile.value?.profileImage != null &&
+                            controller
+                                .profile
+                                .value!
+                                .profileImage!
+                                .isNotEmpty &&
+                            !controller.isImageRemoved.value);
+
+                    return hasImage
+                        ? IconButton(
+                            icon: const Icon(
+                              Icons.delete_outline,
+                              color: Color(0xFFE30613),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              controller.removeImage();
+                              controller.updateProfile(); // Save immediately
+                            },
+                          )
+                        : const SizedBox(
+                            width: 48,
+                          ); // Placeholder to center title
+                  }),
+                ],
               ),
-              Obx(() => (controller.selectedImage.value != null ||
-                      (controller.profile.value?.profileImage != null &&
-                          controller.profile.value!.profileImage!.isNotEmpty &&
-                          !controller.isImageRemoved.value))
-                  ? ListTile(
-                      leading: const Icon(Icons.delete_outline, color: Color(0xFFE30613)),
-                      title: const Text("Remove Profile Picture"),
-                      onTap: () {
-                        Navigator.pop(context);
-                        controller.removeImage();
-                      },
-                    )
-                  : const SizedBox.shrink()),
-            ],
-          ),
+            ),
+            const Divider(),
+
+            // Source Options
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE30613).withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.camera_alt_outlined,
+                  color: Color(0xFFE30613),
+                ),
+              ),
+              title: const Text(
+                "Camera",
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                controller.pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE30613).withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.image_outlined,
+                  color: Color(0xFFE30613),
+                ),
+              ),
+              title: const Text(
+                "Gallery",
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                controller.pickImage(ImageSource.gallery);
+              },
+            ),
+            const SizedBox(height: 12),
+          ],
         ),
       ),
     );
@@ -272,7 +360,10 @@ class ProfileUpdateView extends StatelessWidget {
               hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
               prefixIcon: Icon(icon, color: Colors.grey[400], size: 22),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
             ),
           ),
         ),
@@ -287,19 +378,18 @@ class ProfileUpdateView extends StatelessWidget {
       height: 55,
       child: ElevatedButton(
         onPressed: () => controller.updateProfile(),
-        
+
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFFE30613),
           foregroundColor: Colors.white,
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         child: Text(
           S.of(context).saveChanges,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
     );
