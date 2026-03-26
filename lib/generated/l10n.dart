@@ -779,26 +779,6 @@ class S {
     );
   }
 
-   //  privacy policy
-  String get privacyPolicy {
-    return Intl.message(
-      'Privacy Policy',
-      name: 'privacyPolicy',
-      desc: '',
-      args: [],
-    );
-  }
-
-  //  privacy policy subtitle
-  String get privacyPolicySubtitle {
-    return Intl.message(
-      'Learn how we handle your data',
-      name: 'privacyPolicySubtitle',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `About Al-Nawaras`
   String get aboutAlNawaras {
     return Intl.message(
@@ -1909,19 +1889,179 @@ class S {
     );
   }
 
-  /// `AED`
+  /// ` AED`
   String get currency {
-    return Intl.message('AED', name: 'currency', desc: '', args: []);
+    return Intl.message(' AED', name: 'currency', desc: '', args: []);
   }
 
-  /// `Error connecting to Server`
+  /// `Error connecting to server`
   String get errorServer {
     return Intl.message(
-      'Error connecting to Server',
+      'Error connecting to server',
       name: 'errorServer',
       desc: '',
       args: [],
     );
+  }
+
+  /// `Reset your password`
+  String get resetYourPassword {
+    return Intl.message(
+      'Reset your password',
+      name: 'resetYourPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter your details to receive an OTP`
+  String get enterDetailsToReceiveOtp {
+    return Intl.message(
+      'Please enter your details to receive an OTP',
+      name: 'enterDetailsToReceiveOtp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Username or Mobile Number`
+  String get usernameOrMobile {
+    return Intl.message(
+      'Username or Mobile Number',
+      name: 'usernameOrMobile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Username or Mobile`
+  String get enterUsernameOrMobile {
+    return Intl.message(
+      'Enter Username or Mobile',
+      name: 'enterUsernameOrMobile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New Password`
+  String get newPassword {
+    return Intl.message(
+      'New Password',
+      name: 'newPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter New Password`
+  String get enterNewPassword {
+    return Intl.message(
+      'Enter New Password',
+      name: 'enterNewPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm New Password`
+  String get confirmNewPassword {
+    return Intl.message(
+      'Confirm New Password',
+      name: 'confirmNewPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send OTP`
+  String get sendOtp {
+    return Intl.message('Send OTP', name: 'sendOtp', desc: '', args: []);
+  }
+
+  /// `Enter 6-Digit OTP`
+  String get enter6DigitOtp {
+    return Intl.message(
+      'Enter 6-Digit OTP',
+      name: 'enter6DigitOtp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verify OTP`
+  String get verifyOtp {
+    return Intl.message('Verify OTP', name: 'verifyOtp', desc: '', args: []);
+  }
+
+  /// `Edit Details`
+  String get editDetails {
+    return Intl.message(
+      'Edit Details',
+      name: 'editDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy Policy`
+  String get privacyPolicy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review our privacy policy`
+  String get privacyPolicySubtitle {
+    return Intl.message(
+      'Review our privacy policy',
+      name: 'privacyPolicySubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subtotal`
+  String get subtotal {
+    return Intl.message('Subtotal', name: 'subtotal', desc: '', args: []);
+  }
+
+  /// `VAT (5%)`
+  String get vat {
+    return Intl.message('VAT (5%)', name: 'vat', desc: '', args: []);
+  }
+
+  /// `Total`
+  String get total {
+    return Intl.message('Total', name: 'total', desc: '', args: []);
+  }
+
+  /// `Language`
+  String get language {
+    return Intl.message('Language', name: 'language', desc: '', args: []);
+  }
+
+  /// `Switch app language`
+  String get languageSubtitle {
+    return Intl.message(
+      'Switch app language',
+      name: 'languageSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get english {
+    return Intl.message('English', name: 'english', desc: '', args: []);
+  }
+
+  /// `Arabic`
+  String get arabic {
+    return Intl.message('Arabic', name: 'arabic', desc: '', args: []);
   }
 }
 

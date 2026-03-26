@@ -648,10 +648,12 @@ class HomeScreen extends StatelessWidget {
                 top: height * 0.02,
                 bottom: height * 0.02,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                   Text(
                     S.of(context).navigateToYourParking,
                     style: const TextStyle(
@@ -690,6 +692,8 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
         ],
       ),
     );
@@ -776,10 +780,12 @@ class HomeScreen extends StatelessWidget {
             width: width * 0.5,
             child: Padding(
               padding: EdgeInsetsDirectional.all(height * 0.02),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                   Text(
                     S.of(context).smartParking,
                     style: const TextStyle(
@@ -825,6 +831,8 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -870,10 +878,12 @@ class HomeScreen extends StatelessWidget {
             width: width * 0.5,
             child: Padding(
               padding: EdgeInsetsDirectional.all(height * 0.02),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                   Text(
                     S.of(context).opportunity,
                     style: const TextStyle(
@@ -906,6 +916,8 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+                  ),
+                ),
               ),
             ),
           ),

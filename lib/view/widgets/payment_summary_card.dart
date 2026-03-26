@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n.dart';
 
 class PaymentSummaryCard extends StatelessWidget {
   final double width;
@@ -107,16 +108,16 @@ class PaymentSummaryCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Divider(height: 1),
           ),
-          _buildItemRow('Subtotal', subtotal),
+          _buildItemRow(S.of(context).subtotal, subtotal),
           const SizedBox(height: 8),
-          _buildItemRow('vat (5%)', vat),
+          _buildItemRow(S.of(context).vat, vat),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Total',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              Text(
+                S.of(context).total,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               Text(
                 total ?? (subtotal == 'AED 1,500.00' && vat == 'AED 75.00'

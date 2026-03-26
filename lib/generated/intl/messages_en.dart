@@ -65,6 +65,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "amountLabel": MessageLookupByLibrary.simpleMessage("Amount"),
     "applePayLabel": MessageLookupByLibrary.simpleMessage("Apple Pay"),
+    "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
     "areaSuffix": m0,
     "available": MessageLookupByLibrary.simpleMessage("Available"),
     "awayFromParking": MessageLookupByLibrary.simpleMessage(
@@ -95,6 +96,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "close": MessageLookupByLibrary.simpleMessage("Close"),
     "completedTab": MessageLookupByLibrary.simpleMessage("Completed"),
     "confirmLocation": MessageLookupByLibrary.simpleMessage("Confirm Location"),
+    "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
+      "Confirm New Password",
+    ),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
     "confirmYourPassword": MessageLookupByLibrary.simpleMessage(
       "Confirm your password",
@@ -108,7 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "creditDebitCard": MessageLookupByLibrary.simpleMessage(
       "Credit/Debit Card",
     ),
-    "currency": MessageLookupByLibrary.simpleMessage("AED"),
+    "currency": MessageLookupByLibrary.simpleMessage(" AED"),
     "currentlyNoItemsFoundPleaseTryLater": MessageLookupByLibrary.simpleMessage(
       "Currently no items Found, Please try later...",
     ),
@@ -124,9 +128,15 @@ class MessageLookup extends MessageLookupByLibrary {
       "Earn 50 pts per booking",
     ),
     "earnPoints": MessageLookupByLibrary.simpleMessage("Earn Points"),
+    "editDetails": MessageLookupByLibrary.simpleMessage("Edit Details"),
     "emailAddress": MessageLookupByLibrary.simpleMessage("Email Address"),
     "emailOrMobile": MessageLookupByLibrary.simpleMessage("Email or Mobile"),
     "endDateLabel": MessageLookupByLibrary.simpleMessage("End Date"),
+    "english": MessageLookupByLibrary.simpleMessage("English"),
+    "enter6DigitOtp": MessageLookupByLibrary.simpleMessage("Enter 6-Digit OTP"),
+    "enterDetailsToReceiveOtp": MessageLookupByLibrary.simpleMessage(
+      "Please enter your details to receive an OTP",
+    ),
     "enterDrivingLicense": MessageLookupByLibrary.simpleMessage(
       "Enter your Driving License Number",
     ),
@@ -140,14 +150,20 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterMobileNumber": MessageLookupByLibrary.simpleMessage(
       "Enter your mobile number",
     ),
+    "enterNewPassword": MessageLookupByLibrary.simpleMessage(
+      "Enter New Password",
+    ),
     "enterPassword": MessageLookupByLibrary.simpleMessage(
       "Enter your password",
+    ),
+    "enterUsernameOrMobile": MessageLookupByLibrary.simpleMessage(
+      "Enter Username or Mobile",
     ),
     "errorConfirmingLocation": MessageLookupByLibrary.simpleMessage(
       "Error confirming location",
     ),
     "errorServer": MessageLookupByLibrary.simpleMessage(
-      "Error connecting to Server",
+      "Error connecting to server",
     ),
     "extend": MessageLookupByLibrary.simpleMessage("Extend"),
     "failedToConfirmLocation": MessageLookupByLibrary.simpleMessage(
@@ -176,6 +192,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Invite friends and earn more points!",
     ),
     "jetskiParking": MessageLookupByLibrary.simpleMessage("Jetski Parking"),
+    "language": MessageLookupByLibrary.simpleMessage("Language"),
+    "languageSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Switch app language",
+    ),
     "learnMoreServices": MessageLookupByLibrary.simpleMessage(
       "Learn more about our services",
     ),
@@ -229,6 +249,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Need assistance? Call us at 800-NAWRAS.",
     ),
     "needHelp": MessageLookupByLibrary.simpleMessage("Need help?"),
+    "newPassword": MessageLookupByLibrary.simpleMessage("New Password"),
     "next": MessageLookupByLibrary.simpleMessage("Next"),
     "no": MessageLookupByLibrary.simpleMessage("No"),
     "noActivePlan": MessageLookupByLibrary.simpleMessage("No Active Plan"),
@@ -292,6 +313,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "premiumParkingSolutions": MessageLookupByLibrary.simpleMessage(
       "Premium Parking Solutions",
     ),
+    "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
+    "privacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
+      "Review our privacy policy",
+    ),
     "profile": MessageLookupByLibrary.simpleMessage("Profile"),
     "provideDetailsToRegister": MessageLookupByLibrary.simpleMessage(
       "Please provide your details to create an account",
@@ -311,6 +336,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "renew": MessageLookupByLibrary.simpleMessage("Renew"),
     "replace": MessageLookupByLibrary.simpleMessage("Replace"),
     "requestService": MessageLookupByLibrary.simpleMessage("Request Service"),
+    "resetYourPassword": MessageLookupByLibrary.simpleMessage(
+      "Reset your password",
+    ),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "rewards": MessageLookupByLibrary.simpleMessage("Rewards"),
     "saveCardForFuture": MessageLookupByLibrary.simpleMessage(
@@ -333,6 +361,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectVehicle": MessageLookupByLibrary.simpleMessage("Select Vehicle"),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
+    "sendOtp": MessageLookupByLibrary.simpleMessage("Send OTP"),
     "serviceName": MessageLookupByLibrary.simpleMessage("Service Name"),
     "services": MessageLookupByLibrary.simpleMessage("Services"),
     "shaded": MessageLookupByLibrary.simpleMessage("Shaded"),
@@ -363,6 +392,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "startDate": MessageLookupByLibrary.simpleMessage("Start Date"),
     "startDateLabel": MessageLookupByLibrary.simpleMessage("Start Date"),
     "startTime": MessageLookupByLibrary.simpleMessage("Start Time"),
+    "subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
     "subtotalLabel": MessageLookupByLibrary.simpleMessage("Subtotal"),
     "termsAndConditions": MessageLookupByLibrary.simpleMessage(
       "Terms and Conditions",
@@ -371,6 +401,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "thirtyDays": MessageLookupByLibrary.simpleMessage("30 Days"),
     "toGoldMember": MessageLookupByLibrary.simpleMessage("To Gold Member"),
     "today": MessageLookupByLibrary.simpleMessage("Today"),
+    "total": MessageLookupByLibrary.simpleMessage("Total"),
     "totalAmount": MessageLookupByLibrary.simpleMessage("Total Amount"),
     "totalLabel": MessageLookupByLibrary.simpleMessage("Total"),
     "totalPoints": MessageLookupByLibrary.simpleMessage("Total Points"),
@@ -383,7 +414,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "updatePersonalDetails": MessageLookupByLibrary.simpleMessage(
       "Update your personal details",
     ),
+    "usernameOrMobile": MessageLookupByLibrary.simpleMessage(
+      "Username or Mobile Number",
+    ),
     "validUntil": m7,
+    "vat": MessageLookupByLibrary.simpleMessage("VAT (5%)"),
     "vatLabel": MessageLookupByLibrary.simpleMessage("VAT (5%)"),
     "vehicle": MessageLookupByLibrary.simpleMessage("Vehicle"),
     "vehicleCheckIn": MessageLookupByLibrary.simpleMessage("Vehicle Check-in"),
@@ -391,6 +426,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Vehicle Direction",
     ),
     "vehicleLabel": MessageLookupByLibrary.simpleMessage("Vehicle"),
+    "verifyOtp": MessageLookupByLibrary.simpleMessage("Verify OTP"),
     "viewAll": MessageLookupByLibrary.simpleMessage("View All"),
     "viewDetails": MessageLookupByLibrary.simpleMessage("View Details"),
     "viewPastBookings": MessageLookupByLibrary.simpleMessage(

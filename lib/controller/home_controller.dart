@@ -279,7 +279,8 @@ class HomeController extends GetxController {
 
           final activities = data['recent_activities'] as List?;
           if (activities != null) {
-            allActivities = activities.map((a) {
+            allActivities = activities.map<Map<String, dynamic>>((raw) {
+              final a = Map<String, dynamic>.from(raw as Map);
               final String state = a['state']?.toString().toLowerCase() ?? '';
               final double amount = (a['amount'] as num?)?.toDouble() ?? 0.0;
               final String startStr = a['booking_start']?.toString() ?? '';
@@ -289,8 +290,7 @@ class HomeController extends GetxController {
                   amount > 0 || state.contains('payment') || state == 'paid';
               final String type = isPayment ? 'renew' : 'checkin';
 
-              // Decide on titleKey: prioritize API preference if it existed,
-              // then fall back to inferred types
+              // Decide on titleKey
               final String titleKey =
                   a['title_key'] ??
                   (isPayment ? 'parkingPayment' : 'vehicleCheckIn');
@@ -319,14 +319,12 @@ class HomeController extends GetxController {
               } catch (_) {}
 
               if (amount > 0) {
-                // Formatting for payment: "Today, 10:30 AM AED 150"
                 displaySub += ' AED $amount';
               } else if (a['location'] != null && a['location'] != "false") {
-                // Formatting for check-in: "Yesterday, 2:15 PM-Spot A12"
                 displaySub += '-Spot ${a['location']}';
               }
 
-              return {
+              return <String, dynamic>{
                 'titleKey': titleKey,
                 'subtitle': displaySub,
                 'icon': _getActivityIcon(type),
@@ -592,16 +590,54 @@ class HomeController extends GetxController {
           final activities =
               response.data['data']['recent_activities'] as List?;
           if (activities != null && activities.isNotEmpty) {
-            final newActivities = activities.map<Map<String, dynamic>>((a) {
-              return {
-                'titleKey':
-                    a['title_key'] ??
-                    (a['type'] == 'renew'
-                        ? 'parkingRenewed'
-                        : 'vehicleCheckIn'),
-                'subtitle': a['subtitle'] ?? '',
-                'icon': _getActivityIcon(a['type']),
-                'color': _getActivityColor(a['type']),
+            final newActivities = activities.map<Map<String, dynamic>>((raw) {
+              // Explicitly convert to avoid '_Map<String,dynamic>' subtype cast error
+              final a = Map<String, dynamic>.from(raw as Map);
+
+              final String state = a['state']?.toString().toLowerCase() ?? '';
+              final double amount = (a['amount'] as num?)?.toDouble() ?? 0.0;
+              final String startStr = a['booking_start']?.toString() ?? '';
+
+              final bool isPayment =
+                  amount > 0 || state.contains('payment') || state == 'paid';
+              final String type = isPayment ? 'renew' : 'checkin';
+              final String titleKey =
+                  a['title_key'] ??
+                  (isPayment ? 'parkingPayment' : 'vehicleCheckIn');
+
+              // Format subtitle the same way as fetchHomeData
+              String displaySub = startStr;
+              try {
+                if (startStr.isNotEmpty) {
+                  final dt = DateTime.parse(startStr);
+                  final now = DateTime.now();
+                  final today = DateTime(now.year, now.month, now.day);
+                  final yesterday = today.subtract(const Duration(days: 1));
+                  final activityDate = DateTime(dt.year, dt.month, dt.day);
+
+                  String datePart;
+                  if (activityDate == today) {
+                    datePart = S.of(Get.context!).today;
+                  } else if (activityDate == yesterday) {
+                    datePart = S.of(Get.context!).yesterday;
+                  } else {
+                    datePart = DateFormat('MMM dd').format(dt);
+                  }
+                  displaySub = "$datePart, ${DateFormat('hh:mm a').format(dt)}";
+                }
+              } catch (_) {}
+
+              if (amount > 0) {
+                displaySub += ' AED $amount';
+              } else if (a['location'] != null && a['location'] != "false") {
+                displaySub += '-Spot ${a['location']}';
+              }
+
+              return <String, dynamic>{
+                'titleKey': titleKey,
+                'subtitle': displaySub,
+                'icon': _getActivityIcon(type),
+                'color': _getActivityColor(type),
               };
             }).toList();
 

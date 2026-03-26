@@ -76,7 +76,7 @@ class AdditionalServicesController extends GetxController {
     if (lowerTitle.contains('cleaning')) {
       return 'lib/assets/images/cleaning.png';
     }
-    if (lowerTitle.contains('towing')) return 'lib/assets/images/trolly.png';
+    if (lowerTitle.contains('towing')) return 'lib/assets/images/Trolly.png';
     if (lowerTitle.contains('vehicle pickup')) {
       return 'lib/assets/images/vehicle pickup.png';
     }

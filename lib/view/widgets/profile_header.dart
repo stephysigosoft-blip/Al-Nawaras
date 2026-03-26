@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../controller/home_controller.dart';
 import '../../controller/profile_controller.dart';
 import '../notifications/notifications_view.dart';
+import '../../generated/l10n.dart';
 
 class ProfileHeader extends StatelessWidget {
   final double width;
@@ -47,9 +48,9 @@ class ProfileHeader extends StatelessWidget {
                         }
                       },
                     ),
-                    const Text(
-                      'Profile',
-                      style: TextStyle(
+                    Text(
+                      S.of(context).profile,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 20,

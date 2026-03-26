@@ -166,7 +166,7 @@ class BookParkingController extends GetxController {
     } else if (lower.contains('truck')) {
       return const AssetImage("lib/assets/images/food truck.png");
     } else if (lower.contains('boat')) {
-      return const AssetImage("lib/assets/images/boat.png");
+      return const AssetImage("lib/assets/images/Boat.png");
     } else if (lower.contains('caravan')) {
       return const AssetImage("lib/assets/images/caravan.png");
     }
@@ -318,7 +318,7 @@ class BookParkingController extends GetxController {
       return 'lib/assets/images/cleaning.png';
     }
     if (lower.contains('towing')) {
-      return 'lib/assets/images/trolly.png';
+      return 'lib/assets/images/Trolly.png';
     }
     if (lower.contains('vehicle pickup')) {
       return 'lib/assets/images/vehicle pickup.png';

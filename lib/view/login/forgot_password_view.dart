@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/forgot_password_controller.dart';
 import '../widgets/custom_app_bar.dart';
+import '../../generated/l10n.dart';
 
 class ForgotPasswordView extends StatelessWidget {
   const ForgotPasswordView({super.key});
@@ -16,8 +17,8 @@ class ForgotPasswordView extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: const CustomAppBar(
-            title: 'Forgot Password',
+          appBar: CustomAppBar(
+            title: S.of(context).forgotPassword,
             centerTitle: false,
           ),
           body: SafeArea(
@@ -29,44 +30,44 @@ class ForgotPasswordView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Reset your password',
-                    style: TextStyle(
+                  Text(
+                    S.of(context).resetYourPassword,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF001133),
                     ),
                   ),
                   SizedBox(height: height * 0.015),
-                  const Text(
-                    'Please enter your details to receive an OTP',
-                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                  Text(
+                    S.of(context).enterDetailsToReceiveOtp,
+                    style: const TextStyle(fontSize: 14, color: Colors.black54),
                   ),
                   SizedBox(height: height * 0.05),
 
                   // Fields
                   if (!controller.isOtpSent) ...[
-                    _buildLabel('Username or Mobile Number'),
+                    _buildLabel(S.of(context).usernameOrMobile),
                     _buildTextField(
                       controller.userOrMobileController,
-                      'Enter Username or Mobile',
+                      S.of(context).enterUsernameOrMobile,
                       Icons.person_outline,
                     ),
                     SizedBox(height: height * 0.025),
-                    _buildLabel('New Password'),
+                    _buildLabel(S.of(context).newPassword),
                     _buildTextField(
                       controller.newPasswordController,
-                      'Enter New Password',
+                      S.of(context).enterNewPassword,
                       Icons.lock_outline,
                       obscureText: controller.obscureNewPassword,
                       onSuffixIconPressed: controller.toggleNewPasswordVisibility,
                       showSuffixIcon: true,
                     ),
                     SizedBox(height: height * 0.025),
-                    _buildLabel('Confirm Password'),
+                    _buildLabel(S.of(context).confirmPassword),
                     _buildTextField(
                       controller.confirmPasswordController,
-                      'Confirm New Password',
+                      S.of(context).confirmNewPassword,
                       Icons.lock_outline,
                       obscureText: controller.obscureConfirmPassword,
                       onSuffixIconPressed: controller.toggleConfirmPasswordVisibility,
@@ -95,9 +96,9 @@ class ForgotPasswordView extends StatelessWidget {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Text(
-                              'Send OTP',
-                              style: TextStyle(
+                          : Text(
+                              S.of(context).sendOtp,
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -107,7 +108,7 @@ class ForgotPasswordView extends StatelessWidget {
 
                   // OTP Section
                   if (controller.isOtpSent) ...[
-                    _buildLabel('Enter 6-Digit OTP'),
+                    _buildLabel(S.of(context).enter6DigitOtp),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: List.generate(6, (index) {
@@ -189,9 +190,9 @@ class ForgotPasswordView extends StatelessWidget {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Text(
-                              'Verify OTP',
-                              style: TextStyle(
+                          : Text(
+                              S.of(context).verifyOtp,
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -204,9 +205,9 @@ class ForgotPasswordView extends StatelessWidget {
                           controller.isOtpSent = false;
                           controller.update();
                         },
-                        child: const Text(
-                          'Edit Details',
-                          style: TextStyle(color: Color(0xFFE30613)),
+                        child: Text(
+                          S.of(context).editDetails,
+                          style: const TextStyle(color: Color(0xFFE30613)),
                         ),
                       ),
                     ),

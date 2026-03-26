@@ -61,6 +61,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "amountLabel": MessageLookupByLibrary.simpleMessage("المبلغ"),
     "applePayLabel": MessageLookupByLibrary.simpleMessage("آبل باي"),
+    "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "areaSuffix": m0,
     "available": MessageLookupByLibrary.simpleMessage("متاح"),
     "awayFromParking": MessageLookupByLibrary.simpleMessage("بعيد عن الموقف"),
@@ -88,6 +89,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
     "completedTab": MessageLookupByLibrary.simpleMessage("مكتمل"),
     "confirmLocation": MessageLookupByLibrary.simpleMessage("تأكيد الموقع"),
+    "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
+      "تأكيد كلمة المرور الجديدة",
+    ),
     "confirmPassword": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور",
     ),
@@ -115,6 +119,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "اكسب 50 نقطة لكل حجز",
     ),
     "earnPoints": MessageLookupByLibrary.simpleMessage("كسب النقاط"),
+    "editDetails": MessageLookupByLibrary.simpleMessage("تعديل التفاصيل"),
     "emailAddress": MessageLookupByLibrary.simpleMessage(
       "عنوان البريد الإلكتروني",
     ),
@@ -122,6 +127,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "البريد الإلكتروني أو الهاتف",
     ),
     "endDateLabel": MessageLookupByLibrary.simpleMessage("تاريخ الانتهاء"),
+    "english": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
+    "enter6DigitOtp": MessageLookupByLibrary.simpleMessage(
+      "أدخل رمز OTP المكون من 6 أرقام",
+    ),
+    "enterDetailsToReceiveOtp": MessageLookupByLibrary.simpleMessage(
+      "الرجاء إدخال التفاصيل الخاصة بك لتلقي رمز OTP",
+    ),
     "enterDrivingLicense": MessageLookupByLibrary.simpleMessage(
       "أدخل رقم رخصة القيادة",
     ),
@@ -133,7 +145,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterMobileNumber": MessageLookupByLibrary.simpleMessage(
       "أدخل رقم هاتفك المحمول",
     ),
+    "enterNewPassword": MessageLookupByLibrary.simpleMessage(
+      "أدخل كلمة المرور الجديدة",
+    ),
     "enterPassword": MessageLookupByLibrary.simpleMessage("أدخل كلمة المرور"),
+    "enterUsernameOrMobile": MessageLookupByLibrary.simpleMessage(
+      "أدخل اسم المستخدم أو رقم الهاتف المحمول",
+    ),
     "errorConfirmingLocation": MessageLookupByLibrary.simpleMessage(
       "خطأ في تأكيد الموقع",
     ),
@@ -169,6 +187,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "ادعُ الأصدقاء واكسب المزيد من النقاط!",
     ),
     "jetskiParking": MessageLookupByLibrary.simpleMessage("مواقف الجت سكي"),
+    "language": MessageLookupByLibrary.simpleMessage("اللغة"),
+    "languageSubtitle": MessageLookupByLibrary.simpleMessage(
+      "تغيير لغة التطبيق",
+    ),
     "learnMoreServices": MessageLookupByLibrary.simpleMessage(
       "تعرف على المزيد عن خدماتنا",
     ),
@@ -214,6 +236,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "هل تحتاج إلى مساعدة؟ اتصل بنا على 800-NAWRAS.",
     ),
     "needHelp": MessageLookupByLibrary.simpleMessage("تحتاج مساعدة؟"),
+    "newPassword": MessageLookupByLibrary.simpleMessage("كلمة مرور جديدة"),
     "next": MessageLookupByLibrary.simpleMessage("التالي"),
     "no": MessageLookupByLibrary.simpleMessage("لا"),
     "noActivePlan": MessageLookupByLibrary.simpleMessage("لا توجد خطة نشطة"),
@@ -280,6 +303,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "premiumParkingSolutions": MessageLookupByLibrary.simpleMessage(
       "حلول مواقف متميزة",
     ),
+    "privacyPolicy": MessageLookupByLibrary.simpleMessage("سياسة الخصوصية"),
+    "privacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
+      "راجع سياسة الخصوصية الخاصة بنا",
+    ),
     "profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
     "provideDetailsToRegister": MessageLookupByLibrary.simpleMessage(
       "يرجى تقديم التفاصيل الخاصة بك لإنشاء حساب",
@@ -298,6 +325,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "renew": MessageLookupByLibrary.simpleMessage("تجديد"),
     "replace": MessageLookupByLibrary.simpleMessage("استبدال"),
     "requestService": MessageLookupByLibrary.simpleMessage("طلب خدمة"),
+    "resetYourPassword": MessageLookupByLibrary.simpleMessage(
+      "إعادة تعيين كلمة المرور",
+    ),
     "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
     "rewards": MessageLookupByLibrary.simpleMessage("المكافآت"),
     "saveCardForFuture": MessageLookupByLibrary.simpleMessage(
@@ -320,6 +350,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectVehicle": MessageLookupByLibrary.simpleMessage("اختر المركبة"),
     "selected": MessageLookupByLibrary.simpleMessage("محدد"),
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
+    "sendOtp": MessageLookupByLibrary.simpleMessage("إرسال رمز OTP"),
     "serviceName": MessageLookupByLibrary.simpleMessage("اسم الخدمة"),
     "services": MessageLookupByLibrary.simpleMessage("الخدمات"),
     "shaded": MessageLookupByLibrary.simpleMessage("مظلل"),
@@ -346,6 +377,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "startDate": MessageLookupByLibrary.simpleMessage("تاريخ البدء"),
     "startDateLabel": MessageLookupByLibrary.simpleMessage("تاريخ البدء"),
     "startTime": MessageLookupByLibrary.simpleMessage("وقت البدء"),
+    "subtotal": MessageLookupByLibrary.simpleMessage("المجموع الفرعي"),
     "subtotalLabel": MessageLookupByLibrary.simpleMessage("المجموع الفرعي"),
     "termsAndConditions": MessageLookupByLibrary.simpleMessage(
       "الأحكام والشروط",
@@ -354,6 +386,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "thirtyDays": MessageLookupByLibrary.simpleMessage("30 يوماً"),
     "toGoldMember": MessageLookupByLibrary.simpleMessage("إلى العضو الذهبي"),
     "today": MessageLookupByLibrary.simpleMessage("اليوم"),
+    "total": MessageLookupByLibrary.simpleMessage("المجموع"),
     "totalAmount": MessageLookupByLibrary.simpleMessage("المبلغ الإجمالي"),
     "totalLabel": MessageLookupByLibrary.simpleMessage("الإجمالي"),
     "totalPoints": MessageLookupByLibrary.simpleMessage("إجمالي النقاط"),
@@ -366,7 +399,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "updatePersonalDetails": MessageLookupByLibrary.simpleMessage(
       "تحديث بياناتك الشخصية",
     ),
+    "usernameOrMobile": MessageLookupByLibrary.simpleMessage(
+      "اسم المستخدم أو رقم الهاتف المحمول",
+    ),
     "validUntil": m7,
+    "vat": MessageLookupByLibrary.simpleMessage("ضريبة القيمة المضافة (5٪)"),
     "vatLabel": MessageLookupByLibrary.simpleMessage(
       "ضريبة القيمة المضافة (5%)",
     ),
@@ -376,6 +413,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "vehicleDirection": MessageLookupByLibrary.simpleMessage("اتجاه المركبة"),
     "vehicleLabel": MessageLookupByLibrary.simpleMessage("المركبة"),
+    "verifyOtp": MessageLookupByLibrary.simpleMessage("تحقق من رمز OTP"),
     "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
     "viewDetails": MessageLookupByLibrary.simpleMessage("عرض التفاصيل"),
     "viewPastBookings": MessageLookupByLibrary.simpleMessage(
