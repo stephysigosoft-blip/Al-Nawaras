@@ -76,7 +76,7 @@ class AdditionalServicesController extends GetxController {
     if (lowerTitle.contains('cleaning')) {
       return 'lib/assets/images/cleaning.png';
     }
-    if (lowerTitle.contains('towing')) return 'lib/assets/images/trolly.png';
+    if (lowerTitle.contains('towing')) return 'lib/assets/images/Trolly.png';
     if (lowerTitle.contains('vehicle pickup')) {
       return 'lib/assets/images/vehicle pickup.png';
     }
@@ -127,7 +127,10 @@ class AdditionalServicesController extends GetxController {
             vat: '$currency ${data['vat']}',
             total: '$currency ${data['total']}',
             details: [
-              {'label': S.of(Get.context!).serviceName, 'value': service['title']},
+              {
+                'label': S.of(Get.context!).serviceName,
+                'value': service['title'],
+              },
               {
                 'label': S.of(Get.context!).membershipPackage,
                 'value': data['membership_type']?.toString() ?? 'N/A',

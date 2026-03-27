@@ -58,10 +58,10 @@ class RegisterController extends GetxController {
       );
       return;
     }
-    if (!GetUtils.isEmail(emailController.text.trim())) {
+    if (!emailController.text.trim().contains('@')) {
       Get.snackbar(
         'Error',
-        'Please enter a valid Email Address',
+        'Email Address must contain @ symbol',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
@@ -72,6 +72,16 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Please enter your Mobile Number',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+    if (mobileController.text.trim().length != 10 || !GetUtils.isNumericOnly(mobileController.text.trim())) {
+      Get.snackbar(
+        'Error',
+        'Mobile Number must be exactly 10 digits',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,

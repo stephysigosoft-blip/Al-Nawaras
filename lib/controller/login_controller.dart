@@ -66,6 +66,23 @@ class LoginController extends GetxController {
       );
       return;
     }
+
+    // Email or Mobile Validation
+    if (login.contains('@')) {
+      // Email must contain @ (already true if contains('@'))
+    } else {
+      // Mobile must be exactly 10 digits
+      if (login.length != 10 || !GetUtils.isNumericOnly(login)) {
+        Get.snackbar(
+          'Error',
+          'Mobile number must be exactly 10 digits or enter a valid Email',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+    }
     if (password.isEmpty) {
       Get.snackbar(
         'Error',
