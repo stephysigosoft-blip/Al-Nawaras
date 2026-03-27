@@ -9,11 +9,12 @@ import 'package:image_picker/image_picker.dart';
 
 import '../config/api_constants.dart';
 import '../model/profile_model.dart';
+import 'base_client.dart';
 import 'home_controller.dart';
 import 'rewards_controller.dart';
 
 class ProfileController extends GetxController {
-  final dio_lib.Dio dio = dio_lib.Dio();
+  final dio_lib.Dio dio = BaseClient.dio;
   final box = GetStorage();
 
   var isLoading = false.obs;
@@ -45,7 +46,13 @@ class ProfileController extends GetxController {
     try {
       isLoading(true);
       if (token == null || token!.isEmpty) {
-        Get.snackbar("Error", "Token not found");
+        Get.snackbar(
+          "Error", 
+          "Token not found", 
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
         return;
       }
 
@@ -104,7 +111,7 @@ class ProfileController extends GetxController {
         isImageRemoved.value = false; // Reset removal flag after fetch
       }
     } on dio_lib.DioException catch (e) {
-      Get.snackbar("Error", e.response?.data['message'] ?? "Fetch failed");
+      BaseClient.handleDioError(e);
     } finally {
       isLoading(false);
     }
@@ -305,20 +312,7 @@ class ProfileController extends GetxController {
         );
       }
     } on dio_lib.DioException catch (e) {
-      String errMsg = "Update failed";
-      if (e.response != null && e.response!.data is Map) {
-        errMsg = e.response!.data['message'] ?? "Update failed";
-      } else {
-        errMsg = e.message ?? "Update failed";
-      }
-      Get.snackbar(
-        "Error",
-        errMsg,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 1),
-      );
+      BaseClient.handleDioError(e);
     } finally {
       isLoading(false);
     }

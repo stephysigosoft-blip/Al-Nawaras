@@ -23,6 +23,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../view/login/login_screen.dart';
 import '../view/settings/maintenance.dart';
 import '../config/api_constants.dart';
+import 'base_client.dart';
 import 'dart:math' as math;
 
 class HomeController extends GetxController {
@@ -92,7 +93,7 @@ class HomeController extends GetxController {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       String buildVersion = packageInfo.version;
 
-      final dio = Dio();
+      final dio = BaseClient.dio;
       final response = await dio.get(ApiConstants.settings);
 
       if (kDebugMode) {
@@ -144,6 +145,8 @@ class HomeController extends GetxController {
           }
         }
       }
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
     } catch (e) {
       if (kDebugMode) {
         print('Failed to fetch settings: $e');
@@ -195,12 +198,13 @@ class HomeController extends GetxController {
       // Check maintenance status every time home data is fetched/refreshed
       fetchSettings();
 
-      final dio = Dio();
+      final dio = BaseClient.dio;
       final storage = GetStorage();
       final token = storage.read('token');
 
       if (token == null || token.toString().isEmpty || token == "null") {
         if (kDebugMode) print('No token found, skipping home data fetch.');
+        _isHomeLoading = false;
         return;
       }
 
@@ -343,12 +347,14 @@ class HomeController extends GetxController {
           update();
         }
       }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        logOut();
+      }
+      BaseClient.handleDioError(e);
     } catch (e) {
       if (kDebugMode) {
         print('Failed to fetch home data: $e');
-      }
-      if (e is DioException && e.response?.statusCode == 401) {
-        logOut();
       }
     } finally {
       _isHomeLoading = false;
@@ -381,9 +387,17 @@ class HomeController extends GetxController {
     update();
 
     try {
-      final dio = Dio();
       final storage = GetStorage();
       final token = storage.read('token');
+
+      if (token == null || token.toString().isEmpty || token == "null") {
+        debugPrint('No token found, skipping parking history fetch.');
+        isLoadingHistory = false;
+        isHistoryLoadingMore = false;
+        return;
+      }
+
+      final dio = BaseClient.dio;
 
       final headers = {
         if (token != null) 'Authorization': 'Bearer $token',
@@ -453,6 +467,9 @@ class HomeController extends GetxController {
           hasMoreHistory = false;
         }
       }
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
+      hasMoreHistory = false;
     } catch (e) {
       debugPrint('Error fetching parking history: $e');
       hasMoreHistory = false;
@@ -478,9 +495,14 @@ class HomeController extends GetxController {
     update();
 
     try {
-      final dio = Dio();
       final storage = GetStorage();
       final token = storage.read('token');
+      if (token == null || token.toString().isEmpty || token == "null") {
+        isVehicleLoading = false;
+        return;
+      }
+
+      final dio = BaseClient.dio;
 
       debugPrint('\n--- API REQUEST (more_vehicles) ---');
       debugPrint('URL: ${ApiConstants.vehicles}');
@@ -535,6 +557,8 @@ class HomeController extends GetxController {
           onSearchChanged(searchController.text); // Refresh filtered list
         }
       }
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
     } catch (e) {
       if (kDebugMode) print('Error loading more vehicles: $e');
     } finally {
@@ -554,15 +578,14 @@ class HomeController extends GetxController {
     update();
 
     try {
-      // Assuming activities can be fetched from home or dedicated endpoint
-      // For now, if home API doesn't support pagination, we might just load once
-      // but let's try a generic approach if an endpoint exists.
-      // Since no separate recent_activities endpoint is in ApiConstants,
-      // we'll assume the Home API can take offset/limit if relevant.
-
-      final dio = Dio();
       final storage = GetStorage();
       final token = storage.read('token');
+      if (token == null || token.toString().isEmpty || token == "null") {
+        isActivityLoading = false;
+        return;
+      }
+
+      final dio = BaseClient.dio;
 
       debugPrint('\n--- API REQUEST (more_activities) ---');
       debugPrint('URL: ${ApiConstants.home}');
@@ -666,6 +689,9 @@ class HomeController extends GetxController {
           }
         }
       }
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
+      hasMoreActivities = false;
     } catch (e) {
       if (kDebugMode) print('Error loading more activities: $e');
       hasMoreActivities = false;
@@ -736,9 +762,13 @@ class HomeController extends GetxController {
     int offset = 0,
   }) async {
     try {
-      final dio = Dio();
       final storage = GetStorage();
       final token = storage.read('token');
+      if (token == null || token.toString().isEmpty || token == "null") {
+        return;
+      }
+
+      final dio = BaseClient.dio;
 
       final headers = {
         if (token != null) 'Authorization': 'Bearer $token',
@@ -778,6 +808,8 @@ class HomeController extends GetxController {
           );
         }
       }
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
     } catch (e) {
       debugPrint('Error during search API call: $e');
     } finally {

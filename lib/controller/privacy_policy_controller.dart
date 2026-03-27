@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
+import 'base_client.dart';
 import '../config/api_constants.dart';
 
 class PrivacyPolicyController extends GetxController {
-  final Dio dio = Dio();
+  final Dio dio = BaseClient.dio;
   final box = GetStorage();
 
   var isLoading = false.obs;
@@ -48,13 +50,16 @@ class PrivacyPolicyController extends GetxController {
         final policyData = data['data'];
         privacyPolicyContent.value = policyData['privacy_policy'] ?? "";
       } else {
-        Get.snackbar("Error", data['message'] ?? "Failed to fetch Privacy Policy");
+        Get.snackbar(
+          "Error", 
+          data['message'] ?? "Failed to fetch Privacy Policy",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } on DioException catch (e) {
-      if (kDebugMode) {
-        print('DioException in fetchPrivacyPolicy: ${e.message}');
-      }
-      Get.snackbar("Error", "Failed to connect to server");
+      BaseClient.handleDioError(e);
     } catch (e) {
       if (kDebugMode) {
         print('Exception in fetchPrivacyPolicy: $e');

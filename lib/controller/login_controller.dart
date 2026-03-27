@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
+import 'base_client.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import '../config/api_constants.dart';
@@ -16,7 +17,7 @@ class LoginController extends GetxController {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   final box = GetStorage();
-  final Dio dio = Dio();
+  final Dio dio = BaseClient.dio;
 
   bool isRememberMe = false;
   bool isLoading = false;
@@ -154,25 +155,7 @@ class LoginController extends GetxController {
         }
       }
     } on DioException catch (e) {
-      if (kDebugMode) {
-        print('API Error (DioException): ${e.message}');
-        if (e.response != null) {
-          print('Response Error Data: ${e.response?.data}');
-        }
-      }
-      String errorMessage = 'A network error occurred. Please try again.';
-      if (e.response != null &&
-          e.response?.data != null &&
-          e.response?.data is Map) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      Get.snackbar(
-        'Error',
-        errorMessage,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      BaseClient.handleDioError(e);
     } catch (e) {
       if (kDebugMode) {
         print('Exception caught: $e');
@@ -216,7 +199,13 @@ class LoginController extends GetxController {
       final idToken = auth.idToken;
 
       if (idToken == null) {
-        Get.snackbar("Error", "Failed to get Google token");
+        Get.snackbar(
+          "Error",
+          "Failed to get Google token",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
         return;
       }
       print("ID TOKEN: $idToken");
@@ -246,20 +235,16 @@ class LoginController extends GetxController {
         // 🔹 Step 5: Navigate
         Get.offAll(() => const HomeScreen());
       } else {
-        Get.snackbar("Error", data["message"]);
+        Get.snackbar(
+          "Error",
+          data["message"],
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } on DioException catch (e) {
-      if (kDebugMode) {
-        print('Social Login Error (DioException): ${e.message}');
-        if (e.response != null) {
-          print('Response Error Data: ${e.response?.data}');
-        }
-      }
-      String errorMessage = 'A network error occurred. Please try again.';
-      if (e.response != null && e.response?.data is Map) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      Get.snackbar("Error", errorMessage);
+      BaseClient.handleDioError(e);
     } catch (e) {
       print("Error: $e");
       Get.snackbar("Error", e.toString());
@@ -301,30 +286,38 @@ class LoginController extends GetxController {
           box.write("name", data["data"]["name"]);
           box.write("email", data["data"]["email"]);
 
-          Get.snackbar("Success", "Login successful");
+          Get.snackbar(
+            "Success",
+            "Login successful",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
 
           // 🔹 Step 4: Navigate
           Get.offAll(() => const HomeScreen());
         } else {
-          Get.snackbar("Error", data["message"] ?? "Login failed");
+          Get.snackbar(
+            "Error",
+            data["message"] ?? "Login failed",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         }
       } else if (result.status == LoginStatus.cancelled) {
         if (kDebugMode) print("Facebook Login Cancelled");
       } else {
-        Get.snackbar("Error", result.message ?? "Facebook login failed");
+        Get.snackbar(
+          "Error",
+          result.message ?? "Facebook login failed",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } on DioException catch (e) {
-      if (kDebugMode) {
-        print('Facebook Login Error (DioException): ${e.message}');
-        if (e.response != null) {
-          print('Response Error Data: ${e.response?.data}');
-        }
-      }
-      String errorMessage = 'A network error occurred. Please try again.';
-      if (e.response != null && e.response?.data is Map) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      Get.snackbar("Error", errorMessage);
+      BaseClient.handleDioError(e);
     } catch (e) {
       if (kDebugMode) print("Error: $e");
       Get.snackbar("Error", e.toString());

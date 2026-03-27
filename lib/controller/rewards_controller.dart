@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../config/api_constants.dart';
+import 'base_client.dart';
 
 class RewardsController extends GetxController {
   bool isLoading = false;
@@ -21,12 +22,19 @@ class RewardsController extends GetxController {
     update();
 
     try {
-      final dio = Dio();
       final storage = GetStorage();
       final token = storage.read('token');
 
+      if (token == null || token.toString().isEmpty || token == "null") {
+        debugPrint('No token found, skipping rewards fetch.');
+        isLoading = false;
+        update();
+        return;
+      }
+
+      final dio = BaseClient.dio;
       final headers = {
-        if (token != null) 'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer $token',
         'Accept': 'application/json',
       };
 
@@ -48,8 +56,10 @@ class RewardsController extends GetxController {
           rewardsData = response.data['data'];
         }
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
       debugPrint('Error fetching rewards: $e');
+    } catch (e) {
     } finally {
       isLoading = false;
       update();
@@ -58,12 +68,16 @@ class RewardsController extends GetxController {
 
   Future<void> fetchProfileData() async {
     try {
-      final dio = Dio();
       final storage = GetStorage();
       final token = storage.read('token');
 
+      if (token == null || token.toString().isEmpty || token == "null") {
+        return;
+      }
+
+      final dio = BaseClient.dio;
       final headers = {
-        if (token != null) 'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer $token',
         'Accept': 'application/json',
       };
 
@@ -86,16 +100,18 @@ class RewardsController extends GetxController {
           update();
         }
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
       debugPrint('Error fetching profile for rewards: $e');
-    }
+    } catch (e) {}
   }
 
   String getMemberImage(String? type) {
     if (type == null) return 'lib/assets/images/Silver member.png';
     String lower = type.toLowerCase();
     if (lower.contains('silver')) return 'lib/assets/images/Silver member.png';
-    if (lower.contains('gold')) return 'lib/assets/images/Silver member.png'; // Placeholder if gold not available
+    if (lower.contains('gold'))
+      return 'lib/assets/images/Silver member.png'; // Placeholder if gold not available
     return 'lib/assets/images/Silver member.png';
   }
 }

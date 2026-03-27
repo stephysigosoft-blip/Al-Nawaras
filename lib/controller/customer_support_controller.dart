@@ -3,9 +3,10 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../config/api_constants.dart';
+import 'base_client.dart';
 
 class ChatController extends GetxController {
-  final Dio dio = Dio();
+  final Dio dio = BaseClient.dio;
   final box = GetStorage();
   final TextEditingController messageController = TextEditingController();
 
@@ -95,7 +96,7 @@ class ChatController extends GetxController {
         hasMoreMessages.value = false;
       }
     } on DioException catch (e) {
-      print('DioException in fetchMessages: ${e.message}');
+      BaseClient.handleDioError(e);
       hasMoreMessages.value = false;
     } catch (e) {
       print('Exception in fetchMessages: $e');
@@ -157,16 +158,16 @@ class ChatController extends GetxController {
 
       final data = response.data;
       if (data['status'] != true) {
-        // Handle failure - maybe remove from list or show error
-        print('Failed to send message on server');
-        Get.snackbar("Error", data['message'] ?? "Failed to send message");
-      } else {
-        // Optionally fetch messages to sync or append ID
-        // fetchMessages(); 
+        Get.snackbar(
+          "Error", 
+          data['message'] ?? "Failed to send message",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
       }
     } on DioException catch (e) {
-      print('DioException in sendMessage: ${e.message}');
-      Get.snackbar("Error", "Failed to send message");
+      BaseClient.handleDioError(e);
     } catch (e) {
       print('Exception in sendMessage: $e');
     } finally {

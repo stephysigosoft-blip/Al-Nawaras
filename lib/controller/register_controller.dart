@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import '../config/api_constants.dart';
+import 'base_client.dart';
 import '../view/login/login_screen.dart';
 
 class RegisterController extends GetxController {
@@ -14,7 +15,7 @@ class RegisterController extends GetxController {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  final Dio dio = Dio();
+  final Dio dio = BaseClient.dio;
 
   bool isTermsAccepted = false;
   bool isPasswordObscured = true;
@@ -179,25 +180,7 @@ class RegisterController extends GetxController {
         await _callRegisterApi();
       }
     } on DioException catch (e) {
-      if (kDebugMode) {
-        print('API Error (check_user DioException): ${e.message}');
-        if (e.response != null) {
-          print('Response Error Data: ${e.response?.data}');
-        }
-      }
-      String errorMessage = 'A network error occurred. Please try again.';
-      if (e.response != null &&
-          e.response?.data != null &&
-          e.response?.data is Map) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      Get.snackbar(
-        'Error',
-        errorMessage,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      BaseClient.handleDioError(e);
       isLoading = false;
       if (!isClosed) update();
     } catch (e) {
@@ -276,25 +259,7 @@ class RegisterController extends GetxController {
         });
       }
     } on DioException catch (e) {
-      if (kDebugMode) {
-        print('API Error (DioException): ${e.message}');
-        if (e.response != null) {
-          print('Response Error Data: ${e.response?.data}');
-        }
-      }
-      String errorMessage = 'A network error occurred. Please try again.';
-      if (e.response != null &&
-          e.response?.data != null &&
-          e.response?.data is Map) {
-        errorMessage = e.response?.data['message'] ?? errorMessage;
-      }
-      Get.snackbar(
-        'Error',
-        errorMessage,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      BaseClient.handleDioError(e);
     } catch (e) {
       if (kDebugMode) {
         print('Exception caught: $e');
