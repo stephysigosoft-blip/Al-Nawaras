@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:al_nawaras/view/book_parking/book_parking_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:al_nawaras/controller/book_parking_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -816,7 +817,14 @@ class HomeController extends GetxController {
   }
 
   void onBookNowClick() {
-    Get.to(() => const SelectParkingView(isDirectionMode: false));
+    // Get bookingId if available from BookParkingController
+    int? bId;
+    try {
+      final bookCtrl = Get.find<BookParkingController>();
+      bId = bookCtrl.lastBookingId;
+    } catch (_) {}
+    
+    Get.to(() => SelectParkingView(isDirectionMode: false, bookingId: bId));
   }
 
   void onCheckRewardsClick() {

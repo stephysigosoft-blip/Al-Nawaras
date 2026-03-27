@@ -1454,6 +1454,66 @@ class S {
     );
   }
 
+  /// `Jetski with Trailer Parking`
+  String get jetskiWithTrailerParking {
+    return Intl.message(
+      'Jetski with Trailer Parking',
+      name: 'jetskiWithTrailerParking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Food Truck Parking – 17 m`
+  String get foodTruckParking17m {
+    return Intl.message(
+      'Food Truck Parking – 17 m',
+      name: 'foodTruckParking17m',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Food Truck Parking – 13 m`
+  String get foodTruckParking13m {
+    return Intl.message(
+      'Food Truck Parking – 13 m',
+      name: 'foodTruckParking13m',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BOATS PARKING - A`
+  String get boatsParkingA {
+    return Intl.message(
+      'BOATS PARKING - A',
+      name: 'boatsParkingA',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `BOATS PARKING - B`
+  String get boatsParkingB {
+    return Intl.message(
+      'BOATS PARKING - B',
+      name: 'boatsParkingB',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CARAVAN PARKING - B`
+  String get caravanParkingB {
+    return Intl.message(
+      'CARAVAN PARKING - B',
+      name: 'caravanParkingB',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `{prefix} Area`
   String areaSuffix(String prefix) {
     return Intl.message(

@@ -372,6 +372,12 @@
   "@boatsParking": {},
   "caravanParking": "Caravan Parking",
   "@caravanParking": {},
+  "jetskiWithTrailerParking": "Jetski with Trailer Parking",
+  "@jetskiWithTrailerParking": {},
+  "foodTruckParking17m": "Food Truck Parking – 17 m",
+  "@foodTruckParking17m": {},
+  "foodTruckParking13m": "Food Truck Parking – 13 m",
+  "@foodTruckParking13m": {},
   "areaSuffix": "{prefix} Area",
   "@areaSuffix": {
     "placeholders": {

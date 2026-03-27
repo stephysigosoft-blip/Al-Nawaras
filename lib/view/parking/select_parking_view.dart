@@ -4,19 +4,24 @@ import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../config/api_constants.dart';
 import '../../generated/l10n.dart';
+import 'dart:math' as math;
 
 class _SlotRowConfig {
   final double top;
-  final double startX;
-  final int count;
+  final double sec1StartX;
+  final int sec1Count;
+  final double sec2StartX;
+  final int sec2Count;
   final double slotW;
   final double slotH;
   final String prefix;
 
   _SlotRowConfig({
     required this.top,
-    required this.startX,
-    required this.count,
+    required this.sec1StartX,
+    required this.sec1Count,
+    required this.sec2StartX,
+    required this.sec2Count,
     required this.slotW,
     required this.slotH,
     required this.prefix,
@@ -25,7 +30,12 @@ class _SlotRowConfig {
 
 class SelectParkingView extends StatefulWidget {
   final bool isDirectionMode;
-  const SelectParkingView({super.key, this.isDirectionMode = false});
+  final int? bookingId;
+  const SelectParkingView({
+    super.key,
+    this.isDirectionMode = false,
+    this.bookingId,
+  });
 
   @override
   State<SelectParkingView> createState() => _SelectParkingViewState();
@@ -43,8 +53,9 @@ class _SelectParkingViewState extends State<SelectParkingView> {
   List<String> bookedSlots = [];
   List<String> shadedSlots = [];
   Map<String, dynamic>? lookupVehicle;
+  String initialConfirmedSlot = ""; 
 
-  final double canvasWidth = 2800.0;
+  final double canvasWidth = 3500.0;
   final double canvasHeight = 900.0;
 
   late final List<_SlotRowConfig> _slotRows;
@@ -54,36 +65,54 @@ class _SelectParkingViewState extends State<SelectParkingView> {
     super.initState();
     _slotRows = [
       _SlotRowConfig(
-        top: 110, // Fits inside 90-180 track layout
-        startX: 250,
-        count: 69,
+        top: 110,
+        sec1StartX: 250,
+        sec1Count: 17,
+        sec2StartX: 1200,
+        sec2Count: 47,
         slotW: 42,
         slotH: 48,
-        prefix: 'JTSP',
+        prefix: 'JTSP1',
       ),
       _SlotRowConfig(
-        top: 250, // Shuttles inside 220-340 track
-        startX: 220,
-        count: 64,
-        slotW: 46,
-        slotH: 55,
-        prefix: 'FTP',
+        top: 250,
+        sec1StartX: 250,
+        sec1Count: 17,
+        sec2StartX: 1200,
+        sec2Count: 47,
+        slotW: 42,
+        slotH: 48,
+        prefix: 'JTSP2',
       ),
       _SlotRowConfig(
-        top: 410, // Shuttles inside 380-500 track
-        startX: 240,
-        count: 69,
+        top: 410,
+        sec1StartX: 250,
+        sec1Count: 17,
+        sec2StartX: 1200,
+        sec2Count: 47,
         slotW: 42,
         slotH: 50,
-        prefix: 'BTP',
+        prefix: 'FTP17',
       ),
       _SlotRowConfig(
-        top: 570, // Shuttles inside 540-660 track
-        startX: 210,
-        count: 70,
+        top: 570,
+        sec1StartX: 250,
+        sec1Count: 17,
+        sec2StartX: 1200,
+        sec2Count: 47,
         slotW: 42,
         slotH: 50,
-        prefix: 'CTP',
+        prefix: 'FTP13A',
+      ),
+      _SlotRowConfig(
+        top: 730,
+        sec1StartX: 250,
+        sec1Count: 17,
+        sec2StartX: 1200,
+        sec2Count: 47,
+        slotW: 42,
+        slotH: 50,
+        prefix: 'FTP13B',
       ),
     ];
 
@@ -91,6 +120,12 @@ class _SelectParkingViewState extends State<SelectParkingView> {
     // They will be populated as you select slots or if an API is provided to list all.
     bookedSlots = [];
     shadedSlots = [];
+    // Shaded slots for Section 2: 35 to 47
+    for (int i = 35; i <= 47; i++) {
+      for (final row in _slotRows) {
+        shadedSlots.add("${row.prefix}_S2-${i.toString().padLeft(2, '0')}");
+      }
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.isDirectionMode) {
@@ -98,6 +133,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         _fetchDynamicParkingDetails();
       } else {
         _fetchVehicleTypes();
+        _fetchParkingHistory();
       }
     });
   }
@@ -135,25 +171,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
 
           if (mounted) {
             setState(() {
-              for (var type in types) {
-                String? name = type['slot_type_name']?.toString().toUpperCase();
-                if (name != null) {
-                  // If a vehicle type exists, we mark its area as tentatively booked for these demo slots
-                  if (name.contains('JETSKI')) {
-                    if (!bookedSlots.contains('JTSP-01'))
-                      bookedSlots.add('JTSP-01');
-                  } else if (name.contains('FOOD TRUCK')) {
-                    if (!bookedSlots.contains('FTP-01'))
-                      bookedSlots.add('FTP-01');
-                  } else if (name.contains('BOATS')) {
-                    if (!bookedSlots.contains('BTP-01'))
-                      bookedSlots.add('BTP-01');
-                  } else if (name.contains('CARAVAN')) {
-                    if (!bookedSlots.contains('CTP-01'))
-                      bookedSlots.add('CTP-01');
-                  }
-                }
-              }
+              // Demo logic removed as per implementation plan
             });
           }
 
@@ -237,12 +255,12 @@ class _SelectParkingViewState extends State<SelectParkingView> {
 
       debugPrint('\n--- API REQUEST (location_details) ---');
       debugPrint('URL: ${ApiConstants.locationDetails}');
-      debugPrint('Parameters: {booking_id: 1}');
+      debugPrint('Parameters: {booking_id: ${widget.bookingId ?? 1}}');
 
       // 1. Fetch location details
       final locationResponse = await dio.get(
         ApiConstants.locationDetails,
-        queryParameters: {'booking_id': 1},
+        queryParameters: {'booking_id': widget.bookingId ?? 1},
         options: Options(headers: headers),
       );
 
@@ -289,7 +307,65 @@ class _SelectParkingViewState extends State<SelectParkingView> {
     }
   }
 
+  Future<void> _fetchParkingHistory() async {
+    try {
+      final dio = Dio();
+      final storage = GetStorage();
+      final token = storage.read('token');
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      final response = await dio.get(
+        ApiConstants.parkingHistory,
+        queryParameters: {'limit': 100, 'offset': 0},
+        options: Options(headers: headers),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['status'] == true) {
+          final List history = response.data['data']['history'] ?? [];
+          if (mounted) {
+            setState(() {
+              for (var booking in history) {
+                final slotStr = booking['slot']?.toString();
+                if (slotStr != null && slotStr != "null" && slotStr.isNotEmpty) {
+                  final prefix = _getPrefixFromSlotNumber(slotStr);
+                  final num = _getNumberFromSlotNumber(slotStr);
+                  if (prefix.isNotEmpty && num.isNotEmpty) {
+                    for (final row in _slotRows) {
+                      if (row.prefix.startsWith(prefix)) {
+                         final s1Code = "${row.prefix}_S1-$num";
+                         final s2Code = "${row.prefix}_S2-$num";
+                         if (!bookedSlots.contains(s1Code)) bookedSlots.add(s1Code);
+                         if (!bookedSlots.contains(s2Code)) bookedSlots.add(s2Code);
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching history for booked slots: $e');
+    }
+  }
+
   String _getPrefixFromSlotNumber(String slotNumber) {
+    if (slotNumber.contains('JETSKI WITH TRAILER')) {
+      // Logic to distinguish JTSP1 vs JTSP2 might need more info from API
+      // For now fallback to first
+      return 'JTSP1';
+    }
+    if (slotNumber.contains('FOOD TRUCK') && slotNumber.contains('17 m')) {
+      return 'FTP17';
+    }
+    if (slotNumber.contains('FOOD TRUCK') && slotNumber.contains('13 m')) {
+      return 'FTP13A';
+    }
     if (slotNumber.contains('JETSKI')) return 'JTSP';
     if (slotNumber.contains('FOOD TRUCK')) return 'FTP';
     if (slotNumber.contains('BOATS')) return 'BTP';
@@ -350,25 +426,32 @@ class _SelectParkingViewState extends State<SelectParkingView> {
                 );
             selectedLocationType =
                 data['location_type']?.toString() ??
-                _getLocationType(slotNumber.split('-').first);
+                _getLocationType(slotNumber.split('-').first, slotNumber);
             selectedSlotSize =
                 data['slot_size']?.toString() ??
                 _getSlotSize(slotNumber.split('-').first);
             selectedSlotNumber = data['slot_number']?.toString() ?? "N/A";
             selectedLocationCode = data['location_code']?.toString() ?? "N/A";
 
+            // If we are initially loading the slot from the backend for this booking
+            if (initialConfirmedSlot.isEmpty && selectedSlotNumber != "N/A") {
+              initialConfirmedSlot = selectedSlotNumber;
+            }
+
             if (data.containsKey('is_booked')) {
               if (data['is_booked'] == true) {
-                if (!bookedSlots.contains(selectedSlotCode))
+                if (!bookedSlots.contains(selectedSlotCode)) {
                   bookedSlots.add(selectedSlotCode);
+                }
               } else {
                 bookedSlots.remove(selectedSlotCode);
               }
             }
             if (data.containsKey('shaded_slot')) {
               if (data['shaded_slot'] == true) {
-                if (!shadedSlots.contains(selectedSlotCode))
+                if (!shadedSlots.contains(selectedSlotCode)) {
                   shadedSlots.add(selectedSlotCode);
+                }
               } else {
                 shadedSlots.remove(selectedSlotCode);
               }
@@ -379,21 +462,58 @@ class _SelectParkingViewState extends State<SelectParkingView> {
     }
   }
 
+  bool _isSameAsConfirmed() {
+    return initialConfirmedSlot.isNotEmpty &&
+        selectedSlotNumber == initialConfirmedSlot;
+  }
+
   Future<void> _onSlotSelected(String codeString, String formattedSlot) async {
+    if (bookedSlots.contains(codeString)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('This slot is already booked and cannot be selected.'),
+          backgroundColor: Color(0xFFE30613),
+        ),
+      );
+      return;
+    }
+
     setState(() {
       selectedSlotCode = codeString; // Keep internal code for UI matching
       selectedSlotNumber = formattedSlot;
       selectedLocation = _getFriendlyLocation(codeString.split('-').first);
-      selectedLocationType = _getLocationType(codeString.split('-').first);
+      selectedLocationType = _getLocationType(codeString.split('-').first, codeString);
       selectedSlotSize = _getSlotSize(codeString.split('-').first);
     });
   }
 
   String _formatSlotCode(String prefix, int index) {
-    String formattedPrefix = prefix;
+    // Strip section identifiers _S1 and _S2
+    String cleanPrefix = prefix.replaceAll('_S1', '').replaceAll('_S2', '');
+    String formattedPrefix = cleanPrefix;
     String locationName = "";
 
-    switch (prefix) {
+    switch (cleanPrefix) {
+      case 'JTSP1':
+        formattedPrefix = "A";
+        locationName = "JETSKI";
+        break;
+      case 'JTSP2':
+        formattedPrefix = "B";
+        locationName = "JETSKI";
+        break;
+      case 'FTP17':
+        formattedPrefix = "C";
+        locationName = "FOOD TRUCK";
+        break;
+      case 'FTP13A':
+        formattedPrefix = "D";
+        locationName = "FOOD TRUCK";
+        break;
+      case 'FTP13B':
+        formattedPrefix = "E";
+        locationName = "FOOD TRUCK";
+        break;
       case 'JTSP':
         formattedPrefix = "A";
         locationName = "JETSKI";
@@ -426,11 +546,11 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       final token = storage.read('token');
       final headers = {
         if (token != null) 'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
+        'Accept': '*/*',
       };
 
       final Map<String, dynamic> requestBody = {
-        'booking_id': 1,
+        'booking_id': widget.bookingId ?? 1,
         'slot_number': _formatSlotCode(
           selectedSlotCode.split('-').first,
           int.parse(selectedSlotCode.split('-').last),
@@ -446,17 +566,17 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         data: requestBody,
         options: Options(
           headers: headers,
-          contentType: Headers.formUrlEncodedContentType,
         ),
       );
 
       debugPrint('--- API RESPONSE (confirm_location) ---');
       debugPrint('Status Code: ${response.statusCode}');
       debugPrint('Response Data: ${response.data}');
-      debugPrint('--------------------------\n');
 
-      if (response.statusCode == 200 && response.data != null) {
-        if (response.data['status'] == true) {
+      if (response.statusCode == 200 &&
+          response.data != null &&
+          response.data['status'] == true) {
+        if (mounted) {
           // After confirmation, fetch slot details as requested
           // check for both slot_assigned and slot_number in response
           final Map<String, dynamic>? data = response.data['data'];
@@ -595,18 +715,25 @@ class _SelectParkingViewState extends State<SelectParkingView> {
 
     for (final row in _slotRows) {
       if (py >= row.top && py <= row.top + row.slotH) {
-        for (int i = 0; i < row.count; i++) {
+        // Section 1: 17 slots
+        for (int i = 0; i < row.sec1Count; i++) {
           final double skewOffset = skewFactor * (row.top + row.slotH - py);
-          final double slotStartX =
-              row.startX + (i * row.slotW * 0.82) + skewOffset;
-
-          if (px >= slotStartX && px <= slotStartX + row.slotW) {
+          final double x = row.sec1StartX + (i * row.slotW) + skewOffset;
+          if (px >= x && px <= x + row.slotW) {
             final codeString =
-                "${row.prefix}-${(i + 1).toString().padLeft(2, '0')}";
-            if (bookedSlots.contains(codeString)) return; // Booked
-
-            final formattedSlot = _formatSlotCode(row.prefix, i + 1);
-            _onSlotSelected(codeString, formattedSlot);
+                "${row.prefix}_S1-${(i + 1).toString().padLeft(2, '0')}";
+            _onSlotSelected(codeString, _formatSlotCode(row.prefix, i + 1));
+            return;
+          }
+        }
+        // Section 2: 47 slots
+        for (int i = 0; i < row.sec2Count; i++) {
+          final double skewOffset = skewFactor * (row.top + row.slotH - py);
+          final double x = row.sec2StartX + (i * row.slotW) + skewOffset;
+          if (px >= x && px <= x + row.slotW) {
+            final codeString =
+                "${row.prefix}_S2-${(i + 1).toString().padLeft(2, '0')}";
+            _onSlotSelected(codeString, _formatSlotCode(row.prefix, i + 1));
             return;
           }
         }
@@ -616,6 +743,14 @@ class _SelectParkingViewState extends State<SelectParkingView> {
 
   String _getFriendlyLocation(String prefix) {
     switch (prefix) {
+      case 'JTSP1':
+      case 'JTSP2':
+        return S.of(context).jetskiWithTrailerParking;
+      case 'FTP17':
+        return S.of(context).foodTruckParking17m;
+      case 'FTP13A':
+      case 'FTP13B':
+        return S.of(context).foodTruckParking13m;
       case 'JTSP':
         return S.of(context).jetskiParking;
       case 'FTP':
@@ -629,13 +764,23 @@ class _SelectParkingViewState extends State<SelectParkingView> {
     }
   }
 
-  String _getLocationType(String prefix) {
+  String _getLocationType(String prefix, [String? code]) {
+    if (code != null && shadedSlots.contains(code)) return S.of(context).shaded;
     if (prefix == 'BTP' || prefix == 'CTP') return S.of(context).shaded;
+    if (prefix.contains('FTP')) return S.of(context).open;
     return S.of(context).open;
   }
 
   String _getSlotSize(String prefix) {
     switch (prefix) {
+      case 'JTSP1':
+      case 'JTSP2':
+        return "4m x 10m";
+      case 'FTP17':
+        return "5m x 17m";
+      case 'FTP13A':
+      case 'FTP13B':
+        return "5m x 13m";
       case 'JTSP':
         return "4m x 10m";
       case 'FTP':
@@ -704,9 +849,13 @@ class _SelectParkingViewState extends State<SelectParkingView> {
                   ),
                   elevation: 0,
                 ),
-                onPressed: selectedSlotCode.isEmpty ? null : _confirmLocation,
+                onPressed: (selectedSlotCode.isEmpty || 
+                            _isSameAsConfirmed()) 
+                           ? null : _confirmLocation,
                 child: Text(
-                  S.of(context).confirmLocation,
+                  _isSameAsConfirmed() 
+                    ? S.of(context).locationConfirmedSuccessfully 
+                    : S.of(context).confirmLocation,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -840,7 +989,7 @@ class _CompleteMapPainter extends CustomPainter {
       roadPaint,
       curvePaint,
       linePaint,
-      label: 'FOOD TRUCK PARKING - Length 17m',
+      label: 'JETSKI WITH TRAILER PARKING',
     );
     _drawContinuousRoadTrack(
       canvas,
@@ -850,7 +999,7 @@ class _CompleteMapPainter extends CustomPainter {
       roadPaint,
       curvePaint,
       linePaint,
-      label: 'BOATS PARKING (SHADED)',
+      label: 'FOOD TRUCK PARKING - Length 17m',
     );
     _drawContinuousRoadTrack(
       canvas,
@@ -860,19 +1009,50 @@ class _CompleteMapPainter extends CustomPainter {
       roadPaint,
       curvePaint,
       linePaint,
-      label: 'CARAVAN PARKING (SHADED)',
+      label: 'FOOD TRUCK PARKING - Length 13m',
+    );
+    _drawContinuousRoadTrack(
+      canvas,
+      700,
+      820,
+      size.width,
+      roadPaint,
+      curvePaint,
+      linePaint,
+      label: 'FOOD TRUCK PARKING - Length 13m',
     );
 
-    // --- 2. DRAW SLOTTED OVERLAPPING BLOCKS MESH ---
+    // --- 2. DRAW VERTICAL ENTRANCE/EXIT ROADWAY ---
+    _drawVerticalRoadway(
+      canvas,
+      x: 1000,
+      width: 140,
+      height: 820,
+      roadPaint: roadPaint,
+      linePaint: linePaint,
+    );
+
+    // --- 3. DRAW SLOTTED OVERLAPPING BLOCKS MESH ---
     for (final row in slotRows) {
+      // Section 1: 17 slots
       _drawSlantedSlotsRow(
         canvas,
         top: row.top,
-        startX: row.startX,
-        count: row.count,
+        startX: row.sec1StartX,
+        count: row.sec1Count,
         slotW: row.slotW,
         slotH: row.slotH,
-        prefix: row.prefix,
+        prefix: "${row.prefix}_S1",
+      );
+      // Section 2: 47 slots
+      _drawSlantedSlotsRow(
+        canvas,
+        top: row.top,
+        startX: row.sec2StartX,
+        count: row.sec2Count,
+        slotW: row.slotW,
+        slotH: row.slotH,
+        prefix: "${row.prefix}_S2",
       );
     }
   }
@@ -918,7 +1098,105 @@ class _CompleteMapPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     textPainter.layout();
-    textPainter.paint(canvas, Offset(250, top - 18));
+    // Label under Section 1
+    textPainter.paint(canvas, Offset(250, bottom + 10));
+    // Label under Section 2 (after the road)
+    textPainter.paint(canvas, Offset(1300, bottom + 10));
+  }
+
+  void _drawVerticalRoadway(
+    Canvas canvas, {
+    required double x,
+    required double width,
+    required double height,
+    required Paint roadPaint,
+    required Paint linePaint,
+  }) {
+    final rect = Rect.fromLTWH(x, 80, width, height);
+    canvas.drawRect(rect, roadPaint);
+    canvas.drawRect(rect, linePaint);
+
+    final double midX = x + width / 2;
+    final dashPaint = Paint()
+      ..color = Colors.white38
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+
+    // Draw Dashed Line in middle
+    double currentY = 80;
+    while (currentY < 80 + height) {
+      canvas.drawLine(
+        Offset(midX, currentY),
+        Offset(midX, math.min(currentY + 15, 80 + height)),
+        dashPaint,
+      );
+      currentY += 25;
+    }
+
+    // Lane Labels: EXIT & ENTRANCE
+    _drawVerticalLabel(
+      canvas,
+      "EXIT",
+      Offset(x + width * 0.25, 80 + height - 20),
+    );
+    _drawVerticalLabel(
+      canvas,
+      "ENTRANCE",
+      Offset(x + width * 0.75, 80 + height - 20),
+    );
+
+    // Optional: Draw curved dashed lines matching the design
+    for (final row in slotRows) {
+      _drawConnectionCurve(
+        canvas,
+        row.top + row.slotH / 2,
+        x,
+        width,
+        dashPaint,
+      );
+    }
+  }
+
+  void _drawConnectionCurve(
+    Canvas canvas,
+    double y,
+    double roadX,
+    double roadWidth,
+    Paint paint,
+  ) {
+    // Left side (Section 1)
+    for (var i = 0; i < 4; i++) {
+      canvas.drawCircle(Offset(roadX - 15 + i * 4, y), 0.4, paint);
+    }
+    // Right side (Section 2)
+    for (var i = 0; i < 4; i++) {
+        canvas.drawCircle(Offset(roadX + roadWidth + 5 + i * 4, y), 0.4, paint);
+    }
+  }
+
+  void _drawVerticalLabel(Canvas canvas, String text, Offset offset) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: const TextStyle(
+          color: Colors.white70,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.0,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+
+    canvas.save();
+    canvas.translate(offset.dx, offset.dy);
+    canvas.rotate(-math.pi / 2);
+    textPainter.paint(
+      canvas,
+      Offset(-textPainter.width / 2, -textPainter.height / 2),
+    );
+    canvas.restore();
   }
 
   void _drawSlantedSlotsRow(
@@ -931,10 +1209,10 @@ class _CompleteMapPainter extends CustomPainter {
     required String prefix,
   }) {
     final availablePaint = Paint()
-      ..color = const Color(0xFF2A2A2A)
+      ..color = const Color(0xFF3A3A3A)
       ..style = PaintingStyle.fill;
     final bookedPaint = Paint()
-      ..color = const Color(0xFFCDCDCD)
+      ..color = const Color(0xFF777777) // Darker gray for booked
       ..style = PaintingStyle.fill;
     final selectedPaint = Paint()
       ..color = const Color(0xFFE30613)
@@ -958,10 +1236,27 @@ class _CompleteMapPainter extends CustomPainter {
       Paint cellPaint = availablePaint;
       if (isShaded) cellPaint = shadedPaint;
       if (isBooked) cellPaint = bookedPaint;
-      if (isSelected) cellPaint = selectedPaint;
-
-      final double x = startX + (i * slotW * 0.82);
+      final double x = startX + (i * slotW);
       final double y = top;
+
+      if (isSelected) {
+        cellPaint = selectedPaint;
+        // Draw a small checkmark in the center of the selected slot
+        final double centerX = x + slotW / 2;
+        final double centerY = y + slotH / 2;
+        final checkPaint = Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.0;
+        final checkPath = Path();
+        checkPath.moveTo(centerX - 6, centerY);
+        checkPath.lineTo(centerX - 2, centerY + 4);
+        checkPath.lineTo(centerX + 6, centerY - 6);
+        canvas.drawPath(checkPath, checkPaint);
+      }
+
+      // --- SKIP SLOTS THAT OVERLAP WITH THE VERTICAL ROADWAY ---
+      // No longer needed since we split the sections
 
       // Draw Slanted Parallelogram
       final Path slotPath = Path();

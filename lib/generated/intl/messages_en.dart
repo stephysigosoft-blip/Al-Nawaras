@@ -72,6 +72,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Away from Parking",
     ),
     "boatsParking": MessageLookupByLibrary.simpleMessage("Boats Parking"),
+    "boatsParkingA": MessageLookupByLibrary.simpleMessage("BOATS PARKING - A"),
+    "boatsParkingB": MessageLookupByLibrary.simpleMessage("BOATS PARKING - B"),
     "bookNow": MessageLookupByLibrary.simpleMessage("Book Now!"),
     "bookParking": MessageLookupByLibrary.simpleMessage("Book Parking"),
     "booked": MessageLookupByLibrary.simpleMessage("Booked"),
@@ -85,6 +87,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "buyNow": MessageLookupByLibrary.simpleMessage("Buy Now!"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "caravanParking": MessageLookupByLibrary.simpleMessage("Caravan Parking"),
+    "caravanParkingB": MessageLookupByLibrary.simpleMessage(
+      "CARAVAN PARKING - B",
+    ),
     "cashOnSite": MessageLookupByLibrary.simpleMessage("Cash on site"),
     "checkNetworkDetail": MessageLookupByLibrary.simpleMessage(
       "Please check your network and try again.",
@@ -172,6 +177,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "foodTruckParking": MessageLookupByLibrary.simpleMessage(
       "Food Truck Parking",
     ),
+    "foodTruckParking13m": MessageLookupByLibrary.simpleMessage(
+      "Food Truck Parking – 13 m",
+    ),
+    "foodTruckParking17m": MessageLookupByLibrary.simpleMessage(
+      "Food Truck Parking – 17 m",
+    ),
     "forAllVehicleTypes": MessageLookupByLibrary.simpleMessage(
       "for All Vehicle Types",
     ),
@@ -192,6 +203,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Invite friends and earn more points!",
     ),
     "jetskiParking": MessageLookupByLibrary.simpleMessage("Jetski Parking"),
+    "jetskiWithTrailerParking": MessageLookupByLibrary.simpleMessage(
+      "Jetski with Trailer Parking",
+    ),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "languageSubtitle": MessageLookupByLibrary.simpleMessage(
       "Switch app language",
