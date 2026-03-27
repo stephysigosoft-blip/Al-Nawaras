@@ -53,7 +53,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
   List<String> bookedSlots = [];
   List<String> shadedSlots = [];
   Map<String, dynamic>? lookupVehicle;
-  String initialConfirmedSlot = ""; 
+  String initialConfirmedSlot = "";
 
   final double canvasWidth = 3500.0;
   final double canvasHeight = 900.0;
@@ -330,16 +330,22 @@ class _SelectParkingViewState extends State<SelectParkingView> {
             setState(() {
               for (var booking in history) {
                 final slotStr = booking['slot']?.toString();
-                if (slotStr != null && slotStr != "null" && slotStr.isNotEmpty) {
+                if (slotStr != null &&
+                    slotStr != "null" &&
+                    slotStr.isNotEmpty) {
                   final prefix = _getPrefixFromSlotNumber(slotStr);
                   final num = _getNumberFromSlotNumber(slotStr);
                   if (prefix.isNotEmpty && num.isNotEmpty) {
                     for (final row in _slotRows) {
                       if (row.prefix.startsWith(prefix)) {
-                         final s1Code = "${row.prefix}_S1-$num";
-                         final s2Code = "${row.prefix}_S2-$num";
-                         if (!bookedSlots.contains(s1Code)) bookedSlots.add(s1Code);
-                         if (!bookedSlots.contains(s2Code)) bookedSlots.add(s2Code);
+                        final s1Code = "${row.prefix}_S1-$num";
+                        final s2Code = "${row.prefix}_S2-$num";
+                        if (!bookedSlots.contains(s1Code)) {
+                          bookedSlots.add(s1Code);
+                        }
+                        if (!bookedSlots.contains(s2Code)) {
+                          bookedSlots.add(s2Code);
+                        }
                       }
                     }
                   }
@@ -482,7 +488,10 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       selectedSlotCode = codeString; // Keep internal code for UI matching
       selectedSlotNumber = formattedSlot;
       selectedLocation = _getFriendlyLocation(codeString.split('-').first);
-      selectedLocationType = _getLocationType(codeString.split('-').first, codeString);
+      selectedLocationType = _getLocationType(
+        codeString.split('-').first,
+        codeString,
+      );
       selectedSlotSize = _getSlotSize(codeString.split('-').first);
     });
   }
@@ -564,9 +573,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       final response = await dio.post(
         ApiConstants.confirmLocation,
         data: requestBody,
-        options: Options(
-          headers: headers,
-        ),
+        options: Options(headers: headers),
       );
 
       debugPrint('--- API RESPONSE (confirm_location) ---');
@@ -692,6 +699,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
                   ),
                 ),
               ),
+              const SizedBox(height: 15),
               _buildFooterPanel(),
             ],
           ),
@@ -849,13 +857,13 @@ class _SelectParkingViewState extends State<SelectParkingView> {
                   ),
                   elevation: 0,
                 ),
-                onPressed: (selectedSlotCode.isEmpty || 
-                            _isSameAsConfirmed()) 
-                           ? null : _confirmLocation,
+                onPressed: (selectedSlotCode.isEmpty || _isSameAsConfirmed())
+                    ? null
+                    : _confirmLocation,
                 child: Text(
-                  _isSameAsConfirmed() 
-                    ? S.of(context).locationConfirmedSuccessfully 
-                    : S.of(context).confirmLocation,
+                  _isSameAsConfirmed()
+                      ? S.of(context).locationConfirmedSuccessfully
+                      : S.of(context).confirmLocation,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -970,6 +978,18 @@ class _CompleteMapPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
+    int targetRowIndex = -1;
+    bool isTargetSection2 = false;
+    if (selectedCode.isNotEmpty) {
+      for (int i = 0; i < slotRows.length; i++) {
+        if (selectedCode.startsWith(slotRows[i].prefix)) {
+          targetRowIndex = i;
+          isTargetSection2 = selectedCode.contains("_S2-");
+          break;
+        }
+      }
+    }
+
     // --- 1. DRAW CONTINUOUS CONNECTING TRACKS ---
     _drawContinuousRoadTrack(
       canvas,
@@ -980,6 +1000,8 @@ class _CompleteMapPainter extends CustomPainter {
       curvePaint,
       linePaint,
       label: 'JETSKI WITH TRAILER PARKING',
+      sec2Label: 'BOATS PARKING - A',
+      sec2ShadedLabel: 'BOATS PARKING - B (SHADED)',
     );
     _drawContinuousRoadTrack(
       canvas,
@@ -990,6 +1012,8 @@ class _CompleteMapPainter extends CustomPainter {
       curvePaint,
       linePaint,
       label: 'JETSKI WITH TRAILER PARKING',
+      sec2Label: 'BOATS PARKING - B',
+      sec2ShadedLabel: 'BOATS PARKING - B (SHADED)',
     );
     _drawContinuousRoadTrack(
       canvas,
@@ -1000,6 +1024,8 @@ class _CompleteMapPainter extends CustomPainter {
       curvePaint,
       linePaint,
       label: 'FOOD TRUCK PARKING - Length 17m',
+      sec2Label: 'BOATS PARKING - B',
+      sec2ShadedLabel: 'CARAVAN PARKING - B(SHADED)',
     );
     _drawContinuousRoadTrack(
       canvas,
@@ -1010,6 +1036,8 @@ class _CompleteMapPainter extends CustomPainter {
       curvePaint,
       linePaint,
       label: 'FOOD TRUCK PARKING - Length 13m',
+      sec2Label: 'CARAVAN PARKING - B',
+      sec2ShadedLabel: 'CARAVAN PARKING - B(SHADED)',
     );
     _drawContinuousRoadTrack(
       canvas,
@@ -1020,6 +1048,8 @@ class _CompleteMapPainter extends CustomPainter {
       curvePaint,
       linePaint,
       label: 'FOOD TRUCK PARKING - Length 13m',
+      sec2Label: 'CARAVAN PARKING - B',
+      sec2ShadedLabel: 'CARAVAN PARKING - A(SHADED)',
     );
 
     // --- 2. DRAW VERTICAL ENTRANCE/EXIT ROADWAY ---
@@ -1030,6 +1060,8 @@ class _CompleteMapPainter extends CustomPainter {
       height: 820,
       roadPaint: roadPaint,
       linePaint: linePaint,
+      targetRowIndex: targetRowIndex,
+      isTargetSection2: isTargetSection2,
     );
 
     // --- 3. DRAW SLOTTED OVERLAPPING BLOCKS MESH ---
@@ -1066,6 +1098,8 @@ class _CompleteMapPainter extends CustomPainter {
     Paint loopFill,
     Paint line, {
     required String label,
+    String? sec2Label,
+    String? sec2ShadedLabel,
   }) {
     final trackH = bottom - top;
     final ribbonPath = Path();
@@ -1084,7 +1118,7 @@ class _CompleteMapPainter extends CustomPainter {
     canvas.drawPath(ribbonPath, loopFill);
     canvas.drawPath(ribbonPath, line);
 
-    // Label coordinates Absolute continuous sizing setups framing coordinators setups dashboard formats
+    // Label under Section 1
     final textPainter = TextPainter(
       text: TextSpan(
         text: label,
@@ -1098,10 +1132,43 @@ class _CompleteMapPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     textPainter.layout();
-    // Label under Section 1
     textPainter.paint(canvas, Offset(250, bottom + 10));
+
     // Label under Section 2 (after the road)
-    textPainter.paint(canvas, Offset(1300, bottom + 10));
+    if (sec2Label != null) {
+      final textPainter2 = TextPainter(
+        text: TextSpan(
+          text: sec2Label,
+          style: const TextStyle(
+            color: Colors.white38,
+            fontSize: 8.5,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.2,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      textPainter2.layout();
+      textPainter2.paint(canvas, Offset(1300, bottom + 10));
+    }
+
+    // Label under Section 2 Shaded area (at the far end)
+    if (sec2ShadedLabel != null) {
+      final textPainter3 = TextPainter(
+        text: TextSpan(
+          text: sec2ShadedLabel,
+          style: const TextStyle(
+            color: Colors.white38,
+            fontSize: 8.5,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.2,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      textPainter3.layout();
+      textPainter3.paint(canvas, Offset(2600, bottom + 10));
+    }
   }
 
   void _drawVerticalRoadway(
@@ -1111,6 +1178,8 @@ class _CompleteMapPainter extends CustomPainter {
     required double height,
     required Paint roadPaint,
     required Paint linePaint,
+    int targetRowIndex = -1,
+    bool isTargetSection2 = false,
   }) {
     final rect = Rect.fromLTWH(x, 80, width, height);
     canvas.drawRect(rect, roadPaint);
@@ -1137,22 +1206,45 @@ class _CompleteMapPainter extends CustomPainter {
     _drawVerticalLabel(
       canvas,
       "EXIT",
-      Offset(x + width * 0.25, 80 + height - 20),
+      Offset(x + width * 0.30, 80 + height - 20),
     );
     _drawVerticalLabel(
       canvas,
       "ENTRANCE",
-      Offset(x + width * 0.75, 80 + height - 20),
+      Offset(x + width * 0.70, 65 + height - 20),
     );
 
+    // Direction Path (from ENTRANCE lane up to target row)
+    if (targetRowIndex != -1) {
+      final targetRow = slotRows[targetRowIndex];
+      final targetY = targetRow.top + targetRow.slotH / 2;
+      final entranceX = x + width * 0.70;
+      final entryY = 65 + height - 20;
+
+      final pathPaint = Paint()
+        ..color = Color(0xFF00FF00) // Highlight Color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5;
+
+      // Vertical line up the entrance lane
+      double yNav = entryY - 10;
+      while (yNav > targetY) {
+        canvas.drawCircle(Offset(entranceX, yNav), 1.0, pathPaint);
+        yNav -= 6;
+      }
+    }
+
     // Optional: Draw curved dashed lines matching the design
-    for (final row in slotRows) {
+    for (int i = 0; i < slotRows.length; i++) {
+      final row = slotRows[i];
       _drawConnectionCurve(
         canvas,
         row.top + row.slotH / 2,
         x,
         width,
         dashPaint,
+        highlightLeft: targetRowIndex == i && !isTargetSection2,
+        highlightRight: targetRowIndex == i && isTargetSection2,
       );
     }
   }
@@ -1162,15 +1254,29 @@ class _CompleteMapPainter extends CustomPainter {
     double y,
     double roadX,
     double roadWidth,
-    Paint paint,
-  ) {
+    Paint paint, {
+    bool highlightLeft = false,
+    bool highlightRight = false,
+  }) {
+    final highlightPaint = Paint()
+      ..color = Color(0xFF00FF00) // Highlight color
+      ..style = PaintingStyle.fill;
+
     // Left side (Section 1)
     for (var i = 0; i < 4; i++) {
-      canvas.drawCircle(Offset(roadX - 15 + i * 4, y), 0.4, paint);
+      canvas.drawCircle(
+        Offset(roadX - 15 + i * 4, y),
+        highlightLeft ? 1.5 : 0.8,
+        highlightLeft ? highlightPaint : paint,
+      );
     }
     // Right side (Section 2)
     for (var i = 0; i < 4; i++) {
-        canvas.drawCircle(Offset(roadX + roadWidth + 5 + i * 4, y), 0.4, paint);
+      canvas.drawCircle(
+        Offset(roadX + roadWidth + 5 + i * 4, y),
+        highlightRight ? 1.5 : 0.8,
+        highlightRight ? highlightPaint : paint,
+      );
     }
   }
 
@@ -1212,7 +1318,8 @@ class _CompleteMapPainter extends CustomPainter {
       ..color = const Color(0xFF3A3A3A)
       ..style = PaintingStyle.fill;
     final bookedPaint = Paint()
-      ..color = const Color(0xFF777777) // Darker gray for booked
+      ..color =
+          const Color(0xFF777777) // Darker gray for booked
       ..style = PaintingStyle.fill;
     final selectedPaint = Paint()
       ..color = const Color(0xFFE30613)
