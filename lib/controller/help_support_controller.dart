@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
+import 'base_client.dart';
 import '../config/api_constants.dart';
 
 class HelpSupportController extends GetxController {
-  final Dio dio = Dio();
+  final Dio dio = BaseClient.dio;
   final box = GetStorage();
 
   var isLoading = false.obs;
@@ -50,13 +52,16 @@ class HelpSupportController extends GetxController {
         supportEmail.value = supportData['support_email'] ?? "";
         supportPhone.value = supportData['support_phone'] ?? "";
       } else {
-        Get.snackbar("Error", data['message'] ?? "Failed to fetch support details");
+        Get.snackbar(
+          "Error", 
+          data['message'] ?? "Failed to fetch support details",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } on DioException catch (e) {
-      if (kDebugMode) {
-        print('DioException in fetchSupportDetails: ${e.message}');
-      }
-      Get.snackbar("Error", "Failed to connect to server");
+      BaseClient.handleDioError(e);
     } catch (e) {
       if (kDebugMode) {
         print('Exception in fetchSupportDetails: $e');

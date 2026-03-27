@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 import '../config/api_constants.dart';
+import 'base_client.dart';
 
 class BookParkingController extends GetxController {
   bool isLoadingVehicles = false;
@@ -41,7 +42,7 @@ class BookParkingController extends GetxController {
     if (!isClosed) update();
 
     try {
-      final dio = Dio();
+      final dio = BaseClient.dio;
       final storage = GetStorage();
       final token = storage.read('token');
 
@@ -73,8 +74,10 @@ class BookParkingController extends GetxController {
           }
         }
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
       debugPrint('Error fetching vehicles: $e');
+    } catch (e) {
     } finally {
       isLoadingVehicles = false;
       if (!isClosed) update();
@@ -99,7 +102,7 @@ class BookParkingController extends GetxController {
     if (!isClosed) update();
 
     try {
-      final dio = Dio();
+      final dio = BaseClient.dio;
       final storage = GetStorage();
       final token = storage.read('token');
 
@@ -140,8 +143,10 @@ class BookParkingController extends GetxController {
           selectedParkingType = dynamicParkingTypes.first['name'] ?? '';
         }
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
       debugPrint('Error fetching parking types: $e');
+    } catch (e) {
     } finally {
       isLoadingParkingTypes = false;
       if (!isClosed) update();
@@ -183,7 +188,7 @@ class BookParkingController extends GetxController {
     if (!isClosed) update();
 
     try {
-      final dio = Dio();
+      final dio = BaseClient.dio;
       final storage = GetStorage();
       final token = storage.read('token');
 
@@ -227,8 +232,10 @@ class BookParkingController extends GetxController {
           selectedMembership = membershipPackages.first['title']!;
         }
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
       debugPrint('Error fetching memberships for book parking: $e');
+    } catch (e) {
     } finally {
       isLoadingMemberships = false;
       if (!isClosed) update();
@@ -243,7 +250,7 @@ class BookParkingController extends GetxController {
     if (!isClosed) update();
 
     try {
-      final dio = Dio();
+      final dio = BaseClient.dio;
       final storage = GetStorage();
       final token = storage.read('token');
 
@@ -295,8 +302,10 @@ class BookParkingController extends GetxController {
           });
         }
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
       debugPrint('Error fetching services for book parking: $e');
+    } catch (e) {
     } finally {
       isLoadingServices = false;
       if (!isClosed) update();
@@ -494,7 +503,7 @@ class BookParkingController extends GetxController {
 
     // Step 1: Call parking/book API
     try {
-      final dio = Dio();
+      final dio = BaseClient.dio;
       final storage = GetStorage();
       final token = storage.read('token');
       final headers = {
@@ -550,8 +559,10 @@ class BookParkingController extends GetxController {
           lastBookingTotal = bookingTotal;
         }
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
       debugPrint('Error calling parking/book: $e');
+    } catch (e) {
       // Don't block navigation — still proceed to payment
     } finally {
       isBooking = false;
@@ -560,7 +571,7 @@ class BookParkingController extends GetxController {
 
     // Step 2: Fetch payment/summary and navigate to PaymentView
     try {
-      final dio = Dio();
+      final dio = BaseClient.dio;
       final storage = GetStorage();
       final token = storage.read('token');
       final headers = {
@@ -628,9 +639,11 @@ class BookParkingController extends GetxController {
       } else {
         _navigateToDefaultPayment(bookingId: bookingId);
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      BaseClient.handleDioError(e);
       debugPrint('Error fetching payment summary: $e');
       _navigateToDefaultPayment(bookingId: bookingId);
+    } catch (e) {
     }
   }
 
