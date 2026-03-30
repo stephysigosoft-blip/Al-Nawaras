@@ -106,6 +106,9 @@ class ProfileController extends GetxController {
           profileImageBytes.value = null;
         }
 
+        // Persist profile image so other controllers (e.g. ChatController) can read it
+        box.write('profile_image', img ?? '');
+
         // Prefill fields
         if (!isClosed) {
           nameController.text = profile.value?.name ?? "";
