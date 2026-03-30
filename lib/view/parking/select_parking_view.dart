@@ -59,7 +59,8 @@ class _SelectParkingViewState extends State<SelectParkingView> {
   final double canvasHeight = 900.0;
 
   late final List<_SlotRowConfig> _slotRows;
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
 
   @override
   void initState() {
@@ -143,20 +144,25 @@ class _SelectParkingViewState extends State<SelectParkingView> {
 
   void _applyGloballyConfirmedSlots() {
     final storage = GetStorage();
-    final List<dynamic>? globalConfirmed = storage.read('user_confirmed_parking_slots');
+    final List<dynamic>? globalConfirmed = storage.read(
+      'user_confirmed_parking_slots',
+    );
     if (globalConfirmed != null) {
       for (var code in globalConfirmed) {
         if (!bookedSlots.contains(code.toString())) {
           bookedSlots.add(code.toString());
         }
       }
-      debugPrint('Applied ${globalConfirmed.length} globally confirmed slots into bookedSlots.');
+      debugPrint(
+        'Applied ${globalConfirmed.length} globally confirmed slots into bookedSlots.',
+      );
     }
   }
 
   void _saveConfirmedSlotGlobally(String code) {
     final storage = GetStorage();
-    List<dynamic> globalConfirmed = storage.read('user_confirmed_parking_slots') ?? [];
+    List<dynamic> globalConfirmed =
+        storage.read('user_confirmed_parking_slots') ?? [];
     if (!globalConfirmed.contains(code)) {
       globalConfirmed.add(code);
       storage.write('user_confirmed_parking_slots', globalConfirmed);
@@ -657,9 +663,11 @@ class _SelectParkingViewState extends State<SelectParkingView> {
               ? data['slot_number'].toString()
               : requestBody['slot_number'].toString();
 
-          final confirmedInternalCode = selectedSlotCode; 
+          final confirmedInternalCode = selectedSlotCode;
           await _fetchSlotDetails(confirmedSlot, headers, dio);
-          _saveConfirmedSlotGlobally(confirmedInternalCode); // Use the captured code to ensure it stays Light Grey
+          _saveConfirmedSlotGlobally(
+            confirmedInternalCode,
+          ); // Use the captured code to ensure it stays Light Grey
 
           if (mounted) {
             _showCustomSnackBar(
@@ -952,7 +960,10 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         _buildLegendItem(const Color(0xFF000000), S.of(context).available),
         _buildLegendItem(const Color(0xFFCDCDCD), S.of(context).booked),
         _buildLegendItem(const Color(0xFFE30613), S.of(context).selected),
-        _buildLegendItem(const Color(0xFF2E2E2E), S.of(context).shaded),
+        _buildLegendItem(
+          const Color.fromARGB(255, 165, 164, 164),
+          S.of(context).shaded,
+        ),
       ],
     );
   }
@@ -1290,7 +1301,8 @@ class _CompleteMapPainter extends CustomPainter {
       final entryY = 65 + height - 20;
 
       final pathPaint = Paint()
-        ..color = Color(0xFF00FF00) // Highlight Color
+        ..color =
+            Color(0xFF00FF00) // Highlight Color
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5;
 
@@ -1327,7 +1339,8 @@ class _CompleteMapPainter extends CustomPainter {
     bool highlightRight = false,
   }) {
     final highlightPaint = Paint()
-      ..color = Color(0xFF00FF00) // Highlight color
+      ..color =
+          Color(0xFF00FF00) // Highlight color
       ..style = PaintingStyle.fill;
 
     // Left side (Section 1)
@@ -1392,7 +1405,7 @@ class _CompleteMapPainter extends CustomPainter {
       ..color = const Color(0xFFE30613)
       ..style = PaintingStyle.fill;
     final shadedPaint = Paint()
-      ..color = const Color(0xFF2E2E2E)
+      ..color = const Color.fromARGB(255, 165, 164, 164)
       ..style = PaintingStyle.fill;
     final strokePaint = Paint()
       ..color = Colors.white24
