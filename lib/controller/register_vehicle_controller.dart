@@ -104,13 +104,12 @@ class RegisterVehicleController extends GetxController {
     } else if (lower.contains('truck')) {
       return 'lib/assets/images/food truck.png';
     } else if (lower.contains('boat')) {
-      return 'lib/assets/images/Boat.png';
+      return 'lib/assets/images/boat.png';
     } else if (lower.contains('trolly')) {
-      return 'lib/assets/images/Trolly.png';
+      return 'lib/assets/images/trolly.png';
     }
     return 'lib/assets/images/caravan.png'; // Default fallback
   }
-
 
   void setVehicleType(String type) {
     selectedVehicleType = type;
@@ -261,7 +260,7 @@ class RegisterVehicleController extends GetxController {
     if (match.isNotEmpty && match.containsKey('id')) {
       return match['id'] as int;
     }
-    
+
     // Fallback if not found
     final lower = type.toLowerCase();
     if (lower.contains('jetski') || lower.contains('jet ski')) return 9;

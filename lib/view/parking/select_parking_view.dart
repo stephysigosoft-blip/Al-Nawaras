@@ -59,6 +59,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
   final double canvasHeight = 900.0;
 
   late final List<_SlotRowConfig> _slotRows;
+  final TransformationController _transformationController = TransformationController();
 
   @override
   void initState() {
@@ -128,6 +129,8 @@ class _SelectParkingViewState extends State<SelectParkingView> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadSavedSlot();
+      _applyGloballyConfirmedSlots();
       if (widget.isDirectionMode) {
         _lookupVehicle();
         _fetchDynamicParkingDetails();
@@ -135,6 +138,60 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         _fetchVehicleTypes();
         _fetchParkingHistory();
       }
+    });
+  }
+
+  void _applyGloballyConfirmedSlots() {
+    final storage = GetStorage();
+    final List<dynamic>? globalConfirmed = storage.read('user_confirmed_parking_slots');
+    if (globalConfirmed != null) {
+      for (var code in globalConfirmed) {
+        if (!bookedSlots.contains(code.toString())) {
+          bookedSlots.add(code.toString());
+        }
+      }
+      debugPrint('Applied ${globalConfirmed.length} globally confirmed slots into bookedSlots.');
+    }
+  }
+
+  void _saveConfirmedSlotGlobally(String code) {
+    final storage = GetStorage();
+    List<dynamic> globalConfirmed = storage.read('user_confirmed_parking_slots') ?? [];
+    if (!globalConfirmed.contains(code)) {
+      globalConfirmed.add(code);
+      storage.write('user_confirmed_parking_slots', globalConfirmed);
+      debugPrint('Saved slot $code to globally confirmed list.');
+    }
+  }
+
+  void _loadSavedSlot() {
+    final storage = GetStorage();
+    final key = 'selected_parking_slot_${widget.bookingId ?? "none"}';
+    final saved = storage.read(key);
+    debugPrint('Loading saved slot from key: $key - Success: ${saved != null}');
+    if (saved != null && saved is Map) {
+      setState(() {
+        selectedSlotCode = saved['code'] ?? "";
+        selectedSlotNumber = saved['number'] ?? "";
+        selectedLocationCode = saved['locationCode'] ?? "";
+        selectedLocation = saved['location'] ?? "";
+        selectedLocationType = saved['locationType'] ?? "";
+        selectedSlotSize = saved['size'] ?? "";
+      });
+    }
+  }
+
+  void _saveSelectedSlot() {
+    final storage = GetStorage();
+    final key = 'selected_parking_slot_${widget.bookingId ?? "none"}';
+    debugPrint('Saving selected slot to key: $key - $selectedSlotCode');
+    storage.write(key, {
+      'code': selectedSlotCode,
+      'number': selectedSlotNumber,
+      'locationCode': selectedLocationCode,
+      'location': selectedLocation,
+      'locationType': selectedLocationType,
+      'size': selectedSlotSize,
     });
   }
 
@@ -287,7 +344,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       // If we reach here in direction mode, it means no valid booking was found
       if (mounted && widget.isDirectionMode) {
         setState(() {
-          selectedSlotCode = "";
+          // Do not clear selectedSlotCode here to preserve local selection/persistence
           selectedSlotNumber = "N/A";
         });
       }
@@ -351,6 +408,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
                   }
                 }
               }
+              _applyGloballyConfirmedSlots(); // Re-apply local ones after API fetch
             });
           }
         }
@@ -417,11 +475,15 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         final data = slotResponse.data['data'];
         if (mounted && data != null) {
           setState(() {
+            // Do not overwrite selectedSlotCode with a computed value from a display string
+            // as the internal map code (prefix_S1/S2-number) is the source of truth.
+            /*
             final prefix = _getPrefixFromSlotNumber(slotNumber);
             final num = _getNumberFromSlotNumber(slotNumber);
             if (prefix.isNotEmpty && num.isNotEmpty) {
               selectedSlotCode = "$prefix-$num";
             }
+            */
 
             selectedLocation =
                 data['location_name']?.toString() ??
@@ -494,6 +556,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       );
       selectedSlotSize = _getSlotSize(codeString.split('-').first);
     });
+    _saveSelectedSlot();
   }
 
   String _formatSlotCode(String prefix, int index) {
@@ -594,7 +657,9 @@ class _SelectParkingViewState extends State<SelectParkingView> {
               ? data['slot_number'].toString()
               : requestBody['slot_number'].toString();
 
+          final confirmedInternalCode = selectedSlotCode; 
           await _fetchSlotDetails(confirmedSlot, headers, dio);
+          _saveConfirmedSlotGlobally(confirmedInternalCode); // Use the captured code to ensure it stays Light Grey
 
           if (mounted) {
             _showCustomSnackBar(
@@ -668,10 +733,14 @@ class _SelectParkingViewState extends State<SelectParkingView> {
             children: [
               _buildInstructions(),
               Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
+                child: Container(
+                  color: const Color(0xFF1E1E1E), // Dark map background
+                  child: InteractiveViewer(
+                    transformationController: _transformationController,
+                    minScale: 0.1,
+                    maxScale: 6.0,
+                    boundaryMargin: const EdgeInsets.all(double.infinity),
+                    constrained: false,
                     child: GestureDetector(
                       onTapDown: (details) =>
                           _handleCanvasTap(details.localPosition),
@@ -681,7 +750,6 @@ class _SelectParkingViewState extends State<SelectParkingView> {
                         color: const Color(0xFF242424),
                         child: Stack(
                           children: [
-                            // Single Layer: Full CustomPaint layout covering road connects AND overlaps interactively
                             Positioned.fill(
                               child: CustomPaint(
                                 painter: _CompleteMapPainter(
@@ -881,10 +949,10 @@ class _SelectParkingViewState extends State<SelectParkingView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildLegendItem(const Color(0xFF2E2E2E), S.of(context).available),
+        _buildLegendItem(const Color(0xFF000000), S.of(context).available),
         _buildLegendItem(const Color(0xFFCDCDCD), S.of(context).booked),
         _buildLegendItem(const Color(0xFFE30613), S.of(context).selected),
-        _buildLegendItem(const Color(0xFF7B846D), S.of(context).shaded),
+        _buildLegendItem(const Color(0xFF2E2E2E), S.of(context).shaded),
       ],
     );
   }
@@ -1315,17 +1383,16 @@ class _CompleteMapPainter extends CustomPainter {
     required String prefix,
   }) {
     final availablePaint = Paint()
-      ..color = const Color(0xFF3A3A3A)
+      ..color = const Color(0xFF000000)
       ..style = PaintingStyle.fill;
     final bookedPaint = Paint()
-      ..color =
-          const Color(0xFF777777) // Darker gray for booked
+      ..color = const Color(0xFFCDCDCD)
       ..style = PaintingStyle.fill;
     final selectedPaint = Paint()
       ..color = const Color(0xFFE30613)
       ..style = PaintingStyle.fill;
     final shadedPaint = Paint()
-      ..color = const Color(0xFF7B846D).withOpacity(0.35)
+      ..color = const Color(0xFF2E2E2E)
       ..style = PaintingStyle.fill;
     final strokePaint = Paint()
       ..color = Colors.white24
@@ -1381,7 +1448,7 @@ class _CompleteMapPainter extends CustomPainter {
         text: TextSpan(
           text: (i + 1).toString().padLeft(2, '0'),
           style: TextStyle(
-            color: isBooked || isSelected ? Colors.black87 : Colors.white70,
+            color: isBooked ? Colors.black : Colors.white70,
             fontSize: 9.2,
             fontWeight: FontWeight.bold,
           ),
