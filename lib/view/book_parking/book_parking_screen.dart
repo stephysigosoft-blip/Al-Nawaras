@@ -512,7 +512,7 @@ class BookParkingScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text(
+                  Text(
                     S.of(context).startTime,
                     style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
