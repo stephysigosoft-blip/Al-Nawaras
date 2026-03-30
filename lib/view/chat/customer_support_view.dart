@@ -1,78 +1,128 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../controller/customer_support_controller.dart';
 
 class CustomerSupportView extends StatelessWidget {
   const CustomerSupportView({super.key});
 
+  // ============================================================
+  // 🔹 TIME FORMATTER
+  // ============================================================
+  String _formatTime(String? rawTime) {
+    if (rawTime == null || rawTime.isEmpty) return '';
+    try {
+      String t = rawTime.trim();
+      // If the backend returns "2026-03-30 08:34:23" (without T or Z)
+      if (!t.toUpperCase().endsWith('Z') && !t.contains('T')) {
+        t = '${t.replaceAll(' ', 'T')}Z';
+      }
+      // If it contains T but no offset (like "2026-03-30T08:34:23")
+      else if (!t.toUpperCase().endsWith('Z') &&
+          t.contains('T') &&
+          !t.contains('+') &&
+          (!t.split('T')[1].contains('-'))) {
+        t = '${t}Z';
+      }
+
+      final dt = DateTime.parse(t).toLocal();
+      final h = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+      final m = dt.minute.toString().padLeft(2, '0');
+      final period = dt.hour >= 12 ? 'PM' : 'AM';
+      return '$h:$m $period';
+    } catch (_) {
+      return rawTime;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ChatController>(
-      init: ChatController(),
+      init: Get.isRegistered<ChatController>()
+          ? Get.find<ChatController>()
+          : ChatController(),
       builder: (controller) {
+        // Clear unread badge whenever the chat screen is open
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          controller.markAllRead();
+        });
+
         return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        backgroundColor: Colors.red[800],
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          '24/7 Customer Support',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+          backgroundColor: Colors.grey[100],
+          appBar: AppBar(
+            backgroundColor: Colors.red[800],
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: const Text(
+              '24/7 Customer Support',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            centerTitle: false,
           ),
-        ),
-        centerTitle: false,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoading.value && controller.messages.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return NotificationListener<ScrollNotification>(
-                onNotification: (ScrollNotification scrollInfo) {
-                  if (scrollInfo.metrics.pixels ==
-                      scrollInfo.metrics.maxScrollExtent) {
-                    controller.loadMoreMessages();
+          body: Column(
+            children: [
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoading.value &&
+                      controller.messages.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
                   }
-                  return true;
-                },
-                child: ListView.builder(
-                  reverse: true, // Bottom to top scroll behavior
-                  padding: const EdgeInsets.all(16),
-                  itemCount: controller.messages.length +
-                      (controller.isFetchingMore.value ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == controller.messages.length) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      );
-                    }
-                    final msg = controller.messages[index];
-                    return _buildMessageItem(
-                      text: msg['text'] ?? '',
-                      isMe: msg['isMe'] ?? false,
-                      sender: msg['sender'] ?? '',
-                    );
-                  },
-                ),
-              );
-            }),
+                  return NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      if (scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent) {
+                        controller.loadMoreMessages();
+                      }
+                      return true;
+                    },
+                    child: ListView.builder(
+                      reverse: true, // Bottom to top scroll behavior
+                      padding: const EdgeInsets.all(16),
+                      itemCount:
+                          controller.messages.length +
+                          (controller.isFetchingMore.value ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == controller.messages.length) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        }
+                        final msg = controller.messages[index];
+                        return _buildMessageItem(
+                          text: msg['text'] ?? '',
+                          isMe: msg['isMe'] ?? false,
+                          sender: msg['sender'] ?? '',
+                          time: _formatTime(msg['time'] as String?),
+                          image: msg['image'] as String?,
+                          userProfileImageBytes:
+                              controller.userProfileImageBytes,
+                          userProfileImageUrl: controller.userProfileImage,
+                        );
+                      },
+                    ),
+                  );
+                }),
+              ),
+              _buildBottomInput(controller),
+            ],
           ),
-          _buildBottomInput(controller),
-        ],
-      ),
-    );
+        );
       },
     );
   }
@@ -81,16 +131,36 @@ class CustomerSupportView extends StatelessWidget {
     required String text,
     required bool isMe,
     required String sender,
+    required String time,
+    String? image,
+    Uint8List? userProfileImageBytes,
+    String? userProfileImageUrl,
   }) {
+    // ── Avatar ──────────────────────────────────────────────
     final avatar = isMe
         ? Container(
             padding: const EdgeInsets.all(3),
-            decoration: BoxDecoration(shape: BoxShape.circle),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.transparent,
-              backgroundImage: AssetImage("lib/assets/images/chatbot2.png"),
-            ),
+            decoration: const BoxDecoration(shape: BoxShape.circle),
+            child: userProfileImageBytes != null
+                ? CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: MemoryImage(userProfileImageBytes),
+                  )
+                : (userProfileImageUrl != null &&
+                      userProfileImageUrl.startsWith('http'))
+                ? CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: NetworkImage(userProfileImageUrl),
+                  )
+                : const CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: AssetImage(
+                      "lib/assets/images/chatbot2.png",
+                    ),
+                  ),
           )
         : Container(
             padding: const EdgeInsets.all(2),
@@ -140,27 +210,65 @@ class CustomerSupportView extends StatelessWidget {
             const SizedBox(width: 12),
           ],
           Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: bubbleBg,
-                borderRadius: bubbleRadius,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 5,
-                    offset: const Offset(0, 2),
+            child: Column(
+              crossAxisAlignment: isMe
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: bubbleBg,
+                    borderRadius: bubbleRadius,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: isMe
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
+                    children: [
+                      if (image != null && image.isNotEmpty) ...[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: image.startsWith('http')
+                              ? Image.network(
+                                  image,
+                                  width: 200,
+                                  fit: BoxFit.cover,
+                                )
+                              : _buildBase64Image(image),
+                        ),
+                        if (text.isNotEmpty) const SizedBox(height: 8),
+                      ],
+                      if (text.isNotEmpty)
+                        Text(
+                          text,
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 14,
+                            height: 1.4,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                if (time.isNotEmpty) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    time,
+                    style: TextStyle(color: Colors.grey[400], fontSize: 10),
                   ),
                 ],
-              ),
-              child: Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.black87,
-                  fontSize: 14,
-                  height: 1.4,
-                ),
-              ),
+              ],
             ),
           ),
           if (isMe) ...[
@@ -181,9 +289,60 @@ class CustomerSupportView extends StatelessWidget {
     );
   }
 
+  Widget _buildBase64Image(String base64Str) {
+    try {
+      return Image.memory(
+        base64Decode(base64Str),
+        width: 200,
+        fit: BoxFit.cover,
+      );
+    } catch (_) {
+      return const SizedBox.shrink();
+    }
+  }
+
+  void _showPicker(BuildContext context, ChatController controller) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: Colors.black54),
+                title: const Text('Take a Photo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  controller.pickAndSendImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: Colors.black54),
+                title: const Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  controller.pickAndSendImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildBottomInput(ChatController controller) {
     return Container(
-      padding: const EdgeInsetsDirectional.only(start: 16, end: 16, bottom: 24, top: 12),
+      padding: const EdgeInsetsDirectional.only(
+        start: 16,
+        end: 16,
+        bottom: 24,
+        top: 12,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -215,10 +374,13 @@ class CustomerSupportView extends StatelessWidget {
                     horizontal: 16,
                     vertical: 12,
                   ),
-                  suffixIcon: Icon(
-                    Icons.image_outlined,
-                    color: Colors.grey[500],
-                    size: 22,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      Icons.image_outlined,
+                      color: Colors.grey[500],
+                      size: 22,
+                    ),
+                    onPressed: () => _showPicker(Get.context!, controller),
                   ),
                 ),
                 onSubmitted: (_) => controller.sendMessage(),
