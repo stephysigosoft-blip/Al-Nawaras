@@ -71,8 +71,9 @@ class HomeController extends GetxController {
     // Also check if any of the list items match (if it's a list section)
     if (sectionName == 'vehicles' && filteredVehicles.isNotEmpty) return true;
     if (sectionName == 'activity' && filteredActivities.isNotEmpty) return true;
-    if (sectionName == 'locations' && searchLocationsResults.isNotEmpty)
+    if (sectionName == 'locations' && searchLocationsResults.isNotEmpty) {
       return true;
+    }
 
     return false;
   }

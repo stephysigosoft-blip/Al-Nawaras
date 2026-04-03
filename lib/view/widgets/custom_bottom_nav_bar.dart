@@ -20,7 +20,7 @@ class CustomBottomNavBar extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
 
     return Container(
-      height: height * 0.08,
+      height: kBottomNavigationBarHeight + MediaQuery.paddingOf(context).bottom,
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -51,6 +51,7 @@ class CustomBottomNavBar extends StatelessWidget {
       onTap: () => onTap(index),
       behavior: HitTestBehavior.opaque,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(

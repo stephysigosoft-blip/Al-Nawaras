@@ -36,6 +36,8 @@ class ApiConstants {
   static const String confirmLocation = '${baseUrl}parking/confirm_location';
   static const String parkingBook = '${baseUrl}parking/book';
   static const String parkingTypes = '${baseUrl}parking/types';
+  static const String availableSummary = '${baseUrl}parking/available_summary';
+  static const String checkAvailability = '${baseUrl}parking/check_availability';
 
   // Memberships
   static const String memberships = '${baseUrl}memberships';

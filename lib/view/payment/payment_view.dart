@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../config/api_constants.dart';
 import '../../generated/l10n.dart';
+import '../../controller/base_client.dart';
 import '../widgets/payment_summary_card.dart';
 import '../widgets/payment_method_item.dart';
 import '../widgets/credit_card_form.dart';
@@ -257,24 +258,23 @@ class _PaymentViewState extends State<PaymentView> {
             height: 48,
             child: ElevatedButton(
               onPressed: () async {
-                // Call payment/confirm using the real booking_id (or fallback to 1)
                 try {
-                  final dio = Dio();
                   final storage = GetStorage();
                   final token = storage.read('token');
-                  
+
                   final headers = {
                     if (token != null) 'Authorization': 'Bearer $token',
                     'Accept': 'application/json',
+                    'Content-Type': 'application/json',
                   };
 
                   // Parse numerical value from totalStr or amount
-                  String priceStr = totalStr.replaceAll(RegExp(r'[^0-9.]'), '');
-                  double numericAmount = double.tryParse(priceStr) ?? 500.0;
+                  String priceDigits = totalStr.replaceAll(RegExp(r'[^0-9.]'), '');
+                  double numericAmount = double.tryParse(priceDigits) ?? 0.0;
 
                   final Map<String, dynamic> requestBody = {
-                    "booking_id": widget.bookingId ?? 1,
-                    "amount": numericAmount,
+                    "booking_id": widget.bookingId.toString(),
+                    "amount": numericAmount.toStringAsFixed(2),
                     "payment_gateway": "stripe",
                     "payment_reference": "gateway_payment_reference"
                   };
@@ -283,7 +283,8 @@ class _PaymentViewState extends State<PaymentView> {
                   debugPrint('URL: ${ApiConstants.paymentConfirm}');
                   debugPrint('Body: $requestBody');
 
-                  final response = await dio.post(
+                  // Using BaseClient's Dio but forcing Form-URL-Encoded as per server expectation
+                  final response = await BaseClient.dio.post(
                     ApiConstants.paymentConfirm,
                     data: requestBody,
                     options: Options(
@@ -296,7 +297,11 @@ class _PaymentViewState extends State<PaymentView> {
                   debugPrint('Status Code: ${response.statusCode}');
                   debugPrint('Response Data: ${response.data}');
 
-                  if (response.statusCode == 200 && response.data != null && response.data['status'] == true) {
+                  if ((response.statusCode == 200 || response.statusCode == 201) &&
+                      response.data != null &&
+                      (response.data['status'] == true ||
+                          response.data['status'] == 200 ||
+                          response.data['status'] == "success")) {
                     if (mounted) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -314,22 +319,28 @@ class _PaymentViewState extends State<PaymentView> {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(response.data['message'] ?? 'Payment confirmation failed.'),
+                          content: Text(response.data['message'] ??
+                              'Payment confirmation failed.'),
                           backgroundColor: const Color(0xFFE30613),
                         ),
                       );
                     }
                   }
-                } catch (e) {
+                } on DioException catch (e) {
                   debugPrint('Error confirming payment: $e');
+                  if (e.response != null) {
+                    debugPrint('Error Response Body: ${e.response?.data}');
+                  }
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(S.of(context).errorServer),
-                        backgroundColor: Color(0xFFE30613),
+                        backgroundColor: const Color(0xFFE30613),
                       ),
                     );
                   }
+                } catch (e) {
+                  debugPrint('Unexpected error: $e');
                 }
               },
               style: ElevatedButton.styleFrom(

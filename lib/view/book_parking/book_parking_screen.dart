@@ -54,7 +54,7 @@ class BookParkingScreen extends StatelessWidget {
                               height,
                             ),
                             SizedBox(height: height * 0.035),
-                            _buildLabel(S.of(context).membershipPackage),
+                            _buildLabel("Membership Package"),
                             _buildMembershipList(
                               context,
                               controller,
@@ -69,10 +69,45 @@ class BookParkingScreen extends StatelessWidget {
                               height,
                             ),
                             SizedBox(height: height * 0.035),
+                            _buildLabel("Available Slot Types"),
+                            _buildAvailableSummaryList(
+                              context,
+                              controller,
+                              width,
+                              height,
+                            ),
+                            if (controller.selectedSlotId != null) ...[
+                              SizedBox(height: height * 0.02),
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.green),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.check_circle,
+                                        color: Colors.green, size: 20),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        "Selected Slot: ${controller.selectedSlotName}",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            SizedBox(height: height * 0.035),
                             _buildLabel(S.of(context).addonServicesOptional),
                             _buildAddonList(context, controller, width, height),
                             SizedBox(height: height * 0.05),
-                          ],
+                          ], 
                         ),
                       ),
                     ),
@@ -360,15 +395,15 @@ class BookParkingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMembershipList(
+  Widget _buildAvailableSummaryList(
     BuildContext context,
     BookParkingController controller,
     double width,
     double height,
   ) {
-    if (controller.isLoadingMemberships) {
+    if (controller.isLoadingSummary) {
       return Container(
-        height: 80,
+        height: 100,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -379,7 +414,7 @@ class BookParkingScreen extends StatelessWidget {
       );
     }
 
-    if (controller.membershipPackages.isEmpty) {
+    if (controller.availableSummaryList.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -388,8 +423,11 @@ class BookParkingScreen extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            S.of(context).noDataAvailable,
+            controller.dateController.text.isEmpty
+                ? "Please select date and time first"
+                : "No slot types available for selected time",
             style: const TextStyle(color: Colors.black45),
+            textAlign: TextAlign.center,
           ),
         ),
       );
@@ -401,67 +439,99 @@ class BookParkingScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
-        children: controller.membershipPackages.map((pkg) {
-          final isSelected = controller.selectedMembership == pkg['title'];
-          return GestureDetector(
-            onTap: () => controller.setMembership(pkg['title']!),
-            child: Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.black.withValues(alpha: 0.05),
+        children: controller.availableSummaryList
+            .where((st) {
+              final selectedTypeLower = controller.selectedParkingType.toLowerCase();
+              final mappedId = controller.locationIdMap[selectedTypeLower];
+              // Primary Case: Location ID matches mapped ID
+              if (mappedId != null && st['location_id'] == mappedId) return true;
+              // Fallback: If mapping is missing or broken, show everything to avoid stuck UI
+              if (mappedId == null) return true;
+              return false;
+            })
+            .map((st) {
+          final isSelected = controller.selectedSlotTypeId == st['slot_type_id'];
+          final isAvailable = (st['available_count'] ?? 0) > 0;
+
+          return InkWell(
+            onTap: isAvailable
+                ? () => controller.checkSlotAvailability(
+                    st['slot_type_id'], st['slot_type_name'], st['location_id'])
+                : null,
+            child: Opacity(
+              opacity: isAvailable ? 1.0 : 0.5,
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.black.withValues(alpha: 0.05),
+                    ),
                   ),
                 ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    height: 18,
-                    width: 18,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isSelected
-                            ? const Color(0xFF00B2FF)
-                            : Colors.black12,
+                child: Row(
+                  children: [
+                    Container(
+                      height: 18,
+                      width: 18,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected
+                              ? const Color(0xFF00B2FF)
+                              : Colors.black12,
+                        ),
+                      ),
+                      child: isSelected
+                          ? Center(
+                              child: Container(
+                                height: 10,
+                                width: 10,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(0xFF00B2FF),
+                                ),
+                              ),
+                            )
+                          : null,
+                    ),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            st['slot_type_name'] ?? 'Slot Type',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            "Available: ${st['available_count'] ?? 0}",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isAvailable ? Colors.green : Colors.red,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: isSelected
-                        ? Center(
-                            child: Container(
-                              height: 10,
-                              width: 10,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFF00B2FF),
-                              ),
-                            ),
-                          )
-                        : null,
-                  ),
-                  const SizedBox(width: 15),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        pkg['title']!,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        pkg['price']!,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.black38,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    if (controller.isLoadingAvailability && isSelected)
+                      const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child:
+                            CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF00B2FF)),
+                      )
+                    else
+                      const Icon(Icons.arrow_forward_ios,
+                          size: 14, color: Colors.black26),
+                  ],
+                ),
               ),
             ),
           );
@@ -476,6 +546,7 @@ class BookParkingScreen extends StatelessWidget {
     double width,
     double height,
   ) {
+    final isFixedPlan = !controller.selectedMembership.toLowerCase().contains('hourly');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -536,13 +607,17 @@ class BookParkingScreen extends StatelessWidget {
                 children: [
                   Text(
                     'End Date', // hardcoded for now, will fix l10n
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 12, 
+                      color: isFixedPlan ? Colors.black26 : Colors.black54,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   _buildDateField(
                     'dd/mm/yyyy',
                     controller.endDateController,
-                    () => controller.selectEndDate(context),
+                    isFixedPlan ? null : () => controller.selectEndDate(context),
+                    isReadOnly: isFixedPlan,
                   ),
                 ],
               ),
@@ -554,13 +629,17 @@ class BookParkingScreen extends StatelessWidget {
                 children: [
                   Text(
                     'End Time', // hardcoded for now, will fix l10n
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 12, 
+                      color: isFixedPlan ? Colors.black26 : Colors.black54,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   _buildDateField(
                     '--- -- --',
                     controller.endTimeController,
-                    () => controller.selectEndTime(context),
+                    isFixedPlan ? null : () => controller.selectEndTime(context),
+                    isReadOnly: isFixedPlan,
                   ),
                 ],
               ),
@@ -574,27 +653,38 @@ class BookParkingScreen extends StatelessWidget {
   Widget _buildDateField(
     String hint,
     TextEditingController controller,
-    VoidCallback onTap,
-  ) {
+    VoidCallback? onTap, {
+    bool isReadOnly = false,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 45,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isReadOnly ? Colors.grey[100] : Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
+          border: Border.all(
+            color: isReadOnly 
+                ? Colors.black.withValues(alpha: 0.03)
+                : Colors.black.withValues(alpha: 0.08),
+          ),
         ),
         child: TextField(
           controller: controller,
           enabled: false, // Prevents keyboard and ensures onTap works
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(color: Colors.black26, fontSize: 13),
+            hintStyle: TextStyle(
+              color: isReadOnly ? Colors.black12 : Colors.black26, 
+              fontSize: 13,
+            ),
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(horizontal: 15),
           ),
-          style: const TextStyle(fontSize: 13, color: Colors.black87),
+          style: TextStyle(
+            fontSize: 13, 
+            color: isReadOnly ? Colors.black38 : Colors.black87,
+          ),
         ),
       ),
     );
@@ -700,6 +790,126 @@ class BookParkingScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildMembershipList(
+    BuildContext context,
+    BookParkingController controller,
+    double width,
+    double height,
+  ) {
+    if (controller.isLoadingMemberships) {
+      return Container(
+        height: 100,
+        alignment: Alignment.center,
+        child: const CircularProgressIndicator(color: Color(0xFFE30613)),
+      );
+    }
+
+    if (controller.membershipPackages.isEmpty) {
+      return Container(
+        height: 80,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Text(
+          "No membership packages available",
+          style: TextStyle(color: Colors.black45, fontSize: 12),
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+      ),
+      child: Column(
+        children: List.generate(controller.membershipPackages.length, (index) {
+          final pkg = controller.membershipPackages[index];
+          final title = pkg['title'] ?? '';
+          final price = pkg['price'] ?? '';
+          final isSelected = controller.selectedMembership == title;
+          final isLast = index == controller.membershipPackages.length - 1;
+
+          return InkWell(
+            onTap: () => controller.setSelectedMembership(title),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                  child: Row(
+                    children: [
+                      // Radio-style indicator
+                      Container(
+                        height: 18,
+                        width: 18,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected
+                                ? const Color(0xFF00B2FF)
+                                : Colors.black.withValues(alpha: 0.3),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: isSelected
+                            ? Center(
+                                child: Container(
+                                  height: 10,
+                                  width: 10,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xFF00B2FF),
+                                  ),
+                                ),
+                              )
+                            : null,
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF001133),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              price,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (!isLast)
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Colors.black.withValues(alpha: 0.05),
+                    indent: 0,
+                    endIndent: 0,
+                  ),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
   Widget _buildBottomAction(
     BuildContext context,
     BookParkingController controller,
@@ -720,25 +930,28 @@ class BookParkingScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  S.of(context).totalAmount,
-                  style: const TextStyle(fontSize: 12, color: Colors.black54),
-                ),
-                SizedBox(height: height * 0.01),
-                Text(
-                  controller.calculatedTotal,
-                  style: TextStyle(
-                    fontSize: 16,
-                    // fontWeight: FontWeight.bold,
-                    color: Colors.black.withValues(alpha: 0.6),
+            if (controller.isCalculatedTotalAvailable)
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    S.of(context).totalAmount,
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
-                ),
-              ],
-            ),
+                  SizedBox(height: height * 0.01),
+                  Text(
+                    controller.calculatedTotal,
+                    style: TextStyle(
+                      fontSize: 16,
+                      // fontWeight: FontWeight.bold,
+                      color: Colors.black.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            if (!controller.isCalculatedTotalAvailable)
+              const Spacer(),
             ElevatedButton(
               onPressed: controller.onNextClick,
               style: ElevatedButton.styleFrom(

@@ -1,0 +1,224 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../controller/book_parking_controller.dart';
+import '../widgets/custom_app_bar.dart';
+
+class SlotSelectionScreen extends GetView<BookParkingController> {
+  const SlotSelectionScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F7F7),
+      appBar: CustomAppBar(
+        title: "Select Your Slot",
+        centerTitle: false,
+        onBackPressed: () => Get.back(),
+      ),
+      body: Column(
+        children: [
+          _buildInfoSection(),
+          Expanded(
+            child: GetBuilder<BookParkingController>(
+              builder: (controller) {
+                if (controller.availableSlotsList.isEmpty) {
+                  return const Center(
+                    child: Text("No slots available for this type."),
+                  );
+                }
+                return GridView.builder(
+                  padding: const EdgeInsets.all(20),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 15,
+                    mainAxisSpacing: 15,
+                    childAspectRatio: 1.2,
+                  ),
+                  itemCount: controller.availableSlotsList.length,
+                  itemBuilder: (context, index) {
+                    final slot = controller.availableSlotsList[index];
+                    final isFree = slot['state'] == 'free';
+                    final isSelected = controller.selectedSlotId == slot['id'];
+
+                    return GestureDetector(
+                      onTap: (isFree && !isSelected)
+                          ? () => controller.selectSlot(slot['id'], slot['name'])
+                          : null,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFFE30613) // Branded Red for your choice
+                              : (isFree
+                                  ? Colors.green.withValues(alpha: 0.1)
+                                  : Colors.grey.withValues(alpha: 0.2)), // Grey for booked
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected
+                                ? const Color(0xFFE30613)
+                                : (isFree ? Colors.green : Colors.grey),
+                            width: isSelected ? 2.5 : 1.5,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              isSelected
+                                  ? Icons.check_circle
+                                  : (isFree ? Icons.door_front_door : Icons.block),
+                              color: isSelected
+                                  ? Colors.white
+                                  : (isFree ? Colors.green : Colors.grey),
+                              size: 24,
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              slot['name'] ?? 'N/A',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: isSelected ? Colors.white : Colors.black87,
+                              ),
+                            ),
+                            Text(
+                              isFree ? "FREE" : "BOOKED",
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w500,
+                                color: isSelected
+                                    ? Colors.white70
+                                    : (isFree ? Colors.green : Colors.grey),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          _buildConfirmButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoSection() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Selected Type: ${controller.selectedSlotTypeName}",
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              _buildLegendItem(Colors.green, "Available"),
+              const SizedBox(width: 20),
+              _buildLegendItem(Colors.grey, "Booked"),
+              const SizedBox(width: 20),
+              _buildLegendItem(const Color(0xFFE30613), "Selected"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegendItem(Color color, String label) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.2),
+            border: Border.all(color: color),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(label, style: const TextStyle(fontSize: 11, color: Colors.black54)),
+      ],
+    );
+  }
+
+  Widget _buildConfirmButton() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, -5),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: GetBuilder<BookParkingController>(
+          builder: (controller) {
+            final hasSelection = controller.selectedSlotId != null;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (controller.isCalculatedTotalAvailable)
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Total Amount",
+                        style: TextStyle(fontSize: 12, color: Colors.black54),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        controller.calculatedTotal,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
+                if (!controller.isCalculatedTotalAvailable)
+                  const Spacer(),
+                ElevatedButton(
+                  onPressed: hasSelection ? () => Get.back() : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE30613),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(160, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 0,
+                    disabledBackgroundColor: Colors.grey.shade300,
+                  ),
+                  child: const Text(
+                    "Confirm",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
