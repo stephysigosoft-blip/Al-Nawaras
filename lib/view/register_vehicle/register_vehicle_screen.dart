@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../generated/l10n.dart';
 import '../../controller/register_vehicle_controller.dart';
 
 class RegisterVehicleScreen extends StatelessWidget {
@@ -21,15 +22,17 @@ class RegisterVehicleScreen extends StatelessWidget {
             backgroundColor: const Color(0xFFE30613),
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_new,
+              icon: Icon(
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.arrow_forward_ios
+                    : Icons.arrow_back_ios_new,
                 color: Colors.white,
                 size: 20,
               ),
               onPressed: () => Get.back(),
             ),
-            title: const Text(
-              'Register Vehicle',
+            title: Text(
+              S.of(context).registerNewVehicle,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -41,9 +44,9 @@ class RegisterVehicleScreen extends StatelessWidget {
                 onPressed: controller.onSkipClick,
                 child: Row(
                   children: [
-                    const Text(
-                      'Skip',
-                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    Text(
+                      S.of(context).skip,
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
                     ),
                     SizedBox(width: width * 0.01),
                     Image.asset(
@@ -67,65 +70,65 @@ class RegisterVehicleScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: height * 0.025),
-                      const Text(
-                        'Please provide your vehicle details',
-                        style: TextStyle(color: Colors.black54, fontSize: 13),
+                      Text(
+                        S.of(context).pleaseProvideVehicleDetails,
+                        style: const TextStyle(color: Colors.black54, fontSize: 13),
                       ),
                       SizedBox(height: height * 0.03),
-                      const Text(
-                        'Select Vehicle Type',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).selectVehicleType,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                           color: Colors.black54,
                         ),
                       ),
                       SizedBox(height: height * 0.015),
-                      _buildVehicleTypeGrid(controller, height, width),
+                      _buildVehicleTypeGrid(context, controller, height, width),
                       SizedBox(height: height * 0.035),
-                      _buildLabel('Vehicle License Number'),
+                      _buildLabel(S.of(context).vehicleLicenseNumber),
                       _buildTextField(
                         controller.licenseController,
-                        'Enter your License Number',
+                        S.of(context).enterLicenseNumber,
                         height,
                         width,
                       ),
                       SizedBox(height: height * 0.02),
-                      _buildLabel('Make'),
+                      _buildLabel(S.of(context).make),
                       _buildTextField(
                         controller.makeController,
-                        'e.g. Yamaha',
+                        S.of(context).makeHint,
                         height,
                         width,
                       ),
                       SizedBox(height: height * 0.02),
-                      _buildLabel('Model'),
+                      _buildLabel(S.of(context).model),
                       _buildTextField(
                         controller.modelController,
-                        'e.g. Caravel',
+                        S.of(context).modelHint,
                         height,
                         width,
                       ),
                       SizedBox(height: height * 0.02),
-                      _buildLabel('Chassis Number'),
+                      _buildLabel(S.of(context).chassisNumber),
                       _buildTextField(
                         controller.chassisController,
-                        'e.g. 1HGCM82633A123456',
+                        S.of(context).chassisHint,
                         height,
                         width,
                       ),
                       SizedBox(height: height * 0.02),
-                      _buildLabel('Year'),
+                      _buildLabel(S.of(context).year),
                       _buildTextField(
                         controller.yearController,
-                        'e.g. 2020',
+                        S.of(context).yearHint,
                         height,
                         width,
                       ),
                       SizedBox(height: height * 0.035),
-                      const Text(
-                        'Vehicle Dimensions',
-                        style: TextStyle(
+                      Text(
+                        S.of(context).vehicleDimensions,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                           color: Colors.black54,
@@ -134,45 +137,45 @@ class RegisterVehicleScreen extends StatelessWidget {
                       SizedBox(height: height * 0.015),
                       _buildTextField(
                         controller.lengthController,
-                        'Length (m)',
+                        S.of(context).lengthM,
                         height,
                         width,
                       ),
                       SizedBox(height: height * 0.012),
                       _buildTextField(
                         controller.widthController,
-                        'Width (m)',
+                        S.of(context).widthM,
                         height,
                         width,
                       ),
                       SizedBox(height: height * 0.012),
                       _buildTextField(
                         controller.heightController,
-                        'Hight (m)',
+                        S.of(context).heightM,
                         height,
                         width,
                       ),
                       SizedBox(height: height * 0.035),
-                      _buildLabel('Comments'),
+                      _buildLabel(S.of(context).comments),
                       _buildTextArea(
                         controller.commentsController,
-                        'Comments',
+                        S.of(context).comments,
                         height,
                         width,
                       ),
                       SizedBox(height: height * 0.035),
-                      _buildLabel('Vehicle Photo'),
+                      _buildLabel(S.of(context).vehiclePhoto),
                       _buildUploadBox(
-                        'Tap to upload vehicle photo',
+                        S.of(context).tapToUploadPhoto,
                         controller.onUploadPhotoClick,
                         height,
                         width,
                         file: controller.vehiclePhoto,
                       ),
                       SizedBox(height: height * 0.035),
-                      _buildLabel('Vehicle Registration Document'),
+                      _buildLabel(S.of(context).vehicleRegistrationDocument),
                       _buildUploadBox(
-                        'Tap to upload registration document',
+                        S.of(context).tapToUploadDocument,
                         controller.onUploadDocClick,
                         height,
                         width,
@@ -180,7 +183,7 @@ class RegisterVehicleScreen extends StatelessWidget {
                       ),
                       SizedBox(height: height * 0.045),
                       _buildButton(
-                        'Register Vehicle',
+                        S.of(context).register,
                         const Color(0xFFE30613),
                         Colors.white,
                         controller.onRegisterClick,
@@ -189,7 +192,7 @@ class RegisterVehicleScreen extends StatelessWidget {
                       ),
                       SizedBox(height: height * 0.015),
                       _buildOutlinedButton(
-                        'Register Later',
+                        S.of(context).registerLater,
                         const Color(0xFFE30613),
                         controller.onRegisterLaterClick,
                         height,
@@ -208,6 +211,7 @@ class RegisterVehicleScreen extends StatelessWidget {
   }
 
   Widget _buildVehicleTypeGrid(
+    BuildContext context,
     RegisterVehicleController controller,
     double height,
     double width,
@@ -222,12 +226,12 @@ class RegisterVehicleScreen extends StatelessWidget {
     }
 
     if (controller.vehicleTypes.isEmpty) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           child: Text(
-            'No vehicle types available',
-            style: TextStyle(color: Colors.black45),
+            S.of(context).noVehicleTypesAvailable,
+            style: const TextStyle(color: Colors.black45),
           ),
         ),
       );

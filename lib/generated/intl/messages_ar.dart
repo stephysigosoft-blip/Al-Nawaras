@@ -22,19 +22,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(prefix) => "منطقة ${prefix}";
 
-  static String m1(number) => "الترخيص: ${number}";
+  static String m1(count) => "المتاح: ${count}";
 
-  static String m2(date) => "عضو منذ ${date}";
+  static String m2(number) => "الترخيص: ${number}";
 
-  static String m3(tab) => "لا توجد مدخلات لعلامة تبويب ${tab}";
+  static String m3(date) => "عضو منذ ${date}";
 
-  static String m4(spot) => "مركون في الموقف ${spot}";
+  static String m4(tab) => "لا توجد مدخلات لعلامة تبويب ${tab}";
 
-  static String m5(amount) => "دفع ${amount}";
+  static String m5(spot) => "مركون في الموقف ${spot}";
 
-  static String m6(count) => "${count} نقطة";
+  static String m6(amount) => "دفع ${amount}";
 
-  static String m7(date) => "صالح حتى: ${date}";
+  static String m7(count) => "${count} نقطة";
+
+  static String m8(slotName) => "الموقف المختار: ${slotName}";
+
+  static String m9(width, length) => "${width}م x ${length}م";
+
+  static String m10(date) => "صالح حتى: ${date}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -64,6 +70,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "areaSuffix": m0,
     "available": MessageLookupByLibrary.simpleMessage("متاح"),
+    "availableCount": m1,
+    "availableSlotTypes": MessageLookupByLibrary.simpleMessage(
+      "أنواع المواقف المتاحة",
+    ),
     "awayFromParking": MessageLookupByLibrary.simpleMessage("بعيد عن الموقف"),
     "boatsParking": MessageLookupByLibrary.simpleMessage("مواقف القوارب"),
     "bookNow": MessageLookupByLibrary.simpleMessage("احجز الآن!"),
@@ -79,6 +89,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
     "caravanParking": MessageLookupByLibrary.simpleMessage("مواقف الكرفانات"),
     "cashOnSite": MessageLookupByLibrary.simpleMessage("نقداً في الموقع"),
+    "chassisHint": MessageLookupByLibrary.simpleMessage(
+      "مثال: 1HGCM82633A123456",
+    ),
+    "chassisNumber": MessageLookupByLibrary.simpleMessage("رقم الشاسيه"),
     "checkNetworkDetail": MessageLookupByLibrary.simpleMessage(
       "يرجى التحقق من الشبكة والمحاولة مرة أخرى.",
     ),
@@ -87,6 +101,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "اختر خطة العضوية التي تناسب احتياجاتك",
     ),
     "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
+    "comments": MessageLookupByLibrary.simpleMessage("تعليقات"),
     "completedTab": MessageLookupByLibrary.simpleMessage("مكتمل"),
     "confirmLocation": MessageLookupByLibrary.simpleMessage("تأكيد الموقع"),
     "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
@@ -127,6 +142,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "البريد الإلكتروني أو الهاتف",
     ),
     "endDateLabel": MessageLookupByLibrary.simpleMessage("تاريخ الانتهاء"),
+    "endTimeLabel": MessageLookupByLibrary.simpleMessage("وقت الانتهاء"),
     "english": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
     "enter6DigitOtp": MessageLookupByLibrary.simpleMessage(
       "أدخل رمز OTP المكون من 6 أرقام",
@@ -142,6 +158,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل البريد الإلكتروني أو الهاتف",
     ),
     "enterFullName": MessageLookupByLibrary.simpleMessage("أدخل اسمك الكامل"),
+    "enterLicenseNumber": MessageLookupByLibrary.simpleMessage(
+      "أدخل رقم الترخيص الخاص بك",
+    ),
     "enterMobileNumber": MessageLookupByLibrary.simpleMessage(
       "أدخل رقم هاتفك المحمول",
     ),
@@ -153,14 +172,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل اسم المستخدم أو رقم الهاتف المحمول",
     ),
     "errorConfirmingLocation": MessageLookupByLibrary.simpleMessage(
-      "خطأ في تأكيد الموقع",
+      "الموقف غير موجود",
     ),
     "errorServer": MessageLookupByLibrary.simpleMessage(
       "خطأ في الاتصال بالخادم",
     ),
     "extend": MessageLookupByLibrary.simpleMessage("تمديد"),
     "failedToConfirmLocation": MessageLookupByLibrary.simpleMessage(
-      "فشل تأكيد الموقع",
+      "الموقف غير موجود",
     ),
     "foodTruckParking": MessageLookupByLibrary.simpleMessage(
       "مواقف شاحنات الطعام",
@@ -180,6 +199,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "goldTier": MessageLookupByLibrary.simpleMessage("ذهبي"),
     "googlePayLabel": MessageLookupByLibrary.simpleMessage("جوجل باي"),
+    "heightM": MessageLookupByLibrary.simpleMessage("الارتفاع (م)"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("المساعدة والدعم"),
     "home": MessageLookupByLibrary.simpleMessage("الرئيسية"),
     "howToEarnPoints": MessageLookupByLibrary.simpleMessage("كيفية كسب النقاط"),
@@ -194,7 +214,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "learnMoreServices": MessageLookupByLibrary.simpleMessage(
       "تعرف على المزيد عن خدماتنا",
     ),
-    "license": m1,
+    "lengthM": MessageLookupByLibrary.simpleMessage("الطول (م)"),
+    "license": m2,
     "loadMore": MessageLookupByLibrary.simpleMessage("تحميل المزيد"),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
     "locationCodeLabel": MessageLookupByLibrary.simpleMessage("رمز الموقع : "),
@@ -208,13 +229,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "logoutConfirm": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك تريد تسجيل الخروج؟",
     ),
+    "make": MessageLookupByLibrary.simpleMessage("الماركة"),
+    "makeHint": MessageLookupByLibrary.simpleMessage("مثال: ياماها"),
     "managePaymentOptions": MessageLookupByLibrary.simpleMessage(
       "إدارة خيارات الدفع",
     ),
     "manageSecurity": MessageLookupByLibrary.simpleMessage(
       "إدارة كلمة المرور والأمان",
     ),
-    "memberSince": m2,
+    "memberSince": m3,
     "membershipPackage": MessageLookupByLibrary.simpleMessage("باقة العضوية"),
     "membershipPlans": MessageLookupByLibrary.simpleMessage("خطط العضوية"),
     "membershipStatusLabel": MessageLookupByLibrary.simpleMessage(
@@ -222,6 +245,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "mobileHint": MessageLookupByLibrary.simpleMessage("+971 XX XXX XXXX"),
     "mobileNumber": MessageLookupByLibrary.simpleMessage("رقم الهاتف المحمول"),
+    "model": MessageLookupByLibrary.simpleMessage("الموديل"),
+    "modelHint": MessageLookupByLibrary.simpleMessage("مثال: كارافيل"),
     "month": MessageLookupByLibrary.simpleMessage("شهر"),
     "monthlyMembership": MessageLookupByLibrary.simpleMessage("عضوية شهرية"),
     "monthlyPremium": MessageLookupByLibrary.simpleMessage("قسط شهري"),
@@ -244,7 +269,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "لم يتم العثور على سجل حجوزات",
     ),
     "noDataAvailable": MessageLookupByLibrary.simpleMessage("لا تتوفر بيانات"),
-    "noEntriesForTab": m3,
+    "noDescriptionAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا يوجد وصف متاح",
+    ),
+    "noEntriesForTab": m4,
     "noInternetConnection": MessageLookupByLibrary.simpleMessage(
       "لا يوجد اتصال بالإنترنت",
     ),
@@ -258,10 +286,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "noRulesFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على قواعد",
     ),
+    "noServicesAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا توجد خدمات متاحة",
+    ),
     "noServicesFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على خدمات",
     ),
+    "noSlotTypesAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا توجد أنواع مواقف متاحة للوقت المختار",
+    ),
     "noStatus": MessageLookupByLibrary.simpleMessage("لا توجد حالة"),
+    "noVehicleTypesAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا توجد أنواع مركبات متاحة",
+    ),
     "noVehiclesFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على مركبات",
     ),
@@ -274,12 +311,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "orSignInWith": MessageLookupByLibrary.simpleMessage(
       "أو سجل الدخول باستخدام",
     ),
-    "parkedAtSpot": m4,
+    "parkedAtSpot": m5,
     "parkingRenewed": MessageLookupByLibrary.simpleMessage("تم تجديد الموقف"),
     "parkingType": MessageLookupByLibrary.simpleMessage("نوع الموقف"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "pay": MessageLookupByLibrary.simpleMessage("ادفع"),
-    "payAmount": m5,
+    "payAmount": m6,
     "payPalLabel": MessageLookupByLibrary.simpleMessage("باي بال"),
     "payment": MessageLookupByLibrary.simpleMessage("الدفع"),
     "paymentMethod": MessageLookupByLibrary.simpleMessage("طريقة الدفع"),
@@ -295,8 +332,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "personalInformation": MessageLookupByLibrary.simpleMessage(
       "المعلومات الشخصية",
     ),
+    "pleaseProvideVehicleDetails": MessageLookupByLibrary.simpleMessage(
+      "يرجى تقديم تفاصيل سيارتك",
+    ),
+    "pleaseSelectDateTimeFirst": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار التاريخ والوقت أولاً",
+    ),
     "points": MessageLookupByLibrary.simpleMessage("النقاط"),
-    "pointsCount": m6,
+    "pointsCount": m7,
     "pointsPerShare": MessageLookupByLibrary.simpleMessage(
       "10 نقاط لكل مشاركة",
     ),
@@ -317,6 +360,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "redeemPoints": MessageLookupByLibrary.simpleMessage("استبدال النقاط"),
     "redeemYourRewards": MessageLookupByLibrary.simpleMessage("استبدل مكافآتك"),
     "register": MessageLookupByLibrary.simpleMessage("تسجيل"),
+    "registerLater": MessageLookupByLibrary.simpleMessage("التسجيل لاحقاً"),
     "registerNewVehicle": MessageLookupByLibrary.simpleMessage(
       "تسجيل مركبة جديدة",
     ),
@@ -348,9 +392,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "اختر من مجموعتنا من الخدمات الإضافية",
     ),
     "selectVehicle": MessageLookupByLibrary.simpleMessage("اختر المركبة"),
+    "selectVehicleType": MessageLookupByLibrary.simpleMessage(
+      "اختر نوع المركبة",
+    ),
     "selected": MessageLookupByLibrary.simpleMessage("محدد"),
+    "selectedSlot": m8,
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
     "sendOtp": MessageLookupByLibrary.simpleMessage("إرسال رمز OTP"),
+    "service": MessageLookupByLibrary.simpleMessage("خدمة"),
     "serviceName": MessageLookupByLibrary.simpleMessage("اسم الخدمة"),
     "services": MessageLookupByLibrary.simpleMessage("الخدمات"),
     "shaded": MessageLookupByLibrary.simpleMessage("مظلل"),
@@ -368,8 +417,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "signOut": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
     "signUp": MessageLookupByLibrary.simpleMessage("اشتراك"),
     "silverTier": MessageLookupByLibrary.simpleMessage("فضي"),
+    "sizeFormat": m9,
     "sizeLabel": MessageLookupByLibrary.simpleMessage("الحجم : "),
+    "skip": MessageLookupByLibrary.simpleMessage("تخطي"),
+    "slotAlreadyBooked": MessageLookupByLibrary.simpleMessage(
+      "هذا الموقف محجوز بالفعل ولا يمكن اختياره.",
+    ),
     "slotNumberLabel": MessageLookupByLibrary.simpleMessage("رقم الموقف : "),
+    "slotType": MessageLookupByLibrary.simpleMessage("نوع الموقف"),
     "smartParking": MessageLookupByLibrary.simpleMessage("المواقف الذكية"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage("حدث خطأ ما"),
     "standard": MessageLookupByLibrary.simpleMessage("قياسي"),
@@ -379,6 +434,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "startTime": MessageLookupByLibrary.simpleMessage("وقت البدء"),
     "subtotal": MessageLookupByLibrary.simpleMessage("المجموع الفرعي"),
     "subtotalLabel": MessageLookupByLibrary.simpleMessage("المجموع الفرعي"),
+    "tapToUploadDocument": MessageLookupByLibrary.simpleMessage(
+      "اضغط لتحميل وثيقة التسجيل",
+    ),
+    "tapToUploadPhoto": MessageLookupByLibrary.simpleMessage(
+      "اضغط لتحميل صورة المركبة",
+    ),
     "termsAndConditions": MessageLookupByLibrary.simpleMessage(
       "الأحكام والشروط",
     ),
@@ -402,7 +463,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "usernameOrMobile": MessageLookupByLibrary.simpleMessage(
       "اسم المستخدم أو رقم الهاتف المحمول",
     ),
-    "validUntil": m7,
+    "validUntil": m10,
     "vat": MessageLookupByLibrary.simpleMessage("ضريبة القيمة المضافة (5٪)"),
     "vatLabel": MessageLookupByLibrary.simpleMessage(
       "ضريبة القيمة المضافة (5%)",
@@ -411,8 +472,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "vehicleCheckIn": MessageLookupByLibrary.simpleMessage(
       "تسجيل دخول المركبة",
     ),
+    "vehicleDimensions": MessageLookupByLibrary.simpleMessage("أبعاد المركبة"),
     "vehicleDirection": MessageLookupByLibrary.simpleMessage("اتجاه المركبة"),
     "vehicleLabel": MessageLookupByLibrary.simpleMessage("المركبة"),
+    "vehicleLicenseNumber": MessageLookupByLibrary.simpleMessage(
+      "رقم ترخيص المركبة",
+    ),
+    "vehiclePhoto": MessageLookupByLibrary.simpleMessage("صورة المركبة"),
+    "vehicleRegistrationDocument": MessageLookupByLibrary.simpleMessage(
+      "وثيقة تسجيل المركبة",
+    ),
     "verifyOtp": MessageLookupByLibrary.simpleMessage("تحقق من رمز OTP"),
     "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
     "viewDetails": MessageLookupByLibrary.simpleMessage("عرض التفاصيل"),
@@ -427,6 +496,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeDescription": MessageLookupByLibrary.simpleMessage(
       "مواقف آمنة للكرفانات، والجت سكي، \nوشاحنات الطعام والقوارب والمزيد",
     ),
+    "widthM": MessageLookupByLibrary.simpleMessage("العرض (م)"),
+    "year": MessageLookupByLibrary.simpleMessage("السنة"),
+    "yearHint": MessageLookupByLibrary.simpleMessage("مثال: 2020"),
     "yes": MessageLookupByLibrary.simpleMessage("نعم"),
     "yesterday": MessageLookupByLibrary.simpleMessage("أمس"),
   };

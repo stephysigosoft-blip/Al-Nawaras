@@ -104,7 +104,7 @@ class RegisterVehicleController extends GetxController {
     } else if (lower.contains('truck')) {
       return 'lib/assets/images/food truck.png';
     } else if (lower.contains('boat')) {
-      return 'lib/assets/images/boat.png';
+      return 'lib/assets/images/Boat.png';
     } else if (lower.contains('trolly')) {
       return 'lib/assets/images/trolly.png';
     }

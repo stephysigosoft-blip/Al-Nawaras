@@ -392,9 +392,9 @@
   "@standard": {},
   "locationConfirmedSuccessfully": "Location and slot confirmed successfully",
   "@locationConfirmedSuccessfully": {},
-  "failedToConfirmLocation": "Failed to confirm location",
+  "failedToConfirmLocation": "Slot Not Found",
   "@failedToConfirmLocation": {},
-  "errorConfirmingLocation": "Error confirming location",
+  "errorConfirmingLocation": "Slot Not Found",
   "@errorConfirmingLocation": {},
   "payment": "Payment",
   "@payment": {},
@@ -513,5 +513,98 @@
   "language": "Language",
   "languageSubtitle": "Switch app language",
   "english": "English",
-  "arabic": "Arabic"
+  "arabic": "Arabic",
+  "availableSlotTypes": "Available Slot Types",
+  "@availableSlotTypes": {},
+  "selectedSlot": "Selected Slot: {slotName}",
+  "@selectedSlot": {
+    "placeholders": {
+      "slotName": {
+        "type": "String"
+      }
+    }
+  },
+  "pleaseSelectDateTimeFirst": "Please select date and time first",
+  "@pleaseSelectDateTimeFirst": {},
+  "noSlotTypesAvailable": "No slot types available for selected time",
+  "@noSlotTypesAvailable": {},
+  "slotType": "Slot Type",
+  "@slotType": {},
+  "availableCount": "Available: {count}",
+  "@availableCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "endTimeLabel": "End Time",
+  "@endTimeLabel": {},
+  "noServicesAvailable": "No services available",
+  "@noServicesAvailable": {},
+  "slotAlreadyBooked": "This slot is already booked and cannot be selected.",
+  "@slotAlreadyBooked": {},
+  "sizeFormat": "{width}m x {length}m",
+  "@sizeFormat": {
+    "placeholders": {
+      "width": {
+        "type": "String"
+      },
+      "length": {
+        "type": "String"
+      }
+    }
+  },
+  "skip": "Skip",
+  "@skip": {},
+  "pleaseProvideVehicleDetails": "Please provide your vehicle details",
+  "@pleaseProvideVehicleDetails": {},
+  "selectVehicleType": "Select Vehicle Type",
+  "@selectVehicleType": {},
+  "vehicleLicenseNumber": "Vehicle License Number",
+  "@vehicleLicenseNumber": {},
+  "enterLicenseNumber": "Enter your License Number",
+  "@enterLicenseNumber": {},
+  "make": "Make",
+  "@make": {},
+  "makeHint": "e.g. Yamaha",
+  "@makeHint": {},
+  "model": "Model",
+  "@model": {},
+  "modelHint": "e.g. Caravel",
+  "@modelHint": {},
+  "chassisNumber": "Chassis Number",
+  "@chassisNumber": {},
+  "chassisHint": "e.g. 1HGCM82633A123456",
+  "@chassisHint": {},
+  "year": "Year",
+  "@year": {},
+  "yearHint": "e.g. 2020",
+  "@yearHint": {},
+  "vehicleDimensions": "Vehicle Dimensions",
+  "@vehicleDimensions": {},
+  "lengthM": "Length (m)",
+  "@lengthM": {},
+  "widthM": "Width (m)",
+  "@widthM": {},
+  "heightM": "Height (m)",
+  "@heightM": {},
+  "comments": "Comments",
+  "@comments": {},
+  "vehiclePhoto": "Vehicle Photo",
+  "@vehiclePhoto": {},
+  "tapToUploadPhoto": "Tap to upload vehicle photo",
+  "@tapToUploadPhoto": {},
+  "vehicleRegistrationDocument": "Vehicle Registration Document",
+  "@vehicleRegistrationDocument": {},
+  "tapToUploadDocument": "Tap to upload registration document",
+  "@tapToUploadDocument": {},
+  "registerLater": "Register Later",
+  "@registerLater": {},
+  "noVehicleTypesAvailable": "No vehicle types available",
+  "@noVehicleTypesAvailable": {},
+  "service": "Service",
+  "@service": {},
+  "noDescriptionAvailable": "No description available.",
+  "@noDescriptionAvailable": {}
 }
