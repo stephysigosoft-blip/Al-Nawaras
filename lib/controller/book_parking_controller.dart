@@ -189,7 +189,7 @@ class BookParkingController extends GetxController {
     } else if (lower.contains('truck')) {
       return const AssetImage("lib/assets/images/food truck.png");
     } else if (lower.contains('boat')) {
-      return const AssetImage("lib/assets/images/boat.png");
+      return const AssetImage("lib/assets/images/Boat.png");
     } else if (lower.contains('caravan')) {
       return const AssetImage("lib/assets/images/caravan.png");
     }
@@ -239,21 +239,25 @@ class BookParkingController extends GetxController {
         for (final m in memberships) {
           final title = m['plan_type']?.toString() ?? 'Standard Plan';
           final rawPrice = m['plan_price']?.toString() ?? '0';
-          final rawDuration = (m['duration'] == null || m['duration'] == false || m['duration'] == 'false') 
-              ? 'unit' 
+          final rawDuration =
+              (m['duration'] == null ||
+                  m['duration'] == false ||
+                  m['duration'] == 'false')
+              ? 'unit'
               : m['duration'].toString();
-          
+
           final id = m['id'] as int?;
 
           // Manual Price Overrides as requested
           String finalPrice = 'AED $rawPrice/$rawDuration';
           final lowerTitle = title.toLowerCase();
-          
+
           if (lowerTitle.contains('hourly')) {
             finalPrice = 'AED 20/hour';
           } else if (lowerTitle.contains('monthly')) {
             finalPrice = 'AED 1,000/month';
-          } else if (lowerTitle.contains('yearly') || lowerTitle.contains('annual')) {
+          } else if (lowerTitle.contains('yearly') ||
+              lowerTitle.contains('annual')) {
             finalPrice = 'AED 6,000/year';
           }
 
@@ -282,7 +286,7 @@ class BookParkingController extends GetxController {
     selectedMembership = title;
     _updateEndDateBasedOnMembership();
     if (!isClosed) update();
-    // After changing membership, we might want to re-check availability 
+    // After changing membership, we might want to re-check availability
     // or recalculate summary if prices are dependent on plan.
     fetchAvailableSummary();
   }
@@ -307,7 +311,7 @@ class BookParkingController extends GetxController {
     } else if (lowerTitle.contains('weekly')) {
       end = start.add(const Duration(days: 7));
     } else if (lowerTitle.contains('monthly')) {
-      // Use 30 days as a standard Odoo month or actual month? 
+      // Use 30 days as a standard Odoo month or actual month?
       // Most Odoo billing uses 30 days for pro-rating, so we use 30 to be safe.
       end = start.add(const Duration(days: 30));
     } else if (lowerTitle.contains('3 month')) {
@@ -325,7 +329,7 @@ class BookParkingController extends GetxController {
     endDateController.text = "${end.day}/${end.month}/${end.year}";
     selectedEndTime = TimeOfDay(hour: end.hour, minute: end.minute);
     endTimeController.text = selectedEndTime!.format(Get.context!);
-    
+
     if (!isClosed) update();
   }
 
@@ -351,7 +355,11 @@ class BookParkingController extends GetxController {
 
       final response = await dio.get(
         ApiConstants.services,
-        options: Options(headers: headers),
+        options: Options(
+          headers: headers,
+          sendTimeout: const Duration(seconds: 60),
+          receiveTimeout: const Duration(seconds: 60),
+        ),
       );
 
       debugPrint('--- API RESPONSE (services - book parking) ---');
@@ -594,14 +602,17 @@ class BookParkingController extends GetxController {
 
       debugPrint('--- API RESPONSE (available_summary) ---');
       debugPrint('Status Code: ${response.statusCode}');
-      debugPrint('Full Response Data: ${response.data}'); // Detailed debug to find hidden rates
+      debugPrint(
+        'Full Response Data: ${response.data}',
+      ); // Detailed debug to find hidden rates
 
       if (response.statusCode == 200 &&
           response.data != null &&
           (response.data['status'] == 200 || response.data['status'] == true)) {
         final List data = response.data['data'] ?? [];
-        availableSummaryList =
-            data.map((e) => e as Map<String, dynamic>).toList();
+        availableSummaryList = data
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
       } else {
         Get.snackbar(
           'Notice',
@@ -621,7 +632,10 @@ class BookParkingController extends GetxController {
   }
 
   Future<void> checkSlotAvailability(
-      int slotTypeId, String typeName, int locationId) async {
+    int slotTypeId,
+    String typeName,
+    int locationId,
+  ) async {
     isLoadingAvailability = true;
     selectedSlotTypeId = slotTypeId;
     selectedSlotTypeName = typeName;
@@ -677,11 +691,12 @@ class BookParkingController extends GetxController {
       if (response.statusCode == 200 &&
           response.data != null &&
           (response.data['status'] == 200 || response.data['status'] == true)) {
-        
         final dynamic rawData = response.data['data'];
-        
+
         // Handle empty object or list
-        if (rawData == null || (rawData is Map && rawData.isEmpty) || (rawData is List && rawData.isEmpty)) {
+        if (rawData == null ||
+            (rawData is Map && rawData.isEmpty) ||
+            (rawData is List && rawData.isEmpty)) {
           Get.snackbar(
             'No Slots Available',
             'No units available for the selected ${selectedMembership.toLowerCase()} duration. Try another date or parking type.',
@@ -694,7 +709,9 @@ class BookParkingController extends GetxController {
         }
 
         final List data = (rawData is List) ? rawData : [];
-        availableSlotsList = data.map((e) => e as Map<String, dynamic>).toList();
+        availableSlotsList = data
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
 
         // Navigate to SlotSelectionScreen
         Get.to(() => const SlotSelectionScreen());
@@ -742,7 +759,7 @@ class BookParkingController extends GetxController {
   ///  - the selected membership package price
   ///  - the prices of all selected add-on services
   String get calculatedTotal {
-    // ABSOLUTE SOURCE OF TRUTH: If the backend has already calculated a real price for this 
+    // ABSOLUTE SOURCE OF TRUTH: If the backend has already calculated a real price for this
     // specific combination (e.g. 960.00), we must use it instantly to avoid discrepancies.
     if (lastBookingTotal != null && lastBookingTotal! > 0) {
       return 'AED ${lastBookingTotal!.toStringAsFixed(2)}';
@@ -759,15 +776,18 @@ class BookParkingController extends GetxController {
 
       if (summaryEntry.isNotEmpty) {
         // PRIORITY: Only use total-based fields. Avoid "rate" or "price" as they are unit costs (e.g. 10/hr).
-        final backendPrice = summaryEntry['total_price'] ?? 
-                             summaryEntry['total'] ?? 
-                             summaryEntry['amount'];
+        final backendPrice =
+            summaryEntry['total_price'] ??
+            summaryEntry['total'] ??
+            summaryEntry['amount'];
 
         if (backendPrice != null) {
           final parsed = _parsePrice(backendPrice.toString());
           if (parsed > 0) {
             total = parsed;
-            debugPrint('--- [DEBUG] Total Amount (API Summary): $total (key found) ---');
+            debugPrint(
+              '--- [DEBUG] Total Amount (API Summary): $total (key found) ---',
+            );
             return _formatTotalWithAddons(total);
           }
         }
@@ -887,8 +907,12 @@ class BookParkingController extends GetxController {
         return;
       }
       if (selectedSlotTypeId == null) {
-        Get.snackbar('Selection Required', 'Please select an available Slot Type first',
-            backgroundColor: Colors.redAccent, colorText: Colors.white);
+        Get.snackbar(
+          'Selection Required',
+          'Please select an available Slot Type first',
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
         isBooking = false;
         if (!isClosed) update();
         return;
@@ -937,14 +961,18 @@ class BookParkingController extends GetxController {
 
           // AUTO-CONFIRM: If the booking is in 'draft', we must confirm it to generate the invoice.
           // This moves the state to 'pending_payment' as required by payment/confirm.
-          if ((bookData['state'] == 'draft' || bookData['state'] == 'pending_payment') && 
+          if ((bookData['state'] == 'draft' ||
+                  bookData['state'] == 'pending_payment') &&
               selectedSlotName != null) {
-            final confirmed =
-                await confirmBookingLocation(bookingId!, selectedSlotName!, selectedSlotId);
+            final confirmed = await confirmBookingLocation(
+              bookingId!,
+              selectedSlotName!,
+              selectedSlotId,
+            );
             if (!confirmed) {
               Get.snackbar(
-                'Selection Failed',
-                'Could not confirm your slot selection. Please try again.',
+                'Slot Not Found',
+                'The selected slot could not be found or confirmed. Please try another selection.',
                 backgroundColor: Colors.redAccent,
                 colorText: Colors.white,
               );
@@ -963,18 +991,23 @@ class BookParkingController extends GetxController {
     } on DioException catch (e) {
       BaseClient.handleDioError(e);
       debugPrint('Error calling parking/book: $e');
-      
-      String errMsg = 'Booking creation failed. Please check if this vehicle is already booked for this date.';
+
+      String errMsg =
+          'Booking creation failed. Please check if this vehicle is already booked for this date.';
       if (e.response?.data != null && e.response?.data['message'] != null) {
         errMsg = e.response?.data['message']?.toString() ?? errMsg;
       }
-      Get.snackbar('Booking Error', errMsg, 
-          backgroundColor: Colors.redAccent, colorText: Colors.white, 
-          duration: const Duration(seconds: 4));
+      Get.snackbar(
+        'Booking Error',
+        errMsg,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
 
       isBooking = false;
       if (!isClosed) update();
-      return; 
+      return;
     } catch (e) {
       debugPrint('Unexpected error in booking: $e');
       isBooking = false;
@@ -1018,12 +1051,13 @@ class BookParkingController extends GetxController {
         final apiVat = data['vat']?.toString() ?? '0.00';
         final apiTotal = data['total']?.toString() ?? '0.00';
 
-        final apiCurrency = (data['currency'] == null ||
+        final apiCurrency =
+            (data['currency'] == null ||
                 data['currency'] == false ||
                 data['currency'] == 'false')
             ? 'AED'
             : data['currency'].toString();
-        
+
         final displayTotal = "$apiCurrency $apiTotal";
 
         // Step 3: Clear stale slot selection data
@@ -1036,7 +1070,8 @@ class BookParkingController extends GetxController {
           () => PaymentView(
             bookingId: bookingId,
             title: 'Booking Payment',
-            subtitle: '${data['parking_type']?.toString() ?? selectedParkingType} Parking',
+            subtitle:
+                '${data['parking_type']?.toString() ?? selectedParkingType} Parking',
             amount: displayTotal,
             subtotal: "$apiCurrency $apiSubtotal",
             vat: "$apiCurrency $apiVat",
@@ -1044,27 +1079,29 @@ class BookParkingController extends GetxController {
             details: [
               {
                 'label': 'Membership Type',
-                'value': data['membership_type']?.toString() ?? selectedMembership
+                'value':
+                    data['membership_type']?.toString() ?? selectedMembership,
               },
               {
                 'label': 'Parking Type',
-                'value': data['parking_type']?.toString() ?? selectedParkingType
+                'value':
+                    data['parking_type']?.toString() ?? selectedParkingType,
               },
               {
                 'label': 'Vehicle',
-                'value': data['vehicle']?.toString() ?? 'N/A'
+                'value': data['vehicle']?.toString() ?? 'N/A',
               },
               {
                 'label': 'Start Date',
-                'value': data['start_date']?.toString() ?? 'N/A'
+                'value': data['start_date']?.toString() ?? 'N/A',
               },
               {
                 'label': 'End Date',
-                'value': data['end_date']?.toString() ?? 'N/A'
+                'value': data['end_date']?.toString() ?? 'N/A',
               },
               {
                 'label': 'Duration',
-                'value': data['duration']?.toString() ?? 'N/A'
+                'value': data['duration']?.toString() ?? 'N/A',
               },
             ],
           ),
@@ -1166,7 +1203,8 @@ class BookParkingController extends GetxController {
       debugPrint('Status Code: ${resp.statusCode}');
       debugPrint('Response Data: ${resp.data}');
 
-      final isSuccess = resp.statusCode == 200 &&
+      final isSuccess =
+          resp.statusCode == 200 &&
           resp.data != null &&
           (resp.data['status'] == 200 || resp.data['status'] == true);
 
@@ -1184,14 +1222,16 @@ class BookParkingController extends GetxController {
         debugPrint('Slot confirmation SUCCESS: $sName');
         return true;
       }
-      
-      debugPrint('Slot confirmation FAILED: ${resp.data?['message'] ?? 'Check server logs'}');
+
+      debugPrint(
+        'Slot confirmation FAILED: ${resp.data?['message'] ?? 'Check server logs'}',
+      );
       return false;
     } catch (e) {
       debugPrint('Auto-confirm failed with exception: $e');
       Get.snackbar(
-        'Auto-confirm Error',
-        e.toString(),
+        'Slot Not Found',
+        'An error occurred while confirming the slot. Please try again.',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );

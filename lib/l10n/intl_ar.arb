@@ -384,9 +384,9 @@
   "@standard": {},
   "locationConfirmedSuccessfully": "تم تأكيد الموقع والموقف بنجاح",
   "@locationConfirmedSuccessfully": {},
-  "failedToConfirmLocation": "فشل تأكيد الموقع",
+  "failedToConfirmLocation": "الموقف غير موجود",
   "@failedToConfirmLocation": {},
-  "errorConfirmingLocation": "خطأ في تأكيد الموقع",
+  "errorConfirmingLocation": "الموقف غير موجود",
   "@errorConfirmingLocation": {},
   "payment": "الدفع",
   "@payment": {},
@@ -501,5 +501,72 @@
   "language": "اللغة",
   "languageSubtitle": "تغيير لغة التطبيق",
   "english": "الإنجليزية",
-  "arabic": "العربية"
+  "arabic": "العربية",
+  "availableSlotTypes": "أنواع المواقف المتاحة",
+  "@availableSlotTypes": {},
+  "selectedSlot": "الموقف المختار: {slotName}",
+  "@selectedSlot": {
+    "placeholders": {
+      "slotName": {
+        "type": "String"
+      }
+    }
+  },
+  "pleaseSelectDateTimeFirst": "يرجى اختيار التاريخ والوقت أولاً",
+  "@pleaseSelectDateTimeFirst": {},
+  "noSlotTypesAvailable": "لا توجد أنواع مواقف متاحة للوقت المختار",
+  "@noSlotTypesAvailable": {},
+  "slotType": "نوع الموقف",
+  "@slotType": {},
+  "availableCount": "المتاح: {count}",
+  "@availableCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "endTimeLabel": "وقت الانتهاء",
+  "@endTimeLabel": {},
+  "noServicesAvailable": "لا توجد خدمات متاحة",
+  "@noServicesAvailable": {},
+  "slotAlreadyBooked": "هذا الموقف محجوز بالفعل ولا يمكن اختياره.",
+  "@slotAlreadyBooked": {},
+  "sizeFormat": "{width}م x {length}م",
+  "@sizeFormat": {
+    "placeholders": {
+      "width": {
+        "type": "String"
+      },
+      "length": {
+        "type": "String"
+      }
+    }
+  },
+  "skip": "تخطي",
+  "pleaseProvideVehicleDetails": "يرجى تقديم تفاصيل سيارتك",
+  "selectVehicleType": "اختر نوع المركبة",
+  "vehicleLicenseNumber": "رقم ترخيص المركبة",
+  "enterLicenseNumber": "أدخل رقم الترخيص الخاص بك",
+  "make": "الماركة",
+  "makeHint": "مثال: ياماها",
+  "model": "الموديل",
+  "modelHint": "مثال: كارافيل",
+  "chassisNumber": "رقم الشاسيه",
+  "chassisHint": "مثال: 1HGCM82633A123456",
+  "year": "السنة",
+  "yearHint": "مثال: 2020",
+  "vehicleDimensions": "أبعاد المركبة",
+  "lengthM": "الطول (م)",
+  "widthM": "العرض (م)",
+  "heightM": "الارتفاع (م)",
+  "comments": "تعليقات",
+  "vehiclePhoto": "صورة المركبة",
+  "tapToUploadPhoto": "اضغط لتحميل صورة المركبة",
+  "vehicleRegistrationDocument": "وثيقة تسجيل المركبة",
+  "tapToUploadDocument": "اضغط لتحميل وثيقة التسجيل",
+  "registerLater": "التسجيل لاحقاً",
+  "noVehicleTypesAvailable": "لا توجد أنواع مركبات متاحة",
+  "service": "خدمة",
+  "noDescriptionAvailable": "لا يوجد وصف متاح"
 }

@@ -49,12 +49,13 @@ class AdditionalServicesController extends GetxController {
               response.data['data']['services'] ?? [];
 
           services.value = servicesData.map((s) {
-            String title = s['service_name'] ?? 'Service';
+            String title = s['service_name'] ?? S.of(Get.context!).service;
             return {
               'id': s['id']?.toString() ?? '',
               'title': title,
               'image': _getServiceImage(title),
-              'description': s['description'] ?? 'No description available.',
+              'description':
+                  s['description'] ?? S.of(Get.context!).noDescriptionAvailable,
               'price': '${S.of(Get.context!).currency} ${s['price'] ?? '0'}',
             };
           }).toList();

@@ -544,9 +544,9 @@ class _SelectParkingViewState extends State<SelectParkingView> {
   Future<void> _onSlotSelected(String codeString, String formattedSlot) async {
     if (bookedSlots.contains(codeString)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('This slot is already booked and cannot be selected.'),
-          backgroundColor: Color(0xFFE30613),
+        SnackBar(
+          content: Text(S.of(context).slotAlreadyBooked),
+          backgroundColor: const Color(0xFFE30613),
         ),
       );
       return;
@@ -610,7 +610,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         break;
     }
 
-    return "$formattedPrefix${index.toString().padLeft(2, '0')} - $locationName";
+    return S.of(context).sizeFormat(formattedPrefix, index.toString().padLeft(2, '0')) + " - " + locationName;
   }
 
   Future<void> _confirmLocation() async {
@@ -691,8 +691,7 @@ class _SelectParkingViewState extends State<SelectParkingView> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 content: Text(
-                  response.data['message'] ??
-                      S.of(context).failedToConfirmLocation,
+                  S.of(context).failedToConfirmLocation,
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
@@ -730,7 +729,13 @@ class _SelectParkingViewState extends State<SelectParkingView> {
         ),
         centerTitle: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 19),
+          icon: Icon(
+            Directionality.of(context) == TextDirection.rtl
+                ? Icons.arrow_forward_ios
+                : Icons.arrow_back_ios,
+            color: Colors.white,
+            size: 19,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         elevation: 0,
@@ -859,20 +864,20 @@ class _SelectParkingViewState extends State<SelectParkingView> {
     switch (prefix) {
       case 'JTSP1':
       case 'JTSP2':
-        return "4m x 10m";
+        return S.of(context).sizeFormat("4", "10");
       case 'FTP17':
-        return "5m x 17m";
+        return S.of(context).sizeFormat("5", "17");
       case 'FTP13A':
       case 'FTP13B':
-        return "5m x 13m";
+        return S.of(context).sizeFormat("5", "13");
       case 'JTSP':
-        return "4m x 10m";
+        return S.of(context).sizeFormat("4", "10");
       case 'FTP':
-        return "5m x 17m";
+        return S.of(context).sizeFormat("5", "17");
       case 'BTP':
-        return "5m x 15m";
+        return S.of(context).sizeFormat("5", "15");
       case 'CTP':
-        return "5m x 16m";
+        return S.of(context).sizeFormat("5", "16");
       default:
         return S.of(context).standard;
     }
@@ -988,18 +993,22 @@ class _SelectParkingViewState extends State<SelectParkingView> {
       child: Row(
         children: [
           SizedBox(
-            width: 105,
+            width: 110,
             child: Text(
               label,
               style: const TextStyle(color: Colors.black, fontSize: 12.5),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12.5,
-              color: Colors.black,
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12.5,
+                color: Colors.black,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ),
         ],

@@ -1484,36 +1484,6 @@ class S {
     );
   }
 
-  /// `BOATS PARKING - A`
-  String get boatsParkingA {
-    return Intl.message(
-      'BOATS PARKING - A',
-      name: 'boatsParkingA',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `BOATS PARKING - B`
-  String get boatsParkingB {
-    return Intl.message(
-      'BOATS PARKING - B',
-      name: 'boatsParkingB',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `CARAVAN PARKING - B`
-  String get caravanParkingB {
-    return Intl.message(
-      'CARAVAN PARKING - B',
-      name: 'caravanParkingB',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `{prefix} Area`
   String areaSuffix(String prefix) {
     return Intl.message(
@@ -1544,20 +1514,20 @@ class S {
     );
   }
 
-  /// `Failed to confirm location`
+  /// `Slot Not Found`
   String get failedToConfirmLocation {
     return Intl.message(
-      'Failed to confirm location',
+      'Slot Not Found',
       name: 'failedToConfirmLocation',
       desc: '',
       args: [],
     );
   }
 
-  /// `Error confirming location`
+  /// `Slot Not Found`
   String get errorConfirmingLocation {
     return Intl.message(
-      'Error confirming location',
+      'Slot Not Found',
       name: 'errorConfirmingLocation',
       desc: '',
       args: [],
@@ -2122,6 +2092,296 @@ class S {
   /// `Arabic`
   String get arabic {
     return Intl.message('Arabic', name: 'arabic', desc: '', args: []);
+  }
+
+  /// `Available Slot Types`
+  String get availableSlotTypes {
+    return Intl.message(
+      'Available Slot Types',
+      name: 'availableSlotTypes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected Slot: {slotName}`
+  String selectedSlot(String slotName) {
+    return Intl.message(
+      'Selected Slot: $slotName',
+      name: 'selectedSlot',
+      desc: '',
+      args: [slotName],
+    );
+  }
+
+  /// `Please select date and time first`
+  String get pleaseSelectDateTimeFirst {
+    return Intl.message(
+      'Please select date and time first',
+      name: 'pleaseSelectDateTimeFirst',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No slot types available for selected time`
+  String get noSlotTypesAvailable {
+    return Intl.message(
+      'No slot types available for selected time',
+      name: 'noSlotTypesAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Slot Type`
+  String get slotType {
+    return Intl.message('Slot Type', name: 'slotType', desc: '', args: []);
+  }
+
+  /// `Available: {count}`
+  String availableCount(String count) {
+    return Intl.message(
+      'Available: $count',
+      name: 'availableCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `End Time`
+  String get endTimeLabel {
+    return Intl.message('End Time', name: 'endTimeLabel', desc: '', args: []);
+  }
+
+  /// `No services available`
+  String get noServicesAvailable {
+    return Intl.message(
+      'No services available',
+      name: 'noServicesAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This slot is already booked and cannot be selected.`
+  String get slotAlreadyBooked {
+    return Intl.message(
+      'This slot is already booked and cannot be selected.',
+      name: 'slotAlreadyBooked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{width}m x {length}m`
+  String sizeFormat(String width, String length) {
+    return Intl.message(
+      '${width}m x ${length}m',
+      name: 'sizeFormat',
+      desc: '',
+      args: [width, length],
+    );
+  }
+
+  /// `Skip`
+  String get skip {
+    return Intl.message('Skip', name: 'skip', desc: '', args: []);
+  }
+
+  /// `Please provide your vehicle details`
+  String get pleaseProvideVehicleDetails {
+    return Intl.message(
+      'Please provide your vehicle details',
+      name: 'pleaseProvideVehicleDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Vehicle Type`
+  String get selectVehicleType {
+    return Intl.message(
+      'Select Vehicle Type',
+      name: 'selectVehicleType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle License Number`
+  String get vehicleLicenseNumber {
+    return Intl.message(
+      'Vehicle License Number',
+      name: 'vehicleLicenseNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your License Number`
+  String get enterLicenseNumber {
+    return Intl.message(
+      'Enter your License Number',
+      name: 'enterLicenseNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Make`
+  String get make {
+    return Intl.message('Make', name: 'make', desc: '', args: []);
+  }
+
+  /// `e.g. Yamaha`
+  String get makeHint {
+    return Intl.message('e.g. Yamaha', name: 'makeHint', desc: '', args: []);
+  }
+
+  /// `Model`
+  String get model {
+    return Intl.message('Model', name: 'model', desc: '', args: []);
+  }
+
+  /// `e.g. Caravel`
+  String get modelHint {
+    return Intl.message('e.g. Caravel', name: 'modelHint', desc: '', args: []);
+  }
+
+  /// `Chassis Number`
+  String get chassisNumber {
+    return Intl.message(
+      'Chassis Number',
+      name: 'chassisNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. 1HGCM82633A123456`
+  String get chassisHint {
+    return Intl.message(
+      'e.g. 1HGCM82633A123456',
+      name: 'chassisHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Year`
+  String get year {
+    return Intl.message('Year', name: 'year', desc: '', args: []);
+  }
+
+  /// `e.g. 2020`
+  String get yearHint {
+    return Intl.message('e.g. 2020', name: 'yearHint', desc: '', args: []);
+  }
+
+  /// `Vehicle Dimensions`
+  String get vehicleDimensions {
+    return Intl.message(
+      'Vehicle Dimensions',
+      name: 'vehicleDimensions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Length (m)`
+  String get lengthM {
+    return Intl.message('Length (m)', name: 'lengthM', desc: '', args: []);
+  }
+
+  /// `Width (m)`
+  String get widthM {
+    return Intl.message('Width (m)', name: 'widthM', desc: '', args: []);
+  }
+
+  /// `Height (m)`
+  String get heightM {
+    return Intl.message('Height (m)', name: 'heightM', desc: '', args: []);
+  }
+
+  /// `Comments`
+  String get comments {
+    return Intl.message('Comments', name: 'comments', desc: '', args: []);
+  }
+
+  /// `Vehicle Photo`
+  String get vehiclePhoto {
+    return Intl.message(
+      'Vehicle Photo',
+      name: 'vehiclePhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to upload vehicle photo`
+  String get tapToUploadPhoto {
+    return Intl.message(
+      'Tap to upload vehicle photo',
+      name: 'tapToUploadPhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vehicle Registration Document`
+  String get vehicleRegistrationDocument {
+    return Intl.message(
+      'Vehicle Registration Document',
+      name: 'vehicleRegistrationDocument',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to upload registration document`
+  String get tapToUploadDocument {
+    return Intl.message(
+      'Tap to upload registration document',
+      name: 'tapToUploadDocument',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Register Later`
+  String get registerLater {
+    return Intl.message(
+      'Register Later',
+      name: 'registerLater',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No vehicle types available`
+  String get noVehicleTypesAvailable {
+    return Intl.message(
+      'No vehicle types available',
+      name: 'noVehicleTypesAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service`
+  String get service {
+    return Intl.message('Service', name: 'service', desc: '', args: []);
+  }
+
+  /// `No description available.`
+  String get noDescriptionAvailable {
+    return Intl.message(
+      'No description available.',
+      name: 'noDescriptionAvailable',
+      desc: '',
+      args: [],
+    );
   }
 }
 

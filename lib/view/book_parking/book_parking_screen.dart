@@ -54,7 +54,7 @@ class BookParkingScreen extends StatelessWidget {
                               height,
                             ),
                             SizedBox(height: height * 0.035),
-                            _buildLabel("Membership Package"),
+                            _buildLabel(S.of(context).membershipPackage),
                             _buildMembershipList(
                               context,
                               controller,
@@ -69,7 +69,7 @@ class BookParkingScreen extends StatelessWidget {
                               height,
                             ),
                             SizedBox(height: height * 0.035),
-                            _buildLabel("Available Slot Types"),
+                            _buildLabel(S.of(context).availableSlotTypes),
                             _buildAvailableSummaryList(
                               context,
                               controller,
@@ -92,7 +92,7 @@ class BookParkingScreen extends StatelessWidget {
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Text(
-                                        "Selected Slot: ${controller.selectedSlotName}",
+                                        S.of(context).selectedSlot(controller.selectedSlotName ?? ''),
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.green),
@@ -424,8 +424,8 @@ class BookParkingScreen extends StatelessWidget {
         child: Center(
           child: Text(
             controller.dateController.text.isEmpty
-                ? "Please select date and time first"
-                : "No slot types available for selected time",
+                ? S.of(context).pleaseSelectDateTimeFirst
+                : S.of(context).noSlotTypesAvailable,
             style: const TextStyle(color: Colors.black45),
             textAlign: TextAlign.center,
           ),
@@ -501,7 +501,7 @@ class BookParkingScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            st['slot_type_name'] ?? 'Slot Type',
+                            st['slot_type_name'] ?? S.of(context).slotType,
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -510,7 +510,7 @@ class BookParkingScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            "Available: ${st['available_count'] ?? 0}",
+                            S.of(context).availableCount(st['available_count']?.toString() ?? '0'),
                             style: TextStyle(
                               fontSize: 11,
                               color: isAvailable ? Colors.green : Colors.red,
@@ -606,7 +606,7 @@ class BookParkingScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'End Date', // hardcoded for now, will fix l10n
+                    S.of(context).endDateLabel,
                     style: TextStyle(
                       fontSize: 12, 
                       color: isFixedPlan ? Colors.black26 : Colors.black54,
@@ -628,7 +628,7 @@ class BookParkingScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'End Time', // hardcoded for now, will fix l10n
+                    S.of(context).endTimeLabel,
                     style: TextStyle(
                       fontSize: 12, 
                       color: isFixedPlan ? Colors.black26 : Colors.black54,
@@ -706,7 +706,7 @@ class BookParkingScreen extends StatelessWidget {
     }
 
     if (controller.addonServices.isEmpty) {
-      return const CustomNoData(message: 'No services available');
+      return CustomNoData(message: S.of(context).noServicesAvailable);
     }
 
     return Column(

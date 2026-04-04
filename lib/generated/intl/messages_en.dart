@@ -22,19 +22,25 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(prefix) => "${prefix} Area";
 
-  static String m1(number) => "License: ${number}";
+  static String m1(count) => "Available: ${count}";
 
-  static String m2(date) => "Member Since ${date}";
+  static String m2(number) => "License: ${number}";
 
-  static String m3(tab) => "No entries for ${tab} tab";
+  static String m3(date) => "Member Since ${date}";
 
-  static String m4(spot) => "Parked at Spot ${spot}";
+  static String m4(tab) => "No entries for ${tab} tab";
 
-  static String m5(amount) => "Pay ${amount}";
+  static String m5(spot) => "Parked at Spot ${spot}";
 
-  static String m6(count) => "${count} Points";
+  static String m6(amount) => "Pay ${amount}";
 
-  static String m7(date) => "Valid until: ${date}";
+  static String m7(count) => "${count} Points";
+
+  static String m8(slotName) => "Selected Slot: ${slotName}";
+
+  static String m9(width, length) => "${width}m x ${length}m";
+
+  static String m10(date) => "Valid until: ${date}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -68,12 +74,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
     "areaSuffix": m0,
     "available": MessageLookupByLibrary.simpleMessage("Available"),
+    "availableCount": m1,
+    "availableSlotTypes": MessageLookupByLibrary.simpleMessage(
+      "Available Slot Types",
+    ),
     "awayFromParking": MessageLookupByLibrary.simpleMessage(
       "Away from Parking",
     ),
     "boatsParking": MessageLookupByLibrary.simpleMessage("Boats Parking"),
-    "boatsParkingA": MessageLookupByLibrary.simpleMessage("BOATS PARKING - A"),
-    "boatsParkingB": MessageLookupByLibrary.simpleMessage("BOATS PARKING - B"),
     "bookNow": MessageLookupByLibrary.simpleMessage("Book Now!"),
     "bookParking": MessageLookupByLibrary.simpleMessage("Book Parking"),
     "booked": MessageLookupByLibrary.simpleMessage("Booked"),
@@ -87,10 +95,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "buyNow": MessageLookupByLibrary.simpleMessage("Buy Now!"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "caravanParking": MessageLookupByLibrary.simpleMessage("Caravan Parking"),
-    "caravanParkingB": MessageLookupByLibrary.simpleMessage(
-      "CARAVAN PARKING - B",
-    ),
     "cashOnSite": MessageLookupByLibrary.simpleMessage("Cash on site"),
+    "chassisHint": MessageLookupByLibrary.simpleMessage(
+      "e.g. 1HGCM82633A123456",
+    ),
+    "chassisNumber": MessageLookupByLibrary.simpleMessage("Chassis Number"),
     "checkNetworkDetail": MessageLookupByLibrary.simpleMessage(
       "Please check your network and try again.",
     ),
@@ -99,6 +108,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Choose the membership plan that best suits your needs",
     ),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
+    "comments": MessageLookupByLibrary.simpleMessage("Comments"),
     "completedTab": MessageLookupByLibrary.simpleMessage("Completed"),
     "confirmLocation": MessageLookupByLibrary.simpleMessage("Confirm Location"),
     "confirmNewPassword": MessageLookupByLibrary.simpleMessage(
@@ -137,6 +147,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "emailAddress": MessageLookupByLibrary.simpleMessage("Email Address"),
     "emailOrMobile": MessageLookupByLibrary.simpleMessage("Email or Mobile"),
     "endDateLabel": MessageLookupByLibrary.simpleMessage("End Date"),
+    "endTimeLabel": MessageLookupByLibrary.simpleMessage("End Time"),
     "english": MessageLookupByLibrary.simpleMessage("English"),
     "enter6DigitOtp": MessageLookupByLibrary.simpleMessage("Enter 6-Digit OTP"),
     "enterDetailsToReceiveOtp": MessageLookupByLibrary.simpleMessage(
@@ -152,6 +163,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "enterFullName": MessageLookupByLibrary.simpleMessage(
       "Enter your full name",
     ),
+    "enterLicenseNumber": MessageLookupByLibrary.simpleMessage(
+      "Enter your License Number",
+    ),
     "enterMobileNumber": MessageLookupByLibrary.simpleMessage(
       "Enter your mobile number",
     ),
@@ -165,14 +179,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Enter Username or Mobile",
     ),
     "errorConfirmingLocation": MessageLookupByLibrary.simpleMessage(
-      "Error confirming location",
+      "Slot Not Found",
     ),
     "errorServer": MessageLookupByLibrary.simpleMessage(
       "Error connecting to server",
     ),
     "extend": MessageLookupByLibrary.simpleMessage("Extend"),
     "failedToConfirmLocation": MessageLookupByLibrary.simpleMessage(
-      "Failed to confirm location",
+      "Slot Not Found",
     ),
     "foodTruckParking": MessageLookupByLibrary.simpleMessage(
       "Food Truck Parking",
@@ -196,6 +210,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "goldTier": MessageLookupByLibrary.simpleMessage("Gold"),
     "googlePayLabel": MessageLookupByLibrary.simpleMessage("Google Pay"),
+    "heightM": MessageLookupByLibrary.simpleMessage("Height (m)"),
     "helpSupport": MessageLookupByLibrary.simpleMessage("Help & Support"),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "howToEarnPoints": MessageLookupByLibrary.simpleMessage("Earn Points"),
@@ -213,7 +228,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "learnMoreServices": MessageLookupByLibrary.simpleMessage(
       "Learn more about our services",
     ),
-    "license": m1,
+    "lengthM": MessageLookupByLibrary.simpleMessage("Length (m)"),
+    "license": m2,
     "loadMore": MessageLookupByLibrary.simpleMessage("Load More"),
     "location": MessageLookupByLibrary.simpleMessage("Location"),
     "locationCodeLabel": MessageLookupByLibrary.simpleMessage(
@@ -231,13 +247,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "logoutConfirm": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to logout?",
     ),
+    "make": MessageLookupByLibrary.simpleMessage("Make"),
+    "makeHint": MessageLookupByLibrary.simpleMessage("e.g. Yamaha"),
     "managePaymentOptions": MessageLookupByLibrary.simpleMessage(
       "Manage your payment options",
     ),
     "manageSecurity": MessageLookupByLibrary.simpleMessage(
       "Manage your password and security",
     ),
-    "memberSince": m2,
+    "memberSince": m3,
     "membershipPackage": MessageLookupByLibrary.simpleMessage(
       "Membership Package",
     ),
@@ -247,6 +265,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "mobileHint": MessageLookupByLibrary.simpleMessage("+971 XX XXX XXXX"),
     "mobileNumber": MessageLookupByLibrary.simpleMessage("Mobile Number"),
+    "model": MessageLookupByLibrary.simpleMessage("Model"),
+    "modelHint": MessageLookupByLibrary.simpleMessage("e.g. Caravel"),
     "month": MessageLookupByLibrary.simpleMessage("month"),
     "monthlyMembership": MessageLookupByLibrary.simpleMessage(
       "Monthly Membership",
@@ -273,7 +293,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "noDataAvailable": MessageLookupByLibrary.simpleMessage(
       "No data available",
     ),
-    "noEntriesForTab": m3,
+    "noDescriptionAvailable": MessageLookupByLibrary.simpleMessage(
+      "No description available.",
+    ),
+    "noEntriesForTab": m4,
     "noInternetConnection": MessageLookupByLibrary.simpleMessage(
       "No Internet Connection",
     ),
@@ -285,10 +308,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "No redeemable rewards available",
     ),
     "noRulesFound": MessageLookupByLibrary.simpleMessage("No rules found"),
+    "noServicesAvailable": MessageLookupByLibrary.simpleMessage(
+      "No services available",
+    ),
     "noServicesFound": MessageLookupByLibrary.simpleMessage(
       "No services found",
     ),
+    "noSlotTypesAvailable": MessageLookupByLibrary.simpleMessage(
+      "No slot types available for selected time",
+    ),
     "noStatus": MessageLookupByLibrary.simpleMessage("No Status"),
+    "noVehicleTypesAvailable": MessageLookupByLibrary.simpleMessage(
+      "No vehicle types available",
+    ),
     "noVehiclesFound": MessageLookupByLibrary.simpleMessage(
       "No vehicles found",
     ),
@@ -299,13 +331,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "open": MessageLookupByLibrary.simpleMessage("Open"),
     "opportunity": MessageLookupByLibrary.simpleMessage("Opportunity!"),
     "orSignInWith": MessageLookupByLibrary.simpleMessage("Or sign in with"),
-    "parkedAtSpot": m4,
+    "parkedAtSpot": m5,
     "parkingPayment": MessageLookupByLibrary.simpleMessage("Parking Payment"),
     "parkingRenewed": MessageLookupByLibrary.simpleMessage("Parking Renewed"),
     "parkingType": MessageLookupByLibrary.simpleMessage("Parking Type"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "pay": MessageLookupByLibrary.simpleMessage("Pay"),
-    "payAmount": m5,
+    "payAmount": m6,
     "payPalLabel": MessageLookupByLibrary.simpleMessage("PayPal"),
     "payment": MessageLookupByLibrary.simpleMessage("Payment"),
     "paymentMethod": MessageLookupByLibrary.simpleMessage("Payment Method"),
@@ -321,8 +353,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "personalInformation": MessageLookupByLibrary.simpleMessage(
       "Personal Information",
     ),
+    "pleaseProvideVehicleDetails": MessageLookupByLibrary.simpleMessage(
+      "Please provide your vehicle details",
+    ),
+    "pleaseSelectDateTimeFirst": MessageLookupByLibrary.simpleMessage(
+      "Please select date and time first",
+    ),
     "points": MessageLookupByLibrary.simpleMessage("points"),
-    "pointsCount": m6,
+    "pointsCount": m7,
     "pointsPerShare": MessageLookupByLibrary.simpleMessage("10 pts per share"),
     "premiumParkingSolutions": MessageLookupByLibrary.simpleMessage(
       "Premium Parking Solutions",
@@ -342,6 +380,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "redeemYourRewards": MessageLookupByLibrary.simpleMessage("Redeem Points"),
     "referenceLabel": MessageLookupByLibrary.simpleMessage("Reference"),
     "register": MessageLookupByLibrary.simpleMessage("Register"),
+    "registerLater": MessageLookupByLibrary.simpleMessage("Register Later"),
     "registerNewVehicle": MessageLookupByLibrary.simpleMessage(
       "Register New Vehicle",
     ),
@@ -373,9 +412,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Select from our range of additional services",
     ),
     "selectVehicle": MessageLookupByLibrary.simpleMessage("Select Vehicle"),
+    "selectVehicleType": MessageLookupByLibrary.simpleMessage(
+      "Select Vehicle Type",
+    ),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
+    "selectedSlot": m8,
     "send": MessageLookupByLibrary.simpleMessage("Send"),
     "sendOtp": MessageLookupByLibrary.simpleMessage("Send OTP"),
+    "service": MessageLookupByLibrary.simpleMessage("Service"),
     "serviceName": MessageLookupByLibrary.simpleMessage("Service Name"),
     "services": MessageLookupByLibrary.simpleMessage("Services"),
     "shaded": MessageLookupByLibrary.simpleMessage("Shaded"),
@@ -395,8 +439,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "signOut": MessageLookupByLibrary.simpleMessage("Sign Out"),
     "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "silverTier": MessageLookupByLibrary.simpleMessage("Silver"),
+    "sizeFormat": m9,
     "sizeLabel": MessageLookupByLibrary.simpleMessage("Size : "),
+    "skip": MessageLookupByLibrary.simpleMessage("Skip"),
+    "slotAlreadyBooked": MessageLookupByLibrary.simpleMessage(
+      "This slot is already booked and cannot be selected.",
+    ),
     "slotNumberLabel": MessageLookupByLibrary.simpleMessage("Slot Number : "),
+    "slotType": MessageLookupByLibrary.simpleMessage("Slot Type"),
     "smartParking": MessageLookupByLibrary.simpleMessage("Smart Parking"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
       "Something went wrong",
@@ -408,6 +458,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "startTime": MessageLookupByLibrary.simpleMessage("Start Time"),
     "subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
     "subtotalLabel": MessageLookupByLibrary.simpleMessage("Subtotal"),
+    "tapToUploadDocument": MessageLookupByLibrary.simpleMessage(
+      "Tap to upload registration document",
+    ),
+    "tapToUploadPhoto": MessageLookupByLibrary.simpleMessage(
+      "Tap to upload vehicle photo",
+    ),
     "termsAndConditions": MessageLookupByLibrary.simpleMessage(
       "Terms and Conditions",
     ),
@@ -431,15 +487,25 @@ class MessageLookup extends MessageLookupByLibrary {
     "usernameOrMobile": MessageLookupByLibrary.simpleMessage(
       "Username or Mobile Number",
     ),
-    "validUntil": m7,
+    "validUntil": m10,
     "vat": MessageLookupByLibrary.simpleMessage("VAT (5%)"),
     "vatLabel": MessageLookupByLibrary.simpleMessage("VAT (5%)"),
     "vehicle": MessageLookupByLibrary.simpleMessage("Vehicle"),
     "vehicleCheckIn": MessageLookupByLibrary.simpleMessage("Vehicle Check-in"),
+    "vehicleDimensions": MessageLookupByLibrary.simpleMessage(
+      "Vehicle Dimensions",
+    ),
     "vehicleDirection": MessageLookupByLibrary.simpleMessage(
       "Vehicle Direction",
     ),
     "vehicleLabel": MessageLookupByLibrary.simpleMessage("Vehicle"),
+    "vehicleLicenseNumber": MessageLookupByLibrary.simpleMessage(
+      "Vehicle License Number",
+    ),
+    "vehiclePhoto": MessageLookupByLibrary.simpleMessage("Vehicle Photo"),
+    "vehicleRegistrationDocument": MessageLookupByLibrary.simpleMessage(
+      "Vehicle Registration Document",
+    ),
     "verifyOtp": MessageLookupByLibrary.simpleMessage("Verify OTP"),
     "viewAll": MessageLookupByLibrary.simpleMessage("View All"),
     "viewDetails": MessageLookupByLibrary.simpleMessage("View Details"),
@@ -458,6 +524,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeDescription": MessageLookupByLibrary.simpleMessage(
       "Secure parking for caravans, jet skis, \nfood trucks, boats and more",
     ),
+    "widthM": MessageLookupByLibrary.simpleMessage("Width (m)"),
+    "year": MessageLookupByLibrary.simpleMessage("Year"),
+    "yearHint": MessageLookupByLibrary.simpleMessage("e.g. 2020"),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
     "yesterday": MessageLookupByLibrary.simpleMessage("Yesterday"),
   };
