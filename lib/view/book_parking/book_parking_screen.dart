@@ -70,12 +70,14 @@ class BookParkingScreen extends StatelessWidget {
                             ),
                             SizedBox(height: height * 0.035),
                             _buildLabel(S.of(context).availableSlotTypes),
-                            _buildAvailableSummaryList(
-                              context,
-                              controller,
-                              width,
-                              height,
-                            ),
+                            controller.isDateTimeSelected
+                                ? _buildAvailableSummaryList(
+                                    context,
+                                    controller,
+                                    width,
+                                    height,
+                                  )
+                                : _buildDateTimePlaceholder(context, width),
                             if (controller.selectedSlotId != null) ...[
                               SizedBox(height: height * 0.02),
                               Container(
@@ -395,6 +397,37 @@ class BookParkingScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildDateTimePlaceholder(BuildContext context, double width) {
+    return Container(
+      width: width,
+      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.calendar_month_outlined,
+            size: 40,
+            color: Colors.grey.withValues(alpha: 0.3),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            "Choose date and time for selecting the slot",
+            style: TextStyle(
+              color: Colors.black45,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAvailableSummaryList(
     BuildContext context,
     BookParkingController controller,
@@ -441,13 +474,25 @@ class BookParkingScreen extends StatelessWidget {
       child: Column(
         children: controller.availableSummaryList
             .where((st) {
+              // 1. Filter by Location (Shaded/Unshaded)
               final selectedTypeLower = controller.selectedParkingType.toLowerCase();
               final mappedId = controller.locationIdMap[selectedTypeLower];
-              // Primary Case: Location ID matches mapped ID
-              if (mappedId != null && st['location_id'] == mappedId) return true;
-              // Fallback: If mapping is missing or broken, show everything to avoid stuck UI
-              if (mappedId == null) return true;
-              return false;
+              bool matchesLocation = (mappedId == null || st['location_id'] == mappedId);
+              if (!matchesLocation) return false;
+
+              // 2. Filter by Vehicle Type (e.g., JETSKI should only see JETSKI slots)
+              final vehicleTypeName = controller.selectedVehicleData?['vehicle_type_name']?.toString().toLowerCase() ?? '';
+              final slotTypeName = st['slot_type_name']?.toString().toLowerCase() ?? '';
+              
+              // Only filter if both names are available to avoid empty lists.
+              // We check if the slot type name contains the vehicle type name (e.g. "Boats Type A" contains "Boat")
+              if (vehicleTypeName.isNotEmpty && slotTypeName.isNotEmpty) {
+                // Remove trailing 's' or 'ies' for better matching (e.g. JETSKIS vs JETSKI)
+                final vPart = vehicleTypeName.replaceAll(RegExp(r's$'), '');
+                if (!slotTypeName.contains(vPart)) return false;
+              }
+
+              return true;
             })
             .map((st) {
           final isSelected = controller.selectedSlotTypeId == st['slot_type_id'];
@@ -457,7 +502,8 @@ class BookParkingScreen extends StatelessWidget {
             onTap: isAvailable
                 ? () => controller.checkSlotAvailability(
                     st['slot_type_id'], st['slot_type_name'], st['location_id'])
-                : null,
+                : () => controller.handleUnavailableSelection(
+                    message: S.of(context).slotAlreadyBooked),
             child: Opacity(
               opacity: isAvailable ? 1.0 : 0.5,
               child: Container(

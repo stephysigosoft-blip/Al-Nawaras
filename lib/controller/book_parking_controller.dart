@@ -189,7 +189,7 @@ class BookParkingController extends GetxController {
     } else if (lower.contains('truck')) {
       return const AssetImage("lib/assets/images/food truck.png");
     } else if (lower.contains('boat')) {
-      return const AssetImage("lib/assets/images/Boat.png");
+      return const AssetImage("lib/assets/images/boat.png");
     } else if (lower.contains('caravan')) {
       return const AssetImage("lib/assets/images/caravan.png");
     }
@@ -439,6 +439,11 @@ class BookParkingController extends GetxController {
 
   TimeOfDay? selectedStartTime;
   TimeOfDay? selectedEndTime;
+  bool get isDateTimeSelected =>
+      dateController.text.isNotEmpty &&
+      timeController.text.isNotEmpty &&
+      endDateController.text.isNotEmpty &&
+      endTimeController.text.isNotEmpty;
 
   Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -614,9 +619,10 @@ class BookParkingController extends GetxController {
             .map((e) => e as Map<String, dynamic>)
             .toList();
       } else {
+        String msg = response.data?['message'] ?? 'Unable to fetch availability';
         Get.snackbar(
           'Notice',
-          response.data?['message'] ?? 'Unable to fetch availability',
+          msg,
           backgroundColor: Colors.orangeAccent,
           colorText: Colors.white,
         );
@@ -716,9 +722,10 @@ class BookParkingController extends GetxController {
         // Navigate to SlotSelectionScreen
         Get.to(() => const SlotSelectionScreen());
       } else {
+        String msg = response.data?['message'] ?? 'Unable to check slot availability';
         Get.snackbar(
           'Notice',
-          response.data?['message'] ?? 'Unable to check slot availability',
+          msg,
           backgroundColor: Colors.orangeAccent,
           colorText: Colors.white,
         );
@@ -992,19 +999,6 @@ class BookParkingController extends GetxController {
       BaseClient.handleDioError(e);
       debugPrint('Error calling parking/book: $e');
 
-      String errMsg =
-          'Booking creation failed. Please check if this vehicle is already booked for this date.';
-      if (e.response?.data != null && e.response?.data['message'] != null) {
-        errMsg = e.response?.data['message']?.toString() ?? errMsg;
-      }
-      Get.snackbar(
-        'Booking Error',
-        errMsg,
-        backgroundColor: Colors.redAccent,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 4),
-      );
-
       isBooking = false;
       if (!isClosed) update();
       return;
@@ -1165,6 +1159,18 @@ class BookParkingController extends GetxController {
           },
         ],
       ),
+    );
+  }
+
+  /// Shows a snackbar when an unavailable item (slot type or specific slot) is selected.
+  void handleUnavailableSelection({String? message}) {
+    Get.snackbar(
+      'Slot Unavailable',
+      message ?? 'This selection is currently full or already booked.',
+      backgroundColor: Colors.redAccent,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      icon: const Icon(Icons.info_outline, color: Colors.white),
     );
   }
 

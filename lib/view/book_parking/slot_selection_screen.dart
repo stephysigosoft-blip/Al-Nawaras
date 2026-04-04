@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/book_parking_controller.dart';
+import '../../generated/l10n.dart';
 import '../widgets/custom_app_bar.dart';
 
 class SlotSelectionScreen extends GetView<BookParkingController> {
@@ -41,9 +42,10 @@ class SlotSelectionScreen extends GetView<BookParkingController> {
                     final isSelected = controller.selectedSlotId == slot['id'];
 
                     return GestureDetector(
-                      onTap: (isFree && !isSelected)
-                          ? () => controller.selectSlot(slot['id'], slot['name'])
-                          : null,
+                      onTap: isFree
+                          ? (isSelected ? null : () => controller.selectSlot(slot['id'], slot['name']))
+                          : () => controller.handleUnavailableSelection(
+                              message: S.of(context).slotAlreadyBooked),
                       child: Container(
                         decoration: BoxDecoration(
                           color: isSelected
