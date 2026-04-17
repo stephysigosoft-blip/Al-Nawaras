@@ -64,11 +64,17 @@ class ApiConstants {
 
   // Payment
   static const String paymentSummary = '${baseUrl}payment/summary';
-  static const String paymentConfirm = '${baseUrl}payment/confirm';
+  
 
   // Notifications
   static const String notifications = '${baseUrl}notifications';
   static const String readNotification = '${baseUrl}notifications/read';
   static const String search = '${baseUrl}search';
   static const String lookup = '${baseUrl}lookup';
+
+  //  App Settings (Paymob Configuration)
+  static const String appSettings = '${baseUrl}settings';
+
+  // Payment confirm
+  static const String paymentConfirm = '${baseUrl}payment/confirm';
 }

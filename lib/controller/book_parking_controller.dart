@@ -96,7 +96,6 @@ class BookParkingController extends GetxController {
     } on DioException catch (e) {
       BaseClient.handleDioError(e);
       debugPrint('Error fetching vehicles: $e');
-    } catch (e) {
     } finally {
       isLoadingVehicles = false;
       if (!isClosed) update();

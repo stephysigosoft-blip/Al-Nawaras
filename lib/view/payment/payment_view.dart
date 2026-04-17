@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:al_nawaras/view/payment/payment_success_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../config/api_constants.dart';
 import '../../generated/l10n.dart';
@@ -10,6 +12,8 @@ import '../widgets/payment_method_item.dart';
 import '../widgets/credit_card_form.dart';
 import '../widgets/custom_logos.dart';
 import '../widgets/draggable_help_button.dart';
+import '../../controller/paymob_controller.dart';
+import 'paymob_webview.dart';
 
 class PaymentView extends StatefulWidget {
   final int? bookingId;
@@ -40,6 +44,14 @@ class PaymentView extends StatefulWidget {
 class _PaymentViewState extends State<PaymentView> {
   int selectedPaymentMethod = 0; // State variable
   bool saveCard = false; // State variable
+  late final PaymobController _paymobController;
+
+  @override
+  void initState() {
+    super.initState();
+    _paymobController = Get.put(PaymobController());
+    _paymobController.fetchPaymobSettings();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -230,6 +242,84 @@ class _PaymentViewState extends State<PaymentView> {
     );
   }
 
+  Future<void> _confirmPayment(String transactionId, String totalStr) async {
+    try {
+      final storage = GetStorage();
+      final token = storage.read('token');
+
+      final headers = {
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      };
+
+      final Map<String, dynamic> requestBody = {
+        "booking_id": widget.bookingId.toString(),
+        "payment_gateway": "paymob",
+        "payment_reference": transactionId
+      };
+
+      debugPrint('\n--- API REQUEST (payment/confirm) ---');
+      debugPrint('URL: ${ApiConstants.paymentConfirm}');
+      debugPrint('Body: $requestBody');
+
+      final response = await BaseClient.dio.post(
+        ApiConstants.paymentConfirm,
+        data: requestBody,
+        options: Options(
+          headers: headers,
+          contentType: Headers.formUrlEncodedContentType,
+        ),
+      );
+
+      debugPrint('--- API RESPONSE (payment/confirm) ---');
+      debugPrint('Status Code: ${response.statusCode}');
+      debugPrint('Response Data: ${response.data}');
+
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          response.data != null &&
+          (response.data['status'] == true ||
+              response.data['status'] == 200 ||
+              response.data['status'] == "success")) {
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => PaymentSuccessView(
+                bookingId: widget.bookingId,
+                title: widget.title,
+                subtitle: widget.subtitle,
+                total: totalStr,
+                details: widget.details,
+              ),
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  response.data['message'] ?? 'Payment confirmation failed.'),
+              backgroundColor: const Color(0xFFE30613),
+            ),
+          );
+        }
+      }
+    } on DioException catch (e) {
+      debugPrint('Error confirming payment: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(S.of(context).errorServer),
+            backgroundColor: const Color(0xFFE30613),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+    }
+  }
+
   Widget _buildStickyFooter(BuildContext context, double width, double height) {
     String totalStr = widget.total ?? (widget.subtotal == null
         ? "${S.of(context).currency} 1,575.00"
@@ -258,89 +348,57 @@ class _PaymentViewState extends State<PaymentView> {
             height: 48,
             child: ElevatedButton(
               onPressed: () async {
-                try {
-                  final storage = GetStorage();
-                  final token = storage.read('token');
+                if (selectedPaymentMethod == 0) {
+                  // Paymob Flow
+                  try {
+                    // 1. Get Numerical Amount
+                    String priceDigits =
+                        totalStr.replaceAll(RegExp(r'[^0-9.]'), '');
+                    double numericAmount = double.tryParse(priceDigits) ?? 0.0;
+                    String currency =
+                        totalStr.contains('AED') ? 'AED' : 'EGP'; // Defaulting
 
-                  final headers = {
-                    if (token != null) 'Authorization': 'Bearer $token',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                  };
+                    // 2. Get Payment Token
+                    final token = await _paymobController.getPaymentToken(
+                      amount: numericAmount,
+                      currency: currency,
+                    );
 
-                  // Parse numerical value from totalStr or amount
-                  String priceDigits = totalStr.replaceAll(RegExp(r'[^0-9.]'), '');
-                  double numericAmount = double.tryParse(priceDigits) ?? 0.0;
-
-                  final Map<String, dynamic> requestBody = {
-                    "booking_id": widget.bookingId.toString(),
-                    "amount": numericAmount.toStringAsFixed(2),
-                    "payment_gateway": "stripe",
-                    "payment_reference": "gateway_payment_reference"
-                  };
-
-                  debugPrint('\n--- API REQUEST (payment/confirm) ---');
-                  debugPrint('URL: ${ApiConstants.paymentConfirm}');
-                  debugPrint('Body: $requestBody');
-
-                  // Using BaseClient's Dio but forcing Form-URL-Encoded as per server expectation
-                  final response = await BaseClient.dio.post(
-                    ApiConstants.paymentConfirm,
-                    data: requestBody,
-                    options: Options(
-                      headers: headers,
-                      contentType: Headers.formUrlEncodedContentType,
-                    ),
-                  );
-
-                  debugPrint('--- API RESPONSE (payment/confirm) ---');
-                  debugPrint('Status Code: ${response.statusCode}');
-                  debugPrint('Response Data: ${response.data}');
-
-                  if ((response.statusCode == 200 || response.statusCode == 201) &&
-                      response.data != null &&
-                      (response.data['status'] == true ||
-                          response.data['status'] == 200 ||
-                          response.data['status'] == "success")) {
-                    if (mounted) {
+                    if (token != null && mounted) {
+                      // 3. Open WebView
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => PaymentSuccessView(
-                            bookingId: widget.bookingId,
-                            title: widget.title,
-                            subtitle: widget.subtitle,
-                            total: totalStr,
-                            details: widget.details,
+                          builder: (context) => PaymobWebView(
+                            paymentToken: token,
+                            iframeId:
+                                _paymobController.paymobConfig?.iframeId ?? '',
+                            onSuccess: (transactionId) async {
+                              Navigator.of(context).pop(); // Close WebView
+                              await _confirmPayment(transactionId, totalStr);
+                            },
+                            onFailure: () {
+                              Navigator.of(context).pop(); // Close WebView
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Payment failed or cancelled'),
+                                  backgroundColor: Color(0xFFE30613),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       );
                     }
-                  } else {
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(response.data['message'] ??
-                              'Payment confirmation failed.'),
-                          backgroundColor: const Color(0xFFE30613),
-                        ),
-                      );
-                    }
+                  } catch (e) {
+                    debugPrint('Paymob initialization error: $e');
                   }
-                } on DioException catch (e) {
-                  debugPrint('Error confirming payment: $e');
-                  if (e.response != null) {
-                    debugPrint('Error Response Body: ${e.response?.data}');
-                  }
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(S.of(context).errorServer),
-                        backgroundColor: const Color(0xFFE30613),
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  debugPrint('Unexpected error: $e');
+                } else {
+                  // Other payment methods (Keep previous logic for now or show snackbar)
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Payment method not implemented yet.'),
+                    ),
+                  );
                 }
               },
               style: ElevatedButton.styleFrom(
