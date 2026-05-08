@@ -1,6 +1,6 @@
 class ApiConstants {
   static const String baseUrl =
-      'https://rta-parking-staging-29068867.dev.odoo.com/api/';
+      'https://rta-parking-staging-31816802.dev.odoo.com/api/';
 
   // Auth
   static const String login = '${baseUrl}login';
